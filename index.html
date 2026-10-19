@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kofferforscher</title><meta name="theme-color" content="#13324A"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
+<style>@font-face{font-family:'Big Shoulders Display';font-weight:800;src:url(fonts/big-shoulders-display-latin-800-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Big Shoulders Display';font-weight:900;src:url(fonts/big-shoulders-display-latin-900-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Figtree';font-weight:500;src:url(fonts/figtree-latin-500-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Figtree';font-weight:700;src:url(fonts/figtree-latin-700-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Figtree';font-weight:800;src:url(fonts/figtree-latin-800-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'DM Mono';font-weight:500;src:url(fonts/dm-mono-latin-500-normal.woff2) format('woff2');font-display:swap}
+@font-face{font-family:'Caveat';font-weight:700;src:url(fonts/caveat-latin-700-normal.woff2) format('woff2');font-display:swap}
+:root{--ink:#13324A;--ink2:#55677A;--deep:#13324A;--ocean:#2779A7;--lagoon:#49C5B6;--sand:#ECD06F;--sky:#B5D5FF;--mint:#B1EAC4;--peach:#FFB288;--coral:#FF6A52;--cream:#F5F0E6;--paper:#FFFDF8;--ts:1;
+--raise:0 1px 1px rgba(19,50,74,.1),0 10px 18px -12px rgba(19,50,74,.55),inset 0 1px 0 rgba(255,255,255,.7),inset 0 -3px 4px -1px rgba(0,0,0,.12);--card:0 18px 34px -24px rgba(19,50,74,.5)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:'Figtree',system-ui,sans-serif;color:var(--ink);background:radial-gradient(60% 70% at 0% 0%,rgba(73,197,182,.28),transparent 60%),radial-gradient(55% 70% at 100% 100%,rgba(236,208,111,.35),transparent 60%),radial-gradient(40% 50% at 100% 0%,rgba(39,121,167,.18),transparent 60%),var(--cream);overflow-x:hidden;font-size:calc(16px*var(--ts));line-height:1.45;-webkit-user-select:none;user-select:none}
+button{font-family:inherit;color:inherit;cursor:pointer;border:0;background:none;touch-action:manipulation}
+input,select,textarea{font-family:inherit;color:var(--ink);-webkit-user-select:text;user-select:text}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+.mono{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink2)}
+.disp{font-family:'Big Shoulders Display',sans-serif;font-weight:900;line-height:.95;letter-spacing:.005em;text-transform:uppercase}
+.hand{font-family:'Caveat',cursive;font-weight:700}
+#app{min-height:100%;max-width:1280px;margin:0 auto;padding:0 20px 40px;position:relative}
+.view{animation:vin .35s ease both}
+@keyframes vin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.top{display:flex;align-items:center;gap:14px;padding:18px 0 14px;position:sticky;top:0;z-index:20;background:linear-gradient(var(--cream) 60%,rgba(245,240,230,0))}
+.top h1{font-size:clamp(30px,4.4vw,46px)}
+.top .sp{flex:1}
+.back{width:52px;height:52px;border-radius:50%;background:var(--paper);display:grid;place-items:center;box-shadow:var(--raise);flex:none}
+.back svg{width:22px;height:22px}
+.pill{height:50px;border-radius:25px;padding:0 20px 0 6px;background:var(--deep);color:#fff;display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:800;box-shadow:var(--raise)}
+.pill.l{background:var(--paper);color:var(--ink)}
+.pill i{width:38px;height:38px;border-radius:50%;background:var(--sand);display:grid;place-items:center;flex:none}
+.pill i svg{width:18px;height:18px}
+.pill.plain{padding:0 20px}
+.chip{height:44px;border-radius:22px;padding:0 18px;background:var(--paper);box-shadow:var(--raise);font-weight:800;font-size:15px;white-space:nowrap}
+.chip.on{background:var(--deep);color:#fff;box-shadow:inset 0 2px 6px rgba(0,0,0,.35)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.card{background:var(--paper);border-radius:26px;box-shadow:var(--card);padding:20px 22px}
+.dark{background:linear-gradient(155deg,#16405E,#13324A 60%,#0F2A3F);color:#fff;border-radius:26px;padding:20px 22px;position:relative}
+.dark .mono{color:var(--mint)}
+.tab{position:absolute;left:22px;top:-14px;background:var(--sand);color:var(--ink);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;padding:5px 14px;border-radius:12px 12px 0 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.row{display:flex;align-items:center;gap:12px}
+.col{display:flex;flex-direction:column;gap:12px}
+.wrap{display:flex;flex-wrap:wrap;gap:10px}
+.sp{flex:1}
+.big{font-size:clamp(34px,5vw,60px)}
+.muted{color:var(--ink2)}
+.btn{height:50px;border-radius:25px;padding:0 24px;background:var(--lagoon);color:var(--ink);font-weight:800;font-size:16px;box-shadow:var(--raise)}
+.btn.d{background:var(--deep);color:#fff}
+.btn.s{background:var(--sand)}
+.btn.c{background:var(--coral);color:#fff}
+.btn.g{background:var(--paper)}
+.btn[disabled]{opacity:.45}
+.round{width:44px;height:44px;border-radius:50%;background:var(--paper);box-shadow:var(--raise);font-size:22px;font-weight:800;display:grid;place-items:center}
+.bar{height:10px;border-radius:5px;background:rgba(19,50,74,.12);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--lagoon);border-radius:5px;transition:width .4s}
+details.acc{background:var(--paper);border-radius:20px;box-shadow:var(--card);overflow:hidden}
+details.acc>summary{list-style:none;cursor:pointer;padding:16px 20px;font-weight:800;font-size:17px;display:flex;align-items:center;gap:12px}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary::after{content:'+';margin-left:auto;font-size:24px;line-height:1;color:var(--ocean)}
+details.acc[open]>summary::after{content:'–'}
+details.acc .c{padding:0 20px 18px}
+.c ul,.c ol{margin:6px 0;padding-left:20px}.c li{margin:5px 0}
+.tag{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;padding:3px 9px;border-radius:10px;background:var(--sky);color:var(--ink);text-transform:uppercase}
+.sheet{position:fixed;inset:0;background:rgba(19,50,74,.55);z-index:60;display:grid;place-items:center;padding:20px;animation:vin .2s}
+.sheet>div{background:var(--paper);border-radius:28px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:24px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--deep);color:#fff;border-radius:22px;padding:12px 22px;font-weight:700;z-index:80;animation:vin .25s}
+/* windows */
+.windows{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(8px,1.4vw,18px);padding:8px 0 4px}
+@media (max-width:820px){.windows{grid-template-columns:repeat(4,1fr)}}
+.win{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;transition:transform .2s}
+.win:active{transform:scale(.97)}
+.bezel{position:relative;width:100%;aspect-ratio:.72;border-radius:46% / 33%;background:linear-gradient(160deg,#fff 0%,#E9ECEE 45%,#CBD1D5 100%);box-shadow:0 22px 28px -18px rgba(19,50,74,.65),inset 0 2px 2px #fff,inset 0 -6px 10px rgba(0,0,0,.12);padding:7%;transition:transform .9s cubic-bezier(.6,0,.2,1),opacity .5s}
+.bezel::before{content:'';position:absolute;inset:3.5%;border-radius:inherit;border:2px solid rgba(255,255,255,.9);box-shadow:inset 0 0 0 2px rgba(0,0,0,.06)}
+.glass{position:relative;width:100%;height:100%;border-radius:44% / 31%;overflow:hidden;box-shadow:inset 0 0 0 5px #7C8890,inset 0 10px 18px rgba(0,0,0,.35);background-image:url(assets/pano.svg);background-repeat:no-repeat;background-size:auto 330%;background-position:calc(var(--i)*16.66%) 41%}
+.glass::after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.28),transparent 35%);pointer-events:none}
+.shade{position:absolute;left:0;right:0;top:0;height:var(--sh,30%);background:repeating-linear-gradient(180deg,#F4F5F5 0 9px,#DDE1E3 9px 11px);border-bottom:5px solid #B8BEC2;border-radius:0 0 8px 8px;transition:height .8s cubic-bezier(.5,0,.2,1);z-index:2;box-shadow:0 8px 12px -6px rgba(0,0,0,.3)}
+.shade::after{content:'';position:absolute;left:50%;bottom:-14px;width:34px;height:10px;margin-left:-17px;border-radius:5px;background:#9AA3A8}
+.win .ic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;position:absolute;left:50%;bottom:14%;transform:translateX(-50%);z-index:3;box-shadow:var(--raise)}
+.win .ic svg{width:18px;height:18px}
+.win .lb{font-weight:800;font-size:clamp(12px,1.35vw,16px);line-height:1.15}
+.win .st{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;color:var(--ink2);text-transform:uppercase}
+.win.paused .bezel{filter:saturate(.7)}
+.zoomer{position:fixed;inset:0;z-index:90;background:var(--cream);opacity:0;pointer-events:none;transition:opacity .35s}
+.zoomer.on{opacity:1}
+/* generic tiles */
+.tile{border-radius:26px;padding:18px 20px;box-shadow:var(--card);text-align:left;display:flex;flex-direction:column;gap:6px;min-height:120px;transition:transform .15s}
+.tile:active{transform:scale(.98)}
+.tile h3{font-size:22px}
+/* packing album */
+.album{display:grid;grid-template-columns:230px 1fr;gap:16px}
+@media (max-width:820px){.album{grid-template-columns:1fr}}
+.tabs{display:flex;flex-direction:column;gap:6px}
+@media (max-width:820px){.tabs{flex-direction:row;overflow:auto}}
+.ctab{padding:12px 16px;border-radius:16px 8px 8px 16px;background:rgba(255,253,248,.6);font-weight:800;display:flex;justify-content:space-between;gap:10px;white-space:nowrap;text-align:left}
+.ctab.on{background:var(--paper);box-shadow:var(--raise);border-left:6px solid var(--c)}
+.ctab small{font-family:'DM Mono',monospace;font-size:11px;color:var(--ink2)}
+.item{display:flex;align-items:center;gap:14px;padding:12px 6px;border-top:1px solid rgba(19,50,74,.08);min-height:60px;width:100%;text-align:left}
+.item .bx{width:32px;height:32px;border-radius:10px;border:2.5px solid var(--ink);flex:none;display:grid;place-items:center;background:#fff}
+.item.done .bx{background:var(--lagoon);border-color:var(--lagoon)}
+.item.done .tx{text-decoration:line-through;color:var(--ink2)}
+.item .tx{font-weight:700;font-size:17px;flex:1}
+.item .tx small{display:block;font-weight:500;font-size:13px;color:var(--ink2)}
+.who{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;padding:3px 8px;border-radius:9px;background:var(--sky);text-transform:uppercase}
+.paper{background:var(--paper);border-radius:28px;box-shadow:var(--card);padding:18px 24px;background-image:repeating-linear-gradient(180deg,transparent 0 39px,#EEE6D3 39px 40px)}
+/* wissen */
+.chap{display:flex;gap:14px;align-items:center;padding:16px;border-radius:24px;background:var(--paper);box-shadow:var(--card);text-align:left;width:100%}
+.chap .nm{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;font-size:28px;flex:none}
+.fact{border-left:5px solid var(--c,var(--lagoon));padding:8px 14px;background:rgba(255,255,255,.6);border-radius:0 14px 14px 0}
+.opt{display:block;width:100%;text-align:left;padding:14px 18px;border-radius:18px;background:var(--paper);box-shadow:var(--raise);font-weight:700;margin:8px 0}
+.opt.ok{background:var(--mint)}.opt.no{background:#FFD5CC}
+input[type=range]{width:100%;accent-color:var(--ocean);height:34px}
+.pin{display:grid;grid-template-columns:repeat(3,76px);gap:12px;justify-content:center}
+.pin button{height:68px;border-radius:22px;background:var(--paper);box-shadow:var(--raise);font-size:26px;font-weight:800}
+.dots{display:flex;gap:12px;justify-content:center;margin:14px 0}
+.dots i{width:16px;height:16px;border-radius:50%;border:2.5px solid var(--ink)}
+.dots i.f{background:var(--ink)}
+.tgl{width:64px;height:36px;border-radius:18px;background:#C9CDD1;position:relative;transition:background .2s;flex:none}
+.tgl::after{content:'';position:absolute;top:4px;left:4px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);transition:left .2s}
+.tgl.on{background:#2BA594}.tgl.on::after{left:32px}
+.inp{height:50px;border-radius:16px;border:2px solid rgba(19,50,74,.18);padding:0 16px;font-size:17px;background:#fff;width:100%}
+.stop{display:flex;gap:14px;padding:14px 0;border-top:1px solid rgba(19,50,74,.08)}
+.stop .no{width:38px;height:38px;border-radius:50%;background:var(--deep);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.stop.done .no{background:var(--lagoon);color:var(--ink)}
+.leg{margin:2px 0 2px 52px;font-family:'DM Mono',monospace;font-size:12px;color:var(--ocean)}
+.kid{background:var(--sand);border-radius:14px;padding:8px 12px;margin-top:8px;font-weight:700}
+.sw{height:12px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.hide{display:none!important}
+@keyframes dash{to{stroke-dashoffset:-64}}
+.str{stroke-dashoffset:0}
+@media print{.top,.chips,.back,.pill{display:none!important}body{background:#fff}}
+.bezel,.glass,.shade{display:block}
+</style></head><body><div id="app"></div><script>var PACK=[{"id":0,"name":"Dokumente","items":[{"id":1,"t":"Personalausweis","n":"","w":"alle","r":["DE","EU"]},{"id":2,"t":"Reisepass","n":"Gültigkeit prüfen","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":3,"t":"Kinderreisepass","n":"","w":"kind","r":["EU","NonEU","IN","US","AF"]},{"id":4,"t":"Visum","n":"ESTA (USA), E-Visum","w":"alle","r":["NonEU","IN","US","AF"]},{"id":5,"t":"Flugtickets / Bordkarte","n":"Handy + Ausdruck","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":6,"t":"Hotel-Buchung","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":7,"t":"Zug- / Bustickets","n":"","w":"alle","r":["DE","EU"]},{"id":8,"t":"Führerschein + intern. Führerschein","n":"außerhalb der EU","w":"eltern","r":["EU","NonEU","IN","US","AF"]},{"id":9,"t":"Mietwagen-Gutschein","n":"","w":"eltern","r":["EU","NonEU","IN","US","AF"]},{"id":10,"t":"Reiseversicherung","n":"Krankheit im Ausland","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":11,"t":"EHIC / Krankenkarte","n":"gilt in der EU","w":"alle","r":["DE","EU"]},{"id":12,"t":"Impfpass","n":"Gelbfieber usw.","w":"alle","r":["IN","AF"]},{"id":13,"t":"Bargeld, Landeswährung","n":"etwas vorher","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":14,"t":"Kreditkarte + EC-Karte","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":15,"t":"Kopien aller Dokumente","n":"extra + Cloud","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":16,"t":"Notfall-Kontakte","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":17,"t":"Botschaft: Adresse / Hotline","n":"","w":"alle","r":["NonEU","IN","US","AF"]},{"id":18,"t":"Geldbeutel","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":1,"name":"Elektronik","items":[{"id":19,"t":"Handy","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":20,"t":"Ladegeräte","n":"alle Kabel","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":21,"t":"Powerbank","n":"nur Handgepäck","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":22,"t":"Reiseadapter","n":"UK / US / Indien","w":"alle","r":["NonEU","IN","US","AF"]},{"id":23,"t":"AirTags","n":"im Gepäck","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":24,"t":"Kopfhörer","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":25,"t":"Kamera + SD-Karten","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":26,"t":"Gimbal / Stativ","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":27,"t":"Tablet / Kindle","n":"für das Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":28,"t":"eSIM / lokale SIM","n":"Roaming prüfen","w":"eltern","r":["EU","NonEU","IN","US","AF"]},{"id":29,"t":"Kabel-Organizer","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":30,"t":"Laptop (falls nötig)","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":31,"t":"Speicherkarten-Leser","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":32,"t":"Mehrfachsteckdose","n":"1 Adapter, viele Stecker","w":"eltern","r":["NonEU","IN","US","AF"]}]},{"id":2,"name":"Gesundheit","items":[{"id":33,"t":"Reiseapotheke","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":34,"t":"Eigene Medikamente","n":"+ Rezept-Kopie","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":35,"t":"Schmerz- / Fiebermittel","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":36,"t":"Pflaster","n":"fürs Kind!","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":37,"t":"Sonnencreme","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":38,"t":"Mückenspray","n":"","w":"alle","r":["NonEU","IN","AF"]},{"id":39,"t":"Desinfektion","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":40,"t":"Mittel gegen Reiseübelkeit","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":41,"t":"Malaria-Vorsorge","n":"Arzt fragen","w":"alle","r":["IN","AF"]},{"id":42,"t":"Mittel gegen Durchfall","n":"","w":"alle","r":["NonEU","IN","AF"]},{"id":43,"t":"Elektrolyt-Salze (ORS)","n":"","w":"alle","r":["IN","AF"]},{"id":44,"t":"Brille / Kontaktlinsen","n":"Ersatz","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":45,"t":"Thermometer","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":46,"t":"Allergie-Mittel","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":3,"name":"Kleidung","items":[{"id":47,"t":"Unterwäsche","n":"pro Tag","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":48,"t":"Socken","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":49,"t":"T-Shirts / Tops","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":50,"t":"Hosen","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":51,"t":"Pullover / Jacke","n":"Wetter prüfen","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":52,"t":"Regenjacke","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":53,"t":"Bequeme Laufschuhe","n":"viel zu Fuß!","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":54,"t":"Sandalen / Flip-Flops","n":"","w":"alle","r":["NonEU","IN","AF"]},{"id":55,"t":"Schlafanzug","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":56,"t":"Badekleidung","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":57,"t":"Sonnenhut / Kappe","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":58,"t":"Sonnenbrille","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":59,"t":"Schal / Tuch (Tempel, Moschee)","n":"","w":"mama","r":["NonEU","IN","AF"]},{"id":60,"t":"Warme Schichten","n":"kaltes Reiseziel","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":61,"t":"Gürtel","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":62,"t":"Leichte Jacke für Flugzeug","n":"Klimaanlage","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":4,"name":"Hygiene","items":[{"id":63,"t":"Zahnbürste + Zahnpasta","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":64,"t":"Shampoo / Duschgel","n":"Reisegröße < 100 ml","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":65,"t":"Deo","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":66,"t":"Bürste / Kamm","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":67,"t":"Rasierer","n":"","w":"papa","r":["DE","EU","NonEU","IN","US","AF"]},{"id":68,"t":"Damenhygiene","n":"","w":"mama","r":["DE","EU","NonEU","IN","US","AF"]},{"id":69,"t":"Feuchttücher","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":70,"t":"Lippenbalsam","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":71,"t":"Reisehandtuch","n":"","w":"alle","r":["NonEU","IN","US","AF"]},{"id":72,"t":"Nagelschere","n":"nur Koffer","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":73,"t":"Taschentücher","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":74,"t":"Wattestäbchen","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":5,"name":"Kind","items":[{"id":75,"t":"Lieblingsspielzeug","n":"1–2 Sachen","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":76,"t":"Buch / Malsachen","n":"Flug, Zug","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":77,"t":"Snacks","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":78,"t":"Trinkflasche","n":"leer durch die Kontrolle","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":79,"t":"Kuscheltier","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":80,"t":"Wechselkleidung im Handgepäck","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":81,"t":"Kinder-Kopfhörer","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":82,"t":"Tablet mit Downloads","n":"Filme offline","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":83,"t":"Nackenkissen","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":84,"t":"Kleine Spiele / Karten","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":6,"name":"Taschen","items":[{"id":85,"t":"Tagesrucksack","n":"Stadttour","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":86,"t":"Trinkflasche zum Auffüllen","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":87,"t":"Reise-Snacks","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":88,"t":"Faltbare Einkaufstasche","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":89,"t":"Wäschebeutel","n":"schmutzige Kleidung","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":90,"t":"Schloss","n":"","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":91,"t":"Stift","n":"Einreisekarte","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":92,"t":"Regenschirm","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":93,"t":"Besteck / Dose","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":94,"t":"Zip-Beutel","n":"Flüssigkeiten, Snacks","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":95,"t":"Nähset / Sicherheitsnadeln","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":96,"t":"Reiseführer / Offline-Karten","n":"vorher laden","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":97,"t":"Brillenetui","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":98,"t":"Brustbeutel / Geldgurt","n":"","w":"alle","r":["NonEU","IN","US","AF"]}]},{"id":7,"name":"Wohnung","items":[{"id":99,"t":"Licht aus","n":"alle Zimmer","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":100,"t":"Mülleimer leeren","n":"auch Bio!","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":101,"t":"Müll rausbringen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":102,"t":"Kühlschrank prüfen","n":"Verderbliches","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":103,"t":"Fenster zu","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":104,"t":"Türen abschließen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":105,"t":"Heizung runter","n":"Winter","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":106,"t":"Geräte ausstecken","n":"Herd, Bügeleisen","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":107,"t":"Haupt-Wasserhahn zu","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":108,"t":"Spülmaschine leer / an","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":109,"t":"WLAN-Router an lassen","n":"für Kameras","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":110,"t":"Pflanzen gießen / Nachbarn fragen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":111,"t":"Briefkasten","n":"Nachbarn fragen","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":112,"t":"Haustier versorgt","n":"falls nötig","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":113,"t":"Schlüssel / an Nachbarn","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":114,"t":"Handy vorher laden","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":115,"t":"Taxi / Zug zum Flughafen bestätigen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":116,"t":"Alarmanlage einschalten","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":117,"t":"Thermostat auf Abwesend","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":118,"t":"Letzter Rundgang","n":"Geldbeutel, Schlüssel, Pass","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]}];
+/* ===== Kofferforscher content (German). Add to these lists to deepen the app; saved progress is keyed by id and never lost. ===== */
+var WINDOWS=[
+ {id:'vor',t:'Vor dem Abflug',s:'Packliste & Briefing',c:'#ECD06F',ic:'M5 13l4 4L19 7'},
+ {id:'hgr',t:'Tüftel-Hangar',s:'Papierflieger bauen',c:'#49C5B6',ic:'M3 12l18-8-6 16-3-7-9-1z'},
+ {id:'auf',t:'Kapitäns-Aufträge',s:'Rätsel für unterwegs',c:'#FF6A52',ic:'M12 3v18M5 10l7-7 7 7'},
+ {id:'wie',t:'Wie fliegt das?',s:'8 Kapitel zum Staunen',c:'#B5D5FF',ic:'M4 16c4-1 6-5 8-9 2 4 4 8 8 9M4 20h16'},
+ {id:'wes',t:'Wunderwesen',s:'Barcelona entdecken',c:'#B1EAC4',ic:'M12 21s-7-5-7-11a7 7 0 0114 0c0 6-7 11-7 11zM12 8v4'},
+ {id:'rek',t:'Weltrekorde',s:'Größer, schneller, älter',c:'#FFB288',ic:'M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z'},
+ {id:'tag',t:'Reise-Tagebuch',s:'Dein Buch der Reise',c:'#2779A7',ic:'M5 4h12a2 2 0 012 2v14H7a2 2 0 01-2-2V4zM9 8h6M9 12h6'}
+];
+var ICON=function(p,col){return '<svg viewBox="0 0 24 24" fill="none" stroke="'+(col||'#13324A')+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>'};
+
+/* ---------- Wie fliegt das? ---------- */
+var WISSEN=[
+{id:'auftrieb',t:'Auftrieb',c:'#B5D5FF',sim:'lift',intro:'Ein Flugzeug mit 70 Tonnen schwebt in der Luft. Wie geht das? Die Antwort steckt in den Flügeln und in der Luft, die du nicht siehst.',
+ secs:[
+ ['Luft ist nicht „nichts“','Ein Würfel Luft von einem Meter Kantenlänge wiegt am Boden rund 1,2 Kilogramm. Wenn ein Flügel mit hoher Geschwindigkeit durch diese Luft saust, trifft er auf Milliarden winziger Teilchen. Genug, um ein ganzes Flugzeug zu tragen.'],
+ ['Der Flügel lenkt Luft nach unten','Ein Flügel ist leicht schräg zur Strömung gestellt. Er schiebt die Luft nach unten. Die Luft schiebt den Flügel nach oben zurück. Das ist die Kraft, die wir Auftrieb nennen. Den Winkel zwischen Flügel und Luftstrom nennt man Anstellwinkel.'],
+ ['Gewölbt oben, flacher unten','Die Oberseite eines Flügels ist gewölbt. Die Luft folgt der Wölbung und wird so zusätzlich nach unten gelenkt. Auf der gewölbten Seite sinkt der Druck ein wenig. Unterdruck oben und Überdruck unten ziehen und schieben den Flügel zusammen nach oben.'],
+ ['Schneller heißt mehr Auftrieb','Verdoppelst du die Geschwindigkeit, wird der Auftrieb viermal so groß. Darum rollt ein Flugzeug erst über die Bahn: Es braucht Tempo, bis die Flügel genug tragen. Das ist der Startlauf.'],
+ ['Klappen zum langsam Fliegen','Beim Start und bei der Landung fährt das Flugzeug Klappen an der Flügelhinterkante und Vorflügel an der Vorderkante aus. Sie machen den Flügel größer und gewölbter. So trägt er auch bei geringerem Tempo. Von deinem Fenstersitz aus kannst du ihnen beim Ausfahren zusehen.']],
+ facts:['Ein Airbus A320 hat eine Spannweite von etwa 36 Metern, das ist breiter als ein Basketballfeld lang ist.','Auch ein Vogel nutzt Auftrieb: Er breitet die Flügel aus und lässt sich von warmer Luft nach oben tragen.','Der Papierflieger fliegt nach demselben Prinzip wie ein Jumbo. Nur der Motor ist deine Wurfhand.','Die Brüder Wright flogen 1903 zum ersten Mal mit einem Motorflugzeug. Der erste Flug dauerte 12 Sekunden.','Segelflieger steigen nur mit Aufwind und fliegen so viele Stunden ohne Motor.'],
+ quiz:[['Was macht ein Flügel mit der Luft?',['Er schiebt sie nach unten','Er saugt sie in sich hinein','Er hält sie fest'],0,'Der Flügel lenkt die Luft nach unten, die Gegenkraft hebt ihn nach oben.'],['Was passiert mit dem Auftrieb, wenn das Flugzeug doppelt so schnell fliegt?',['Er bleibt gleich','Er wird viermal so groß','Er halbiert sich'],1,'Der Auftrieb wächst mit dem Quadrat der Geschwindigkeit.'],['Wozu sind die Klappen am Flügel da?',['Zum Bremsen am Boden','Damit der Flügel auch bei langsamem Tempo trägt','Zum Kühlen'],1,'Klappen vergrößern und wölben den Flügel für Start und Landung.']]},
+
+{id:'kraefte',t:'Die vier Kräfte',c:'#ECD06F',sim:'forces',intro:'Jedes Flugzeug wird von vier Kräften gleichzeitig gehalten, gezogen und geschoben. Pilotinnen und Piloten spielen mit ihnen wie bei einem Tauziehen, das immer im Gleichgewicht bleibt.',
+ secs:[
+ ['Auftrieb – nach oben','Er entsteht an den Flügeln und hebt das Flugzeug an.'],
+ ['Gewicht – nach unten','Das Flugzeug samt Passagieren, Gepäck und Treibstoff wird von der Erde angezogen. Je leichter, desto weniger Auftrieb braucht es. Darum zählt beim Check-in jedes Kilo.'],
+ ['Schub – nach vorne','Die Triebwerke blasen Luft nach hinten und schieben das Flugzeug dadurch nach vorne.'],
+ ['Widerstand – nach hinten','Die Luft bremst alles, was sich durch sie bewegt. Darum haben Flugzeuge eine glatte, stromlinienförmige Form. Am Ende der Flügel stehen oft kleine aufgebogene Spitzen, sogenannte Winglets. Sie verringern den Widerstand und sparen Treibstoff.'],
+ ['Gleichgewicht im Reiseflug','Im Reiseflug sind Auftrieb und Gewicht gleich groß und Schub und Widerstand ebenfalls. Dann fliegt das Flugzeug geradeaus, ohne zu steigen oder zu sinken. Beim Steigen ist der Auftrieb etwas größer, beim Sinken etwas kleiner.']],
+ facts:['Beim Abheben ist der Schub fast am größten. Im Reiseflug reicht weniger.','Der Treibstoff steckt zum großen Teil in den Flügeln. Er macht sie schwer und hält sie zugleich ruhig.','Ein Flugzeug wird während des Fluges leichter, weil es Treibstoff verbraucht.','Gleitflug: Auch ganz ohne Schub gleitet ein Flugzeug weit, ähnlich wie ein Papierflieger.'],
+ quiz:[['Welche Kraft schiebt das Flugzeug nach vorne?',['Gewicht','Schub','Widerstand'],1,'Die Triebwerke erzeugen den Schub.'],['Wann sind alle vier Kräfte im Gleichgewicht?',['Im Geradeausflug in gleicher Höhe','Beim Start','Beim Parken'],0,'Im Reiseflug halten sich Auftrieb/Gewicht und Schub/Widerstand die Waage.'],['Wofür sind Winglets gut?',['Als Antenne','Sie verringern den Widerstand','Sie machen den Flieger bunter'],1,'Winglets sparen Treibstoff.']]},
+
+{id:'steuern',t:'Steuern',c:'#49C5B6',sim:'steer',intro:'Ein Flugzeug kann sich auf drei Arten drehen. Für jede gibt es ein eigenes Ruder. Du kannst sie beim Warten am Flughafen oder im Flug am Fenster beobachten.',
+ secs:[
+ ['Rollen – Querruder','Die Querruder sitzen hinten außen an den Flügeln. Geht das eine nach oben und das andere nach unten, neigt sich das Flugzeug zur Seite. So fliegt es Kurven.'],
+ ['Nicken – Höhenruder','Das Höhenruder sitzt hinten am waagerechten Leitwerk. Nach oben gestellt hebt es die Nase, nach unten senkt es sie. So steigt und sinkt das Flugzeug.'],
+ ['Gieren – Seitenruder','Das Seitenruder steht am senkrechten Leitwerk, der großen Flosse hinten. Es dreht die Nase nach links oder rechts. Es hält das Flugzeug sauber in der Spur, vor allem bei Wind.'],
+ ['Spoiler und Klappen','Auf den Flügeln stehen zusätzliche Platten, die Spoiler. Sie klappen nach der Landung hoch und nehmen dem Flügel den Auftrieb, damit das Flugzeug fest auf der Bahn steht und bremsen kann.'],
+ ['Trimmung','Kleine Einstellungen am Leitwerk halten das Flugzeug im Reiseflug ruhig, ohne dass jemand ständig steuern muss. Der Autopilot hilft dabei.']],
+ facts:['Die Steuerung im Cockpit geht heute über Kabel und Computer („Fly-by-wire“), nicht mehr nur über Seile und Stangen.','Ein Seitensteuer-Pedal wird mit den Füßen bewegt, das Höhen- und Querruder mit dem Steuerknüppel.','Bei der Landung siehst du die Spoiler als Platten auf den Flügeln, wenn du am Fenster sitzt.'],
+ quiz:[['Welches Ruder lässt das Flugzeug steigen?',['Seitenruder','Höhenruder','Querruder'],1,'Das Höhenruder hebt oder senkt die Nase.'],['Wozu sind Spoiler nach der Landung da?',['Sie nehmen dem Flügel den Auftrieb','Sie sind Lichter','Sie kühlen die Reifen'],0,'Damit das Flugzeug fest auf der Bahn steht und bremsen kann.'],['Was bewirkt das Seitenruder?',['Es dreht die Nase nach links oder rechts','Es fährt das Fahrwerk aus','Es heizt die Kabine'],0,'Es steuert das Gieren.']]},
+
+{id:'triebwerk',t:'Triebwerke',c:'#FF6A52',sim:'engine',intro:'Ein modernes Triebwerk ist wie ein riesiger, sehr kontrollierter Föhn: Es saugt Luft an, drückt sie zusammen, mischt Treibstoff dazu und bläst sie kraftvoll nach hinten.',
+ secs:[
+ ['1 · Ansaugen','Ganz vorn dreht sich der Fan, ein großes Rad mit breiten Schaufeln. Es saugt Luft an. Der größte Teil der Luft läuft außen am Kern vorbei und liefert den Großteil des Schubs.'],
+ ['2 · Verdichten','Im Kern drücken viele kleine Schaufelräder die Luft auf einen Bruchteil ihres Raumes zusammen. Dabei wird sie heiß und steht unter hohem Druck.'],
+ ['3 · Verbrennen','In der Brennkammer spritzt Treibstoff in die verdichtete Luft. Die Mischung brennt gleichmäßig. Die Gase dehnen sich mit großer Kraft aus.'],
+ ['4 · Antreiben und Ausstoßen','Die heißen Gase treiben eine Turbine an, ähnlich wie Wind eine Windmühle. Die Turbine dreht den Fan und den Verdichter vorne mit. Der Rest strömt nach hinten hinaus und schiebt das Flugzeug.'],
+ ['Leiser und sparsamer','Neue Triebwerke haben größere Fans und lassen mehr Luft außen vorbeiströmen. Das spart Treibstoff und macht sie leiser.']],
+ facts:['Der Fan eines großen Triebwerks hat mehr als drei Meter Durchmesser.','Die Schaufeln drehen sich tausende Male pro Minute.','Triebwerke werden im Test sogar mit Wasser und Sand beschossen, damit sie robust sind.','Moderne Flugzeuge können auch mit teilweise nachhaltigem Treibstoff fliegen.'],
+ quiz:[['Was macht der Fan?',['Er saugt Luft an','Er kühlt den Treibstoff','Er dreht den Reifen'],0,'Der Fan zieht Luft ins Triebwerk.'],['Was treibt die Turbine an?',['Die heißen Gase','Die Passagiere','Ein Gummiband'],0,'Die Gase strömen durch die Turbine wie Wind durch eine Windmühle.'],['Wo wird der Treibstoff verbrannt?',['In der Brennkammer','Im Fan','In den Rädern'],0,'In der Brennkammer mischt sich Treibstoff mit der verdichteten Luft.']]},
+
+{id:'innen',t:'Im Inneren',c:'#B1EAC4',sim:'inside',intro:'Ein Flugzeug ist wie ein kleines Dorf, das fliegt: Cockpit, Küche, Gepäckkeller, Wohnzimmer – und alles passt in eine Röhre.',
+ secs:[
+ ['Cockpit','Hier arbeiten Kapitänin oder Kapitän und Erste Offiziere zusammen. Sie prüfen vor jedem Flug Wetter, Route, Treibstoff und Technik. Viele Anzeigen sind Bildschirme.'],
+ ['Kabine','Die Kabine ist luftdicht. Die Luft wird gefiltert und auf einen angenehmen Druck gebracht, ungefähr wie auf einem Berg in 2 000 Metern Höhe. Deshalb knackt es manchmal in den Ohren.'],
+ ['Frachtraum','Unter dem Boden der Kabine liegen Koffer und Fracht. Auch dieser Raum ist beheizt und belüftet.'],
+ ['Tanks','Der Treibstoff liegt vor allem in den Flügeln. Dort ist viel Platz, und das Gewicht ist gut verteilt.'],
+ ['Fahrwerk','Beim Start fährt das Fahrwerk ein, damit weniger Widerstand entsteht. Du hörst dabei ein leises Rumpeln. Vor der Landung fährt es wieder aus.'],
+ ['Küche und Toiletten','Die Bordküche (Galley) hat Wagen, Öfen und Kaffeemaschinen. Das Wasser kommt aus Tanks.']],
+ facts:['Fenster haben ein winziges Loch, das Druck ausgleicht und Beschlag verhindert.','Die Kabinendecke und Sitze sind so gebaut, dass sie bei jedem Flug sehr leicht sind.','Das Licht in der Kabine wird beim Start und bei der Landung gedimmt, damit sich die Augen schneller an Dunkelheit gewöhnen.','Das Bordmenü wird auf der Erde vorbereitet und an Bord aufgewärmt.'],
+ quiz:[['Wo ist der meiste Treibstoff?',['In den Flügeln','Im Kofferraum','Im Cockpit'],0,'Die Tanks liegen hauptsächlich in den Flügeln.'],['Warum knackt es in den Ohren?',['Der Druck ändert sich beim Steigen und Sinken','Wegen der Musik','Wegen der Kälte'],0,'Der Luftdruck ändert sich, das Ohr gleicht ihn aus. Schlucken oder Gähnen hilft.'],['Wann fährt das Fahrwerk ein?',['Nach dem Start','Vor dem Boarding','Nach der Landung'],0,'So gibt es weniger Luftwiderstand.']]},
+
+{id:'start',t:'Start und Landung',c:'#FFB288',sim:'phases',intro:'Ein Flug besteht aus mehreren Abschnitten, wie die Kapitel in einem Buch. Wenn du sie kennst, weißt du immer, was gerade passiert.',
+ secs:[
+ ['Rollen','Das Flugzeug rollt zur Startbahn. Du hörst leise Geräusche vom Fahrwerk und spürst kleine Kurven.'],
+ ['Startlauf','Die Triebwerke geben mehr Schub, das Flugzeug beschleunigt. Du wirst sanft in den Sitz gedrückt.'],
+ ['Abheben','Bei etwa 250 bis 280 km/h hebt die Nase ab und die Räder verlassen den Boden.'],
+ ['Steigflug','Das Flugzeug steigt in Kurven und gerade aus, bis es seine Reiseflughöhe erreicht. Das Fahrwerk fährt ein. Die Klappen werden eingezogen.'],
+ ['Reiseflug','In etwa 10 bis 12 Kilometern Höhe fliegt es bei rund 850 km/h. Hier ist die Luft dünn und kalt, aber sehr ruhig.'],
+ ['Sinkflug und Anflug','Das Flugzeug sinkt langsam, die Klappen kommen heraus, das Fahrwerk fährt aus. Die Landebahn wird größer.'],
+ ['Landung','Die Räder berühren die Bahn bei etwa 250 km/h. Spoiler und Bremsen bringen das Flugzeug zum Stehen. Dann rollst du zum Gate.']],
+ facts:['Die Landebahn in Barcelona liegt direkt am Meer. Bei klarem Wetter siehst du beim Anflug die Küste.','Beim Start geht es sehr schnell: In etwa 30 Sekunden vom Stehen zum Abheben.','Piloten sprechen bei der Landung vom „Aufsetzen“. Gute Landungen sind oft ganz sanft.','Die Reiseflughöhe wird so gewählt, dass das Flugzeug möglichst wenig Treibstoff braucht.'],
+ quiz:[['Bei welchem Tempo hebt ein Verkehrsflugzeug etwa ab?',['50 km/h','250 bis 280 km/h','900 km/h'],1,'Das ist nötig, damit die Flügel genug Auftrieb erzeugen.'],['Wie hoch fliegt ein Passagierflugzeug etwa im Reiseflug?',['1 Kilometer','10 bis 12 Kilometer','100 Kilometer'],1,'Reiseflughöhe liegt meist bei 10 bis 12 km.'],['Was passiert nach der Landung mit den Spoilern?',['Sie klappen hoch und helfen beim Bremsen','Sie fallen ab','Sie leuchten'],0,'Sie nehmen Auftrieb weg und drücken das Flugzeug auf die Bahn.']]},
+
+{id:'wetter',t:'Wolken und Wetter',c:'#9ACDEB',sim:'weather',intro:'Über den Wolken ist es fast immer sonnig. Von oben siehst du, wie Wetter „gemacht“ wird.',
+ secs:[
+ ['Wolkenfamilien','Cumulus sind die weißen Haufenwolken. Stratus ist eine flache Schicht, oft grau. Cirrus sind hohe, dünne Schleier aus Eiskristallen. Cumulonimbus sind die hohen Gewitterwolken, die wie Türme aussehen. Flugzeuge fliegen um sie herum.'],
+ ['Warum wird es oben kalt?','Pro 1 000 Meter Höhe sinkt die Temperatur im Mittel um etwa 6,5 Grad. In Reiseflughöhe sind es ungefähr minus 55 Grad. Außen kalt, innen gemütlich: Die Kabine wird beheizt.'],
+ ['Schaukeln in der Luft','Manchmal schaukelt das Flugzeug leicht. Das sind Luftströmungen, wie Wellen auf dem Wasser. Das Flugzeug ist dafür gebaut. Man bleibt am besten angeschnallt.'],
+ ['Kondensstreifen','Die weißen Streifen hinter dem Flugzeug entstehen, wenn heißer, feuchter Abgasstrahl in der sehr kalten Luft zu winzigen Eiskristallen gefriert.'],
+ ['Besondere Himmelsbilder','Manchmal sieht man vom Flugzeug einen runden Regenbogen, der den Schatten des Flugzeugs umgibt. Er heißt Glorie. Du brauchst Sonne in deinem Rücken und eine Wolkenschicht unten.']],
+ facts:['Eine kleine Sommerwolke kann mehrere hundert Tonnen Wasser enthalten.','Wolken schweben, weil die Wassertröpfchen so klein sind.','Auch Vögel nutzen Wetter: Zugvögel fliegen mit Rückenwind.','Der höchste Berg der Erde, der Mount Everest, ist 8 849 Meter hoch, also niedriger als ein Flugzeug fliegt.'],
+ quiz:[['Wie kalt ist es in Reiseflughöhe etwa?',['+15 Grad','0 Grad','etwa minus 55 Grad'],2,'Mit der Höhe sinkt die Temperatur.'],['Welche Wolke ist die Gewitterwolke?',['Cirrus','Cumulonimbus','Stratus'],1,'Cumulonimbus ist die hohe Türme-Wolke.'],['Wie entsteht ein Kondensstreifen?',['Aus Eiskristallen im kalten Abgas','Aus Rauch','Aus Schnee'],0,'Der feuchte Abgasstrahl gefriert in der Kälte.']]},
+
+{id:'wege',t:'Wege am Himmel',c:'#2779A7',sim:'routes',intro:'Auch am Himmel gibt es Straßen, Schilder und Verkehrsregeln. Sie sind nur unsichtbar. Genau dadurch kommen viele Flugzeuge sicher und pünktlich an.',
+ secs:[
+ ['Der kürzeste Weg ist gebogen','Die Erde ist rund. Der kürzeste Weg zwischen zwei Orten ist ein Bogen, der „Großkreis“. Auf einer flachen Karte sieht er manchmal gebogen aus, auf dem Globus ist er die gerade Linie.'],
+ ['Flugstraßen','Flugzeuge folgen festgelegten Strecken, die aus Punkten mit fünf Buchstaben bestehen. Das ist wie ein Netz aus Autobahnen mit Kreuzungen.'],
+ ['Flugsicherung','Lotsen am Boden sprechen mit den Pilotinnen und Piloten. Sie sorgen für ausreichenden Abstand und die richtige Reihenfolge beim Landen. Die Sprache dabei ist Englisch.'],
+ ['Jetstream','In großer Höhe weht ein sehr starker Wind von West nach Ost. Flüge nach Osten sind dadurch oft kürzer, Flüge nach Westen etwas länger.'],
+ ['Navigation','Heute helfen Satelliten (GPS) und Funkfeuer. Aber auch ein Kompass gehört weiter zur Ausstattung.'],
+ ['Hannover → Barcelona','Die Luftlinie von Hannover nach Barcelona beträgt rund 1 370 Kilometer. Die Richtung ist Südwest. Du überfliegst unterwegs Deutschland, einen Zipfel Frankreich und die Pyrenäen, bevor das Mittelmeer auftaucht.']],
+ facts:['Die Flugroute wird vor jedem Flug neu berechnet, mit aktuellem Wetter und Wind.','Jeder Flughafen hat einen Dreibuchstaben-Code: HAJ steht für Hannover, BCN für Barcelona.','Flugzeuge fliegen in verschiedenen Höhenstufen, damit sie nicht in dieselbe Richtung auf gleicher Höhe fliegen.','Die Pyrenäen sind ein Gebirge zwischen Frankreich und Spanien.'],
+ quiz:[['Wofür steht HAJ?',['Hannover','Hamburg','Hawaii'],0,'HAJ ist der Code des Flughafens Hannover-Langenhagen.'],['Wie heißt der starke Wind in großer Höhe?',['Jetstream','Passat','Föhn'],0,'Der Jetstream weht meist von West nach Ost.'],['In welche Himmelsrichtung fliegen wir von Hannover nach Barcelona?',['Südwest','Nordost','Nordwest'],0,'Barcelona liegt südwestlich von Hannover.']]}
+];
+
+/* ---------- Weltrekorde ---------- */
+var REKORDE={
+ 'Höhe':{unit:'m',items:[['Giraffe',5.5,'Das höchste Landtier'],['Torre Glòries (Barcelona)',144.4,'Der Turm sieht aus wie eine Gurke'],['Kölner Dom',157,'Einst das höchste Gebäude der Welt'],['Sagrada Família',172.5,'Höchste Kirche der Welt, 2026 mit dem Turm Jesu'],['Eiffelturm',330,'Mit Antenne'],['Burj Khalifa',828,'Höchstes Gebäude der Welt'],['Zugspitze',2962,'Höchster Berg Deutschlands'],['Mount Everest',8849,'Höchster Berg der Erde'],['Reiseflughöhe',11000,'Etwa 10 bis 12 km']]},
+ 'Tempo':{unit:'km/h',items:[['Spaziergänger',5,''],['Fahrrad',20,''],['Gepard',110,'Schnellstes Landtier, aber nur kurz'],['ICE',300,'Höchstgeschwindigkeit auf Teilstrecken'],['Wanderfalke im Sturzflug',320,'Schnellster Vogel, über 300 km/h'],['Passagierflugzeug',850,'Reiseflug'],['Schallgeschwindigkeit',1225,'Bei 15 °C in der Luft'],['Raumstation ISS',27600,'Sie umkreist die Erde alle rund 90 Minuten']]},
+ 'Länge':{unit:'m',items:[['Papierflieger',0.3,''],['Albatros-Spannweite',3.5,'Größte Flügelspannweite lebender Vögel'],['Wright Flyer 1903',12.3,'Das erste Motorflugzeug, Spannweite'],['Blauwal',30,'Größtes Tier der Erde'],['Airbus A320',35.8,'Spannweite'],['Airbus A380',79.8,'Spannweite'],['Fußballfeld',105,'Länge im Stadion'],['Papierflieger-Weltrekord',69.1,'Weitester Flug 2012']]},
+ 'Gewicht':{unit:'t',items:[['Auto',1.5,''],['Elefant',6,'Afrikanischer Elefantenbulle'],['Flugzeug A320 (max.)',78,'Höchstes Startgewicht'],['Blauwal',150,'Bis zu 150 Tonnen'],['Airbus A380 (max.)',575,'Höchstes Startgewicht']]}
+};
+
+/* ---------- Wunderwesen in Barcelona (Orte aus dem Stadtplan) ---------- */
+var WESEN=[
+ {id:'schild',n:'Die Säulen-Schildkröten',stop:'sagrada',c:'#B1EAC4',txt:'An der Weihnachtsfassade tragen zwei Schildkröten Säulen: eine Land- und eine Meeresschildkröte. Findest du beide?',tip:'Stell dich genau gegenüber und schau nach oben.'},
+ {id:'drache',n:'Der Dach-Drache',stop:'batllo',c:'#FF6A52',txt:'Das Dach von Casa Batlló sieht aus wie der Rücken eines Drachen. Das Kreuz ist die Lanze des Ritters.',tip:'Suche die Schuppen aus Keramikfliesen.'},
+ {id:'ritter',n:'Die Helm-Ritter',stop:'milla',c:'#ECD06F',txt:'Auf dem Dach der Casa Milà stehen Schornsteine, die wie Ritter mit Helm aussehen.',tip:'Von der Straßenecke aus kannst du sie zählen.'},
+ {id:'pfef',n:'Das Lebkuchenhaus',stop:'amatller',c:'#FFB288',txt:'Der gestufte Giebel von Casa Amatller sieht aus wie ein Lebkuchenhaus. Unten gibt es sogar Schokolade.',tip:'Stufen zählen!'},
+ {id:'gaense',n:'Die 13 Gänse',stop:'cath',c:'#B5D5FF',txt:'Im Kreuzgang der Kathedrale leben 13 weiße Gänse, eine für jedes Lebensjahr der jungen Heiligen Eulàlia.',tip:'Gänse sind laut. Zuhören hilft.'},
+ {id:'skull',n:'Der Brücken-Wächter',stop:'bisbe',c:'#ECD06F',txt:'Unter der Brücke Pont del Bisbe soll ein Totenkopf mit Dolch versteckt sein. Eine Legende.',tip:'Schau nach oben zur Brücke und suche das Zeichen.'},
+ {id:'traeger',n:'Die Stein-Träger',stop:'smm',c:'#49C5B6',txt:'An den Türen von Santa Maria del Mar sind Hafenarbeiter in Stein gehauen, die die Steine für die Kirche trugen.',tip:'Schau auf Augenhöhe an die Türen.'},
+ {id:'barcino',n:'Die Römer-Säulen',stop:'august',c:'#FFB288',txt:'Vier Säulen sind rund 2 000 Jahre alt. Damals hieß Barcelona noch Barcino.',tip:'Sie stehen versteckt in einem Innenhof.'},
+ {id:'salam',n:'Der bunte Drache El Drac',stop:'guell',c:'#49C5B6',txt:'Im Park Güell begrüßt dich ein farbiges Tier aus Scherbenmosaik am Eingangstreppchen.',tip:'Bunte Fliesenstücke, wohin du schaust!'},
+ {id:'mammut',n:'Das Mammut',stop:'mammoth',c:'#B1EAC4',txt:'Im Ciutadella-Park steht ein großes Mammut aus Stein. Es erinnert an Tiere der Eiszeit.',tip:'Kannst du seine Stoßzähne zählen?'},
+ {id:'fisch',n:'Der goldene Fisch',stop:'peix',c:'#ECD06F',txt:'Am Strand schimmert ein riesiger goldener Fisch aus Metall in der Sonne.',tip:'Er glitzert bei Sonne am besten.'},
+ {id:'brunnen',n:'Die tanzenden Wasser',stop:'fountain',c:'#2779A7',txt:'Beim Zauberbrunnen tanzen Wasser, Licht und Musik gemeinsam. Gebaut 1929 für eine Weltausstellung.',tip:'Abends wird es am schönsten.'},
+ {id:'cube',n:'Die gestapelten Würfel',stop:'estel',c:'#B5D5FF',txt:'Am Hafen steht eine Skulptur aus aufeinandergestapelten Würfeln.',tip:'Sie sieht je nach Winkel anders aus.'}
+];
+
+/* ---------- Vor dem Abflug: Briefing ---------- */
+var BRIEFING=[
+ ['Zu Hause · Abfahrt','Überprüfe die „Wohnung verlassen“-Liste in der Packliste. Fotografiere die Bordkarten, falls du sie verlierst.',['Reisepässe und Bordkarten griffbereit','Wasserflasche leer mitnehmen und später füllen','Kopfhörer und Kuscheltier in den Handgepäck-Rucksack']],
+ ['Am Flughafen · Check-in','Am Schalter oder am Automaten geben Erwachsene Gepäck auf. Die Koffer werden gewogen und bekommen einen Aufkleber mit dem Code BCN. Danach rollt das Gepäck auf einem Band in den Keller des Flughafens.',['Gepäckband: Wohin geht der Koffer?','Bordkarte zeigen','Handgepäck bleibt bei dir']],
+ ['Sicherheitskontrolle','Du legst deinen Rucksack in eine Wanne und gehst durch einen Scanner. Flüssigkeiten sollten in kleinen Behältern und im durchsichtigen Beutel sein. Das ist für alle gleich und dauert nur kurz.',['Gürtel, Jacke, Metall in die Wanne','Flüssigkeiten griffbereit (Zip-Beutel)','Leere Trinkflasche darf mit']],
+ ['Gate und Warten','Auf der Anzeigetafel steht das Gate (zum Beispiel „B12“) und die Boarding-Zeit. Wenn du magst, beobachte die Flugzeuge: Welche Tür wird geöffnet? Wer lädt Koffer ein?',['Gate-Nummer merken','Toilette vor dem Boarding','Flugzeug-Registrierung am Rumpf lesen']],
+ ['Boarding','Du zeigst deine Bordkarte und gehst durch die Röhre zum Flugzeug. Am Eingang begrüßt dich die Crew. Dein Sitzplatz steht auf der Bordkarte.',['Sitzreihe und Buchstabe finden','Handgepäck über dem Sitz oder darunter','Anschnallen, sobald du sitzt']],
+ ['Start','Das Licht wird gedimmt, die Triebwerke werden lauter, und du spürst die Beschleunigung. Kaugummi, Schlucken oder Gähnen helfen den Ohren.',['Tablett hochklappen','Fensterblende offen lassen','Beschleunigung spüren']],
+ ['Im Flug','Etwa 2 bis 2,5 Stunden dauert der Flug Hannover → Barcelona. Du kannst lesen, spielen, malen oder aus dem Fenster schauen. Wenn die Anschnallzeichen aus sind, darfst du kurz aufstehen.',['Wolken zählen','Wie schnell fliegen wir? (siehe „Wie fliegt das?“)','Pyrenäen suchen']],
+ ['Landung und Ankunft','Beim Sinkflug knackt es wieder in den Ohren. Nach dem Aufsetzen rollt das Flugzeug zum Gate. Dann holst du dein Gepäck vom Band. Willkommen in Barcelona!',['Koffer am Band erkennen (Band-Nummer)','Offline-Karte öffnen (Stadtplan)','Metro-Ticket kaufen']]
+];
+var VORHER=['Wie hoch fliegen wir? (Schätze in Kilometern)','Wie lange dauert der Flug?','Wie viele Tunnel / Berge siehst du von oben?','Welche Farbe hat das Meer bei Barcelona?','Was wird das Erste sein, das du in Barcelona isst?'];
+
+/* ---------- Stadtplan Tipps (aus dem Familien-Stadtplan) ---------- */
+var STADT_TIPS=[
+ ['Jetzt buchen','<ul><li><b>Sagrada Família</b>, früh buchen (9:00 oder 10:00). sagradafamilia.org. Kind unter 11 frei, braucht aber ein Ticket.</li><li><b>Park Güell</b>, Slot ca. 10:30: parkguell.barcelona.</li><li><b>Picasso-Museum</b>, kostenloser Slot donnerstags 16:00–19:00: museupicassobcn.cat.</li><li><b>CosmoCaixa</b> (optional, mit Planetarium): cosmocaixa.org.</li></ul>',true],
+ ['Unterwegs','<ul><li><b>T-casual</b>: €13 für 10 Fahrten (Zone 1), je bis 75 Min. inklusive Umsteigen. Gilt in Metro, Bus, Tram, FGC und Nahverkehrszügen. Pro Person eine Karte am Metro-Automaten.</li><li>Dein Kind (9–12) zahlt wie Erwachsene. Nur unter 4 fahren frei.</li><li><b>Flughafen:</b> Zug R2 Nord ab Terminal 2 nach Sants / Passeig de Gràcia gilt mit T-casual. Die Flughafen-Metro L9 nicht (€5,90). Bei Ankunft an T1: kostenloser grüner Shuttle zu T2.</li><li>Die Hola-Barcelona-Karte lohnt sich nur bei viel Fahrten.</li><li>Die Standseilbahn Montjuïc ist im Metrotarif enthalten, die Seilbahnen nicht.</li></ul>'],
+ ['Geld sparen','<ul><li>Mittags warm essen: <b>menú del día</b> ca. €13–18 mit drei Gängen.</li><li>Kostenlose Aussichtspunkte: Tres Creus, Bunkers del Carmel, Turó del Putxet, Montjuïc-Gärten, MNAC-Treppen.</li><li>Gratis-Zeiten: Picasso donnerstags 16–19 Uhr, MNAC samstags ab 15 Uhr. CosmoCaixa ist unter 16 frei.</li><li>Picknick aus dem Supermarkt (Mercadona, Bonpreu, Condis).</li><li>Nicht an der Rambla oder Strandpromenade essen. Eine Straße weiter ist besser.</li><li>Kartenzahlung immer in <b>EUR</b>.</li><li>Die Touristensteuer wird meist im Hotel pro Person und Nacht gezahlt.</li></ul>'],
+ ['Sicherheit','<ul><li><b>Taschendiebe</b> sind das größte Risiko: Rambla, Metro L1/L3, Sagrada Família, Strände, Brunnen-Menge. Taschen zu und vorne tragen. Kein Handy auf dem Tisch.</li><li><b>Strand:</b> ab Oktober keine Rettungsschwimmer. Nur bis zum Stehen ins Wasser und nie allein.</li><li><b>Notruf 112</b> (jedes Handy).</li><li>Jeden Tag einen Treffpunkt ausmachen. Kärtchen mit Telefonnummer in die Tasche des Kindes.</li><li>Achtung Radwege auf Gehwegen, besonders Passeig de Sant Joan und an der Küste.</li><li>Hut, Sonnencreme und Trinkflasche. Öffentliche Brunnen haben Trinkwasser.</li></ul>']
+];
+var KIND={see:'Sehen',eat:'Essen',play:'Spielen',view:'Aussicht'};
+var TRANSIT={'d4:arc':'FGC + Metro L1 bis Arc de Triomf, ca. 30 Min.','d6:castle':'Bus 150 hinauf zur Burg (oder Seilbahn)'};
+
+var CITY=[
+{id:"d1",dow:"Mon",date:"19 Oct",title:"Sagrada Família & Gaudí's Eixample",area:"Eixample",start:"Metro Sagrada Família (L2, L5)",budget:"€120",budgetNote:"€52 Sagrada tickets (child free under 11) · ~€8 transport · ~€60 food",
+ lede:"The big Gaudí day. Book a 9:00 or 10:00 Sagrada slot now; 2026 slots sell out 1–2 weeks ahead.",
+ stops:[
+ {id:"sagrada",n:"Sagrada Família",lat:41.4036,lng:2.1744,k:"see",t:"9:00–11:00",c:"€26 adult · child under 11 free (reserve)",h:"Mon–Fri 9:00–19:00 in October",why:"Gaudí's basilica, now the tallest church in the world (172.5 m) since the Tower of Jesus opened in June 2026. The stained-glass light inside is the highlight.",kid:"Find the two tortoises holding up columns on the Nativity façade: one land tortoise, one sea turtle.",tip:"9:00–10:00 is the daily Quiet Hour: calmer, great for kids. Book only on sagradafamilia.org; resellers add €26–40."},
+ {id:"pgaudi",n:"Plaça de Gaudí",lat:41.4049,lng:2.1763,k:"play",t:"11:00",c:"Free",why:"The pond gives the classic reflection photo of the Nativity towers. Small playground.",kid:"Take the 'upside-down Sagrada' photo in the water.",tip:"Best light in the morning."},
+ {id:"avgaudi",n:"Avinguda de Gaudí",lat:41.4082,lng:2.1755,k:"see",t:"11:30",c:"Free",why:"Car-free avenue linking Sagrada Família and Sant Pau, lined with modernist lampposts.",kid:"Look back halfway: both buildings line up at each end.",tip:"Café terraces here are pricey; buy snacks at a bakery on a side street."},
+ {id:"santpau",n:"Sant Pau Recinte Modernista",lat:41.4114,lng:2.1744,k:"see",t:"12:00",c:"Exterior free · inside ~€17",why:"A hospital built like a fairy-tale town with tiled domes by Domènech i Montaner.",kid:"Count the colours on the tiled roofs.",tip:"The street view is good enough if you're saving money."},
+ {id:"honest",n:"Honest Greens (lunch)",lat:41.3940,lng:2.1630,k:"eat",t:"13:30",c:"~€10 bowl",why:"Counter-service grain-and-protein bowls near Passeig de Gràcia. Quick and filling.",kid:"Simple plates with chicken, rice or potatoes.",tip:"Several branches in Eixample; tap Maps for the nearest one."},
+ {id:"milla",n:"Casa Milà (La Pedrera)",lat:41.3953,lng:2.1619,k:"see",t:"14:30",c:"Exterior free · inside from ~€25",why:"Gaudí's wavy stone apartment block. No straight walls on the façade.",kid:"The rooftop chimneys look like knights' helmets. Spot them from the street corner.",tip:"Price changes by demand; outside views are free."},
+ {id:"batllo",n:"Casa Batlló",lat:41.3917,lng:2.1650,k:"see",t:"15:15",c:"Exterior free · inside from ~€25",why:"The 'house of bones': balconies like masks and a roof shaped like a dragon's back.",kid:"Find the dragon's spine on the roof and the knight's lance (the cross tower).",tip:"Inside visit is kid-friendly but optional on a budget day."},
+ {id:"amatller",n:"Casa Amatller",lat:41.3916,lng:2.1646,k:"see",t:"15:30",c:"Exterior free",why:"Next door to Casa Batlló. Three architects competed side by side on this 'Block of Discord'.",kid:"Spot the stepped gable that looks like a gingerbread house.",tip:"Chocolate shop on the ground floor (the Amatllers made chocolate)."},
+ {id:"pcat",n:"Plaça de Catalunya",lat:41.3870,lng:2.1701,k:"see",t:"16:30",c:"Free",why:"The city's central square and main metro hub. End of the day's walk.",kid:"Fountains and sculptures around the square.",tip:"From here: metro L1/L3 back to your hotel."}],
+ extras:[
+ {id:"x-punxes",n:"Casa de les Punxes",lat:41.3976,lng:2.1645,k:"see",cat:"Hidden gem",c:"Exterior free",why:"A brick 'castle' with six pointed towers in the middle of the Eixample grid.",kid:"Does it look like a fairy-tale castle or a witch's house?",tip:"5 min walk from Casa Milà along Diagonal."},
+ {id:"x-aigues",n:"Jardins de la Torre de les Aigües",lat:41.3933,lng:2.1680,k:"play",cat:"Hidden gem",c:"Free",why:"A hidden courtyard garden inside an Eixample block, with an old water tower. Enter through a doorway on Carrer de Roger de Llúria 56.",kid:"A secret garden behind a normal-looking door.",tip:"Opening hours vary out of summer; peek in when passing."},
+ {id:"x-permanyer",n:"Passatge Permanyer",lat:41.3895,lng:2.1665,k:"see",cat:"Hidden gem",c:"Free",why:"A quiet lane of small townhouses with front gardens, unusual in the Eixample.",kid:"Pick your favourite little house.",tip:"Gates may be closed at times; look through from the street."},
+ {id:"x-fabra",n:"Parc de l'Estació del Nord",lat:41.3955,lng:2.1825,k:"play",cat:"Kid fun",c:"Free",why:"Open park with Beverly Pepper's blue-tiled land sculptures you can walk over.",kid:"Run along the blue tile waves like a dragon's tail.",tip:"Next to the bus station, 15 min from Sagrada Família."}],
+ rain:["Sagrada Família is indoors; spend longer inside and in the museum below.","Casa Batlló inside (paid, immersive, very good with kids).","Swap with Thursday: CosmoCaixa science museum."],
+ facts:["Construction started in 1882 and is still going. That's 144 years.","Gaudí is buried in the crypt of the Sagrada Família.","Casa Batlló's roof tiles shimmer like dragon scales."],
+ spot:["A tortoise holding a column","The number square on the Passion façade (rows add to 33)","A dragon's back on a roof","A chimney that looks like a knight","A flower tile on the pavement of Passeig de Gràcia"]},
+
+{id:"d2",dow:"Tue",date:"20 Oct",title:"Old Town: Gothic Quarter & El Born",area:"Old Town",start:"Metro Catalunya (L1, L3)",budget:"€70",budgetNote:"No tickets · ~€5 transport · ~€65 food (sandwiches, churros, pizza)",
+ lede:"Medieval lanes, Roman columns and a market. All free. Tuesday is when every site here is open.",
+ stops:[
+ {id:"rambla",n:"La Rambla",lat:41.3845,lng:2.1712,k:"see",t:"10:00",c:"Free",why:"The famous promenade. Walk it once, downhill, and keep going.",kid:"Find Joan Miró's colourful mosaic set into the pavement.",tip:"Busiest pickpocket zone in the city. Bags zipped and in front. Don't eat here."},
+ {id:"boq",n:"La Boqueria market",lat:41.3818,lng:2.1716,k:"eat",t:"10:20",c:"Fruit cups & juice ~€2–4",why:"Covered market with fruit pyramids, jamón and sweets.",kid:"Pick a fresh juice colour each.",tip:"Stalls deeper inside are cheaper than at the entrance. Open Mon–Sat."},
+ {id:"reial",n:"Plaça Reial",lat:41.3801,lng:2.1754,k:"see",t:"11:00",c:"Free",why:"Palm-tree square with arcades.",kid:"The lampposts were Gaudí's very first job for the city.",tip:"Toilets: use a café you buy something in."},
+ {id:"pallaresa",n:"Granja La Pallaresa (churros)",lat:41.3830,lng:2.1733,k:"eat",t:"11:30",c:"~€15 for three",why:"Thick hot chocolate and churros on Carrer de Petritxol since 1947.",kid:"Dip the churro, don't drink the chocolate. It's that thick.",tip:"Share one portion of churros between two."},
+ {id:"cath",n:"Barcelona Cathedral",lat:41.3840,lng:2.1762,k:"see",t:"12:00",c:"Square free · inside paid",why:"Gothic cathedral with a huge front square.",kid:"13 white geese live in the cloister, one for each year of young Saint Eulàlia's life.",tip:"Shoulders and knees covered to enter."},
+ {id:"felip",n:"Plaça de Sant Felip Neri",lat:41.3833,lng:2.1749,k:"see",t:"12:20",c:"Free",why:"A tiny, quiet square with a sad story.",kid:"The holes in the church wall come from a 1938 bombing.",tip:"Speak softly; there's a school here."},
+ {id:"bisbe",n:"Pont del Bisbe",lat:41.3830,lng:2.1767,k:"see",t:"12:30",c:"Free",why:"The lacy stone bridge everyone photographs.",kid:"Legend says a skull with a dagger is hidden under the bridge. Can you find it?",tip:"Stand on Carrer del Bisbe for the classic shot."},
+ {id:"conesa",n:"Conesa Entrepans (lunch)",lat:41.3829,lng:2.1775,k:"eat",t:"13:00",c:"~€5 per sandwich",why:"Toasted sandwiches since 1951 with 90+ fillings, on Plaça Sant Jaume.",kid:"Ham-and-cheese toastie is a safe pick.",tip:"Order at the counter, eat on the square."},
+ {id:"august",n:"Temple d'August",lat:41.3836,lng:2.1774,k:"see",t:"13:45",c:"Free",why:"Four 2,000-year-old Roman columns hidden inside a courtyard.",kid:"These columns are older than the city's name. It was called Barcino.",tip:"Small site; may have short opening hours. Peek in if open."},
+ {id:"rei",n:"Plaça del Rei",lat:41.3841,lng:2.1777,k:"see",t:"14:00",c:"Free",why:"The medieval royal square. Under it lie Roman streets (MUHBA museum).",kid:"Pretend you're arriving at the king's palace up the stone steps.",tip:"MUHBA museum is a good rainy option."},
+ {id:"smm",n:"Santa Maria del Mar",lat:41.3838,lng:2.1820,k:"see",t:"14:30",c:"Exterior free · inside small fee",why:"The 'cathedral of the sea', built by port workers who carried the stones.",kid:"Look for the carved porters with stones on their backs on the doors.",tip:"Sit on the steps for a break."},
+ {id:"bornccm",n:"El Born CCM",lat:41.3855,lng:2.1838,k:"see",t:"15:00",c:"Free entry to the ruins view",why:"An old iron market built over the streets of 1714 Barcelona. You look down on them.",kid:"Find the old houses' doorways down in the dig.",tip:"Closed Mondays, which is why the old town is on Tuesday."},
+ {id:"pizza",n:"La Pizza del Born (dinner)",lat:41.3850,lng:2.1830,k:"eat",t:"evening",c:"~€6 two slices + drink",why:"Pizza by the slice on Passeig del Born. Cheap and quick.",kid:"Easy dinner for a tired walker.",tip:"Dinner in Spain starts late; slice shops suit families."}],
+ extras:[
+ {id:"x-palau",n:"Palau de la Música Catalana",lat:41.3876,lng:2.1753,k:"see",cat:"Hidden gem",c:"Exterior free · tours paid",why:"Concert hall with mosaic columns and flower tiles on the outside.",kid:"Find the mosaic pillars and the stone singers on the corner.",tip:"5 min from the cathedral."},
+ {id:"x-caterina",n:"Mercat de Santa Caterina",lat:41.3863,lng:2.1786,k:"see",cat:"Hidden gem",c:"Free",why:"Market with a wavy roof of over 300,000 tiles in fruit-and-vegetable colours.",kid:"From the side street, the roof looks like a wave of fruit.",tip:"Calmer and cheaper than La Boqueria."},
+ {id:"x-berenguer",n:"Roman walls, Plaça de Ramon Berenguer",lat:41.3845,lng:2.1787,k:"see",cat:"Free sight",c:"Free",why:"A long stretch of Roman city wall with towers, right on the street.",kid:"Roman soldiers once guarded these towers.",tip:"On Via Laietana, by Jaume I metro."},
+ {id:"x-call",n:"El Call (old Jewish quarter)",lat:41.3826,lng:2.1747,k:"see",cat:"Hidden gem",c:"Free",why:"The narrowest, twistiest lanes of the old town.",kid:"Can you touch both walls at once in the narrowest lane?",tip:"Between the cathedral and Plaça Sant Jaume."},
+ {id:"x-montcada",n:"Carrer de Montcada",lat:41.3848,lng:2.1810,k:"see",cat:"Free sight",c:"Free",why:"Medieval street of merchant palaces with courtyards you can peek into.",kid:"Look up for stone faces on the walls.",tip:"The Picasso Museum is on this street."}],
+ rain:["El Born CCM and La Boqueria are covered.","MUHBA history museum under Plaça del Rei (Roman streets underground).","Chocolate Museum (small, near El Born)."],
+ facts:["Barcelona was a Roman town called Barcino 2,000 years ago.","Plaça Reial's lampposts were Gaudí's first public commission (1879).","Santa Maria del Mar was built in just 54 years. Fast for the 1300s."],
+ spot:["Miró's mosaic on La Rambla","A gargoyle on the cathedral","Bomb holes in a wall","The skull under Pont del Bisbe","A Roman column","A porter carved on a church door"]},
+
+{id:"d3",dow:"Wed",date:"21 Oct",title:"Park Güell, Bunkers & Gràcia",area:"Gràcia",start:"Metro Vallcarca (L3), then outdoor escalators up",budget:"€128",budgetNote:"€49.50 Park Güell (2×€18 + child €13.50) · ~€8 transport · ~€70 food",
+ lede:"Hill day with the best views in the city. Wear good shoes: steep first, then downhill.",
+ stops:[
+ {id:"tres",n:"Turó de les Tres Creus",lat:41.4158,lng:2.1500,k:"view",t:"9:45",c:"Free zone",why:"Hilltop with three crosses in Park Güell's free area: 360° view over the city and sea.",kid:"Climb to the top and find the Sagrada Família towers.",tip:"Get here first, before your timed slot."},
+ {id:"guell",n:"Park Güell Monumental Zone",lat:41.4145,lng:2.1527,k:"see",t:"10:30 slot",c:"€18 adult · €13.50 child 7–12",why:"The mosaic salamander, the wavy bench terrace and the gingerbread gatehouses.",kid:"Count the columns in the Hypostyle Room (there are 86).",tip:"Book on parkguell.barcelona. Arrive no more than 30 min late or the ticket is void."},
+ {id:"picnic3",n:"Park Güell free forest zone (picnic)",lat:41.4160,lng:2.1540,k:"eat",t:"12:30",c:"~€15 bought beforehand",why:"Shady paths and stone viaducts. No ticket needed.",kid:"Walk under the leaning stone arcades that look like waves.",tip:"Buy bocadillos and fruit at a bakery near the metro before going up."},
+ {id:"bunkers",n:"Bunkers del Carmel",lat:41.4192,lng:2.1619,k:"view",t:"14:00",c:"Free",why:"Old anti-aircraft base from 1937 on top of Turó de la Rovira. The widest view in Barcelona.",kid:"Spot the sea, Montjuïc and the Sagrada Família.",tip:"Gates close late afternoon (17:30 winter / 19:30 summer). Be up by 15:00. Bus V17 or 24 if legs are tired."},
+ {id:"vicens",n:"Casa Vicens",lat:41.4035,lng:2.1508,k:"see",t:"16:00",c:"Exterior free · inside paid",why:"Gaudí's first house, covered in green-and-white tiles with marigold flowers.",kid:"Find the tiny painted flowers on the tiles.",tip:"Good rainy-day interior."},
+ {id:"vila",n:"Plaça de la Vila de Gràcia",lat:41.4026,lng:2.1570,k:"play",t:"16:45",c:"Free",why:"Village square with a tall clock tower. Gràcia used to be its own town.",kid:"Local kids play football and ride scooters here.",tip:"Benches for a break."},
+ {id:"sol",n:"Plaça del Sol",lat:41.4012,lng:2.1576,k:"play",t:"17:15",c:"Free",why:"The liveliest square in Gràcia, full of families in the early evening.",kid:"Space to run around.",tip:"Ice cream shops nearby."},
+ {id:"virreina",n:"Plaça de la Virreina",lat:41.4036,lng:2.1611,k:"see",t:"18:00",c:"Free",why:"Quiet square with a pretty church. Locals' favourite.",kid:"Listen for the church bell.",tip:"Sunset is around 18:45."},
+ {id:"tapeo",n:"Tapeo Gràcia (dinner)",lat:41.4031,lng:2.1597,k:"eat",t:"evening",c:"Tapas ~€5–12 each",why:"Neighbourhood tapas: ham croquettes, bombas, cod fritters.",kid:"Patatas bravas and croquetas are kid-proof.",tip:"Carrer Topazi 8. Check opening time; book if you can."}],
+ extras:[
+ {id:"x-creueta",n:"Parc de la Creueta del Coll",lat:41.4185,lng:2.1470,k:"play",cat:"Kid fun",c:"Free",why:"An old stone quarry turned into a park, with a huge concrete sculpture by Chillida hanging over the pond.",kid:"A giant stone claw hangs in the air on cables.",tip:"15 min walk north of Park Güell."},
+ {id:"x-putxet",n:"Jardins del Turó del Putxet",lat:41.4087,lng:2.1420,k:"view",cat:"Viewpoint",c:"Free",why:"Quiet hilltop park with a playground and a city view, mostly used by locals.",kid:"Playground at the top.",tip:"Good alternative if Park Güell's free zone is crowded."},
+ {id:"x-guinardo",n:"Parc del Guinardó",lat:41.4170,lng:2.1690,k:"view",cat:"Viewpoint",c:"Free",why:"Big wooded hill park just below the Bunkers, with paths and lookouts.",kid:"Forest paths in the middle of the city.",tip:"Pairs with the Bunkers on the way down."},
+ {id:"x-revolucio",n:"Plaça de la Revolució",lat:41.4027,lng:2.1588,k:"play",cat:"Hidden gem",c:"Free",why:"Long, sunny Gràcia square with a playground and ice cream shops.",kid:"Playground and ice cream in one stop.",tip:"Between Plaça del Sol and Plaça de la Virreina."}],
+ rain:["Swap with Thursday (CosmoCaixa).","Casa Vicens interior (paid).","Gràcia's covered market, Mercat de l'Abaceria."],
+ facts:["Park Güell was planned as a luxury housing estate. Only two houses were ever sold.","The bench terrace is one long snake made of broken tile pieces (trencadís).","The Bunkers hill is 262 m high."],
+ spot:["The mosaic salamander","A house that looks like gingerbread","Three crosses on a hill","A clock tower","The sea from the Bunkers","A green-and-white flower tile"]},
+
+{id:"d4",dow:"Thu",date:"22 Oct",title:"Science, Parks & a Free Museum Hour",area:"Sarrià & Ciutadella",start:"FGC L7 Av. Tibidabo, then 15 min walk (or bus V15)",budget:"€113",budgetNote:"€16 CosmoCaixa (under 16 free) · Picasso free slot · ~€12 transport · ~€85 food",
+ lede:"An indoor rainforest in the morning, a giant mammoth in the afternoon, and Picasso for free on Thursday.",
+ stops:[
+ {id:"cosmo",n:"CosmoCaixa science museum",lat:41.4135,lng:2.1316,k:"see",t:"10:00–13:30",c:"€8 adult · under 16 free",why:"Hands-on science museum with a real flooded Amazon forest (piranhas, tropical fish, rain showers) and a giant Geological Wall.",kid:"Stay for the tropical rain that falls in the flooded forest every few hours.",tip:"Open daily 10:00–20:00. Planetarium seats are limited; book a session with your ticket. Café on site for lunch."},
+ {id:"arc",n:"Arc de Triomf",lat:41.3910,lng:2.1806,k:"see",t:"14:30",c:"Free",why:"Red-brick arch built for the 1888 World Fair. Wide promenade for scooters and street music.",kid:"Race to the arch from the far end.",tip:"Metro L1 Arc de Triomf."},
+ {id:"cascada",n:"Cascada fountain (Ciutadella)",lat:41.3897,lng:2.1871,k:"see",t:"15:00",c:"Free",why:"A grand fountain with golden horses. Climb the stairs behind it.",kid:"A young Gaudí helped build this as a student.",tip:"Ciutadella Park has clean grass for a rest."},
+ {id:"lake",n:"Ciutadella boating lake",lat:41.3884,lng:2.1857,k:"play",t:"15:30",c:"Rowing boat small fee",why:"Rent a rowing boat for half an hour.",kid:"Let the child row. It's harder than it looks!",tip:"Boats may close early in autumn; check on the day."},
+ {id:"mammoth",n:"Mammoth statue",lat:41.3874,lng:2.1886,k:"play",t:"16:00",c:"Free",why:"A life-size stone mammoth from 1907. Barcelona's favourite photo with kids.",kid:"Stand by its tusk for scale.",tip:"Barcelona Zoo is next door (paid, optional)."},
+ {id:"picasso",n:"Picasso Museum (free slot)",lat:41.3852,lng:2.1810,k:"see",t:"16:30–19:00",c:"Free Thu 16:00–19:00 (book)",why:"Picasso's early work, from childhood sketches to his blue period, in five medieval palaces.",kid:"Find drawings Picasso made when he was about your age.",tip:"Free tickets need a timed booking on museupicassobcn.cat. Book now."},
+ {id:"paradeta",n:"La Paradeta Born (dinner)",lat:41.3862,lng:2.1838,k:"eat",t:"evening",c:"Pay by weight, ~€15–20 pp",why:"Pick your seafood at the counter, they cook it, you collect when your number is called.",kid:"Choosing the fish is part of the fun. Fried calamari is a safe bet.",tip:"Carrer Comercial 7. Queue forms early; go at opening."}],
+ extras:[
+ {id:"x-umbracle",n:"Umbracle & Hivernacle (Ciutadella)",lat:41.3880,lng:2.1853,k:"see",cat:"Hidden gem",c:"Free to see from outside",why:"Two 19th-century iron-and-glass plant houses inside the park.",kid:"A shady house made of wooden slats for plants.",tip:"Near the park's Passeig de Picasso side."},
+ {id:"x-zoo",n:"Barcelona Zoo",lat:41.3870,lng:2.1910,k:"play",cat:"Kid fun",c:"Paid · ~€21 adult, ~€12.50 child",why:"Big zoo inside Ciutadella Park, with a children's farm.",kid:"Elephants, gorillas and a petting farm.",tip:"Only if you skip CosmoCaixa or have a spare morning."},
+ {id:"x-sjoan",n:"Passeig de Sant Joan",lat:41.3940,lng:2.1755,k:"play",cat:"Kid fun",c:"Free",why:"Wide boulevard with playgrounds every block, popular with local families.",kid:"Playground hopping up the avenue.",tip:"Watch for the bike lane in the middle."},
+ {id:"x-tamarita",n:"Jardins de la Tamarita",lat:41.4122,lng:2.1340,k:"play",cat:"Hidden gem",c:"Free",why:"Small leafy garden near CosmoCaixa with a play area, quiet and local.",kid:"A calm run-around after the museum.",tip:"2 min from CosmoCaixa."}],
+ rain:["CosmoCaixa is indoors; stay longer.","Picasso Museum.","Barcelona Zoo has covered houses (paid)."],
+ facts:["CosmoCaixa's flooded forest has real Amazon animals under one glass roof.","Ciutadella was a military fortress before it became a park.","The mammoth statue has stood in the park since 1907."],
+ spot:["A piranha","A rock layer in the Geological Wall","Golden horses on a fountain","A mammoth","A rowing boat","A Picasso drawing he made as a kid"]},
+
+{id:"d5",dow:"Fri",date:"23 Oct",title:"Port, Barceloneta & Beach Day",area:"Barceloneta",start:"Metro Drassanes (L3)",budget:"€68",budgetNote:"No tickets · ~€8 transport · ~€60 food",
+ lede:"Harbour walk, the famous bombas for lunch, then swim and play along the beaches.",
+ stops:[
+ {id:"colom",n:"Columbus Monument",lat:41.3758,lng:2.1778,k:"see",t:"10:00",c:"Free",why:"A 60 m column at the bottom of La Rambla.",kid:"Columbus is pointing at the Mediterranean, not at America.",tip:"Lion statues at the base are fine for photos."},
+ {id:"ramblamar",n:"Rambla de Mar & Port Vell",lat:41.3762,lng:2.1810,k:"see",t:"10:20",c:"Free",why:"Wooden walkway over the harbour with yachts and sea views.",kid:"Watch the swing bridge if it opens for a boat.",tip:"The Aquarium is here if it rains."},
+ {id:"bmarket",n:"Mercat de la Barceloneta",lat:41.3800,lng:2.1890,k:"see",t:"11:30",c:"Free",why:"Modern neighbourhood market in the old fishermen's district.",kid:"Spot five kinds of fish you've never seen.",tip:"Buy fruit for the beach here."},
+ {id:"cova",n:"La Cova Fumada (lunch)",lat:41.3792,lng:2.1893,k:"eat",t:"12:30",c:"Under ~€14 pp",why:"Tiny tavern where the 'bomba' (meat-and-potato ball with sauce) was invented.",kid:"One bomba each. Ask for less spicy sauce.",tip:"Cash only, weekday lunch, no sign outside. Arrive before 13:00."},
+ {id:"estel",n:"L'Estel Ferit (stacked cubes)",lat:41.3776,lng:2.1912,k:"see",t:"13:30",c:"Free",why:"Rebecca Horn's rusty tower of cubes on the sand, a tribute to the old beach shacks.",kid:"Count the cubes.",tip:"Good meeting point if anyone gets lost."},
+ {id:"beach",n:"Barceloneta / Sant Miquel beach",lat:41.3782,lng:2.1922,k:"play",t:"14:00–16:30",c:"Free",why:"City beach with ~20 °C sea in late October.",kid:"Swim and dig. Stay where you can stand.",tip:"No lifeguards after early October. Swim near the shore and take turns watching bags."},
+ {id:"peix",n:"Peix d'Or (golden fish)",lat:41.3866,lng:2.1974,k:"see",t:"17:00",c:"Free",why:"Frank Gehry's giant copper fish from the 1992 Olympics.",kid:"Does it look like it's swimming or jumping?",tip:"Promenade is flat and great for walking."},
+ {id:"bogatell",n:"Bogatell beach",lat:41.3935,lng:2.2068,k:"play",t:"17:30",c:"Free",why:"Calmer family beach with a playground, ping-pong tables and outdoor gym.",kid:"Playground plus beach football.",tip:"Metro back: Llacuna (L4), 13 min walk."}],
+ extras:[
+ {id:"x-pbarceloneta",n:"Parc de la Barceloneta",lat:41.3832,lng:2.1945,k:"play",cat:"Kid fun",c:"Free",why:"Park around an old gasworks water tower, with a playground, next to the beach.",kid:"Playground break between swims.",tip:"Behind the beach near the hospital."},
+ {id:"x-teleferic",n:"Port Cable Car (Torre de Sant Sebastià)",lat:41.3717,lng:2.1885,k:"view",cat:"Viewpoint",c:"Paid · ~€12.50 one way",why:"Old cable car crossing the harbour from Barceloneta to Montjuïc, 70 m above the water.",kid:"Fly over the ships in a hanging cabin.",tip:"Splurge option. One way gets you to Montjuïc for Saturday-style views."},
+ {id:"x-wtower",n:"Barceloneta breakwater (Rompeolas)",lat:41.3695,lng:2.1902,k:"view",cat:"Viewpoint",c:"Free",why:"Walk out along the sea wall at the tip of Barceloneta for open-sea views.",kid:"Waves splash against the big rocks.",tip:"Stay away from the edge on windy days."},
+ {id:"x-poblenou",n:"Rambla del Poblenou",lat:41.4005,lng:2.2025,k:"see",cat:"Hidden gem",c:"Free",why:"The locals' rambla: calm, tree-lined, with cafés and ice cream, a short walk inland from Bogatell.",kid:"Ice cream reward after the beach.",tip:"Metro Poblenou (L4) at the top end."}],
+ rain:["Barcelona Aquarium (paid: ~€27–29 adult, ~€22 child 5–10; penguins and touch pools).","Maritime Museum at Drassanes.","Swap with Saturday afternoon: MNAC is free from 15:00 on Saturdays."],
+ facts:["Barceloneta was built in the 1750s as a fishermen's neighbourhood.","The bomba was invented at La Cova Fumada.","The golden fish is 56 m long."],
+ spot:["Columbus's pointing finger","A sailing boat","The stacked cubes","A starfish or shell","A golden fish","A seagull stealing food"]},
+
+{id:"d6",dow:"Sat",date:"24 Oct",title:"Montjuïc Hill & the Magic Fountain",area:"Montjuïc",start:"Metro Paral·lel (L2, L3), funicular + bus 150 up",budget:"€78",budgetNote:"Castle & cable car optional · ~€8 transport · ~€70 food",
+ lede:"Ride up, then walk all the way down through gardens and the Olympic park. End with the free fountain show.",
+ stops:[
+ {id:"funic",n:"Funicular de Montjuïc",lat:41.3727,lng:2.1690,k:"see",t:"10:00",c:"Normal metro fare (T-casual)",why:"Underground funicular from Paral·lel metro up the hill.",kid:"It climbs like a train on a steep ramp.",tip:"From the top take bus 150 to the castle (T-casual). The cable car is the fun paid option: €17.10 adult / €11.70 child online."},
+ {id:"castle",n:"Montjuïc Castle",lat:41.3634,lng:2.1663,k:"view",t:"10:45",c:"Outside free · inside €12 adult (under 8 free)",why:"Star-shaped fortress on top of the hill with views over the port and sea.",kid:"Walk around the moat and find the cannons.",tip:"Open 10:00–20:00 until 31 Oct. The walls and views outside are free."},
+ {id:"alcalde",n:"Mirador de l'Alcalde",lat:41.3683,lng:2.1693,k:"view",t:"12:00",c:"Free",why:"Terrace viewpoint over the harbour, paved with mosaic.",kid:"Wave at the cruise ships.",tip:"Downhill path from the castle."},
+ {id:"brossa",n:"Jardins de Joan Brossa",lat:41.3693,lng:2.1667,k:"play",t:"12:30",c:"Free",why:"Old amusement-park grounds turned garden with play features.",kid:"Playground and space to roam. Good picnic stop.",tip:"Picnic lunch here; bring food from below."},
+ {id:"anella",n:"Anella Olímpica",lat:41.3647,lng:2.1531,k:"see",t:"14:00",c:"Free",why:"The 1992 Olympic park with the white Calatrava tower.",kid:"Peek into the Olympic stadium gates.",tip:"Long, flat avenue. Toilets near the stadium."},
+ {id:"mnac",n:"MNAC terrace & steps",lat:41.3685,lng:2.1533,k:"view",t:"15:30",c:"Outside free · museum free Sat from 15:00",why:"Palace on the hill. The steps give the best view down to Plaça d'Espanya.",kid:"Count the steps down to the fountain.",tip:"Museum is free on Saturday afternoons. Great rain backup."},
+ {id:"blai",n:"Carrer de Blai (pintxos dinner)",lat:41.3735,lng:2.1630,k:"eat",t:"18:30",c:"Pintxos ~€1.50–3 each",why:"Pedestrian street of pintxo bars in Poble Sec. Locals' cheap night out.",kid:"Pick what looks good off the counter. Keep the sticks to pay.",tip:"Go early; it fills up after 20:00."},
+ {id:"fountain",n:"Magic Fountain show",lat:41.3713,lng:2.1517,k:"see",t:"21:00 & 21:30",c:"Free",why:"Water, light and music show. In October: Thu–Sat, 21:00–22:00.",kid:"The jets can shoot over 50 m high.",tip:"Stand on the steps behind for a full view. Watch bags in the crowd."}],
+ extras:[
+ {id:"x-cactus",n:"Jardins de Mossèn Costa i Llobera",lat:41.3693,lng:2.1722,k:"see",cat:"Free sight",c:"Free",why:"Cactus garden on the sea-facing slope, with hundreds of species.",kid:"Find a cactus taller than a grown-up.",tip:"Below Mirador de l'Alcalde."},
+ {id:"x-migdia",n:"Mirador del Migdia",lat:41.3602,lng:2.1645,k:"view",cat:"Viewpoint",c:"Free",why:"South-side viewpoint behind the castle, facing the open sea and the airport.",kid:"Count the planes landing.",tip:"Quieter than the castle; good at sunset."},
+ {id:"x-laribal",n:"Jardins de Laribal & Font del Gat",lat:41.3700,lng:2.1580,k:"see",cat:"Hidden gem",c:"Free",why:"Terraced gardens with stairways, water channels and Moorish-style fountains.",kid:"Follow the little water channel down the steps.",tip:"On the way between the Anella and Poble Sec."},
+ {id:"x-verdaguer",n:"Jardins de Mossèn Cinto Verdaguer",lat:41.3690,lng:2.1645,k:"see",cat:"Free sight",c:"Free",why:"Gardens with ponds of water lilies and bulb flowers, by the cable car station.",kid:"Look for frogs and fish in the ponds.",tip:"Right next to the funicular top station."},
+ {id:"x-poble",n:"Poble Espanyol",lat:41.3687,lng:2.1475,k:"play",cat:"Kid fun",c:"Paid",why:"Open-air village with copies of buildings from all over Spain and craft workshops.",kid:"Watch a glass-blower at work.",tip:"Optional; next to the Magic Fountain."}],
+ rain:["MNAC museum (free Sat from 15:00).","Castle exhibitions (paid).","Swap with Friday's Aquarium."],
+ facts:["The Magic Fountain was built for the 1929 World Exhibition.","The castle used to be a prison.","Barcelona hosted the Olympic Games in 1992."],
+ spot:["A cannon","A cable car cabin","The Olympic torch tower","A cruise ship","Water dancing to music"]}
+];
+
+/* ===== Kofferforscher core: state, router, helpers, update ===== */
+var APP_VERSION='1.0.0';
+var KEY='kofferforscher.v1';
+var DEFAULTS={
+ v:1,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
+ names:{mascot:'Muya',wesen:'Wunderwesen',kind:''},ts:1,
+ trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
+ archive:[],
+ pack:{done:{},custom:[],region:'EU',allRegions:false,person:'alle',cat:0},
+ brief:{done:{}},pred:{},sealed:false,
+ hgr:{best:0,log:[],cfg:{span:3,nose:1,angle:4,elev:1,power:3}},
+ auf:{stars:{},rounds:{}},wissen:{read:{},quiz:{}},
+ wes:{found:{},spot:{}},rek:{cat:'Höhe'},diary:{},stadt:{done:{},day:0,showX:false},
+ seen:{}
+};
+var S;
+function deepMerge(d,s){var o=Array.isArray(d)?d.slice():{};if(Array.isArray(d))return s===undefined?d.slice():s;
+ for(var k in d){if(s&&s[k]!==undefined&&s[k]!==null){o[k]=(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k]))?deepMerge(d[k],s[k]):s[k]}else o[k]=JSON.parse(JSON.stringify(d[k]))}
+ if(s)for(var k2 in s)if(!(k2 in d))o[k2]=s[k2];return o}
+function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+ S=deepMerge(DEFAULTS,raw||{})}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+load();
+
+/* ---------- helpers ---------- */
+var $=function(s,r){return(r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00')-new Date(a+'T00:00:00'))/864e5)}
+function toast(t){var e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2200)}
+function rnd(seed){var s=seed>>>0;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function pick(r,a){return a[Math.floor(r()*a.length)]}
+function shuffle(r,a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function fmt(n){return String(n).replace('.',',')}
+function arrow(){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#13324A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>'}
+function backBtn(href){return '<a class="back" href="#'+(href||'/')+'" aria-label="Zurück"><svg viewBox="0 0 24 24" fill="none" stroke="#13324A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></a>'}
+function topbar(label,title,back,right){return '<div class="top">'+backBtn(back)+'<div><div class="mono">'+label+'</div><h1 class="disp">'+title+'</h1></div><div class="sp"></div>'+(right||'')+'</div>'}
+function sheet(inner){var s=document.createElement('div');s.className='sheet';s.innerHTML='<div>'+inner+'</div>';s.addEventListener('click',function(e){if(e.target===s)s.remove()});document.body.appendChild(s);return s}
+function closeSheet(){$$('.sheet').forEach(function(s){s.remove()})}
+function sha(t){var enc=new TextEncoder().encode('kf|'+t);if(!(window.crypto&&crypto.subtle))return Promise.resolve('p:'+t);
+ return crypto.subtle.digest('SHA-256',enc).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return('0'+x.toString(16)).slice(-2)}).join('')})}
+function applyTs(){document.documentElement.style.setProperty('--ts',S.ts)}
+
+/* ---------- usage / time limits ---------- */
+function usedToday(){return Math.round(S.used[today()]||0)}
+function winUsed(id){var k=today()+'|'+id;return S.wused[k]||0}
+function winState(id){ // 'open' | 'paused' | 'limit'
+ if(S.pauseUntil&&Date.now()<S.pauseUntil)return 'paused';
+ if(S.wpaused[id])return 'paused';
+ if(S.lim&&usedToday()>=S.lim)return 'limit';
+ if(winUsed(id)>=S.mins[id])return 'limit';
+ return 'open'}
+var curWin=null;
+setInterval(function(){if(document.hidden||!curWin)return;var d=today();S.used[d]=(S.used[d]||0)+0.25;var k=d+'|'+curWin;S.wused[k]=(S.wused[k]||0)+0.25;save();
+ if(winState(curWin)!=='open'&&!$('.limit')){limitScreen()}},15000);
+function limitScreen(){var e=document.createElement('div');e.className='sheet limit';e.innerHTML='<div style="text-align:center"><div class="disp" style="font-size:44px">Zeit für eine Pause</div><p style="margin:12px 0 18px;font-weight:700">'+esc(S.names.mascot)+' sagt: Das Rollo ist zu. Schau aus dem echten Fenster oder frag Mama und Papa.</p><a class="btn d" href="#/" style="display:inline-grid;place-items:center;line-height:50px">Zum Start</a></div>';document.body.appendChild(e)}
+
+/* ---------- router ---------- */
+var ROUTES={};
+var unlocked=false;
+function route(){var h=location.hash.replace(/^#/,'')||'/';var parts=h.split('/').filter(Boolean);var name=parts[0]||'home';closeSheet();
+ if(name!=='eltern'&&name!=='reise')unlocked=unlocked&&false;
+ curWin=null;for(var i=0;i<WINDOWS.length;i++)if(WINDOWS[i].id===name)curWin=name;
+ if(curWin&&winState(curWin)!=='open'){toast('Dieses Fenster ruht gerade. Frag Mama oder Papa.');location.hash='#/';return}
+ var f=ROUTES[name]||ROUTES.home;var app=$('#app');app.innerHTML='<div class="view">'+f(parts.slice(1))+'</div>';window.scrollTo(0,0);
+ var post=ROUTES['post:'+name];if(post)post(parts.slice(1))}
+function rerender(){var y=window.scrollY;var h=location.hash.replace(/^#/,'')||'/';var parts=h.split('/').filter(Boolean);var name=parts[0]||'home';var f=ROUTES[name]||ROUTES.home;
+ $('#app').innerHTML='<div class="view" style="animation:none">'+f(parts.slice(1))+'</div>';var post=ROUTES['post:'+name];if(post)post(parts.slice(1));window.scrollTo(0,y)}
+window.addEventListener('hashchange',route);
+
+/* ---------- actions (event delegation) ---------- */
+var ACT={};
+document.addEventListener('click',function(e){var t=e.target.closest('[data-act]');if(!t)return;var f=ACT[t.getAttribute('data-act')];if(f){f(t.getAttribute('data-a'),t,e)}});
+document.addEventListener('input',function(e){var t=e.target.closest('[data-in]');if(!t)return;var f=ACT[t.getAttribute('data-in')];if(f)f(t.value,t,e)});
+document.addEventListener('change',function(e){var t=e.target.closest('[data-ch]');if(!t)return;var f=ACT[t.getAttribute('data-ch')];if(f)f(t.value,t,e)});
+
+/* ---------- service worker + update ---------- */
+var SWREG=null,UPD={waiting:null};
+function initSW(){if(!('serviceWorker' in navigator))return;
+ navigator.serviceWorker.register('sw.js').then(function(reg){SWREG=reg;
+  if(reg.waiting)UPD.waiting=reg.waiting;
+  reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller){UPD.waiting=w;var b=$('#updstate');if(b)b.innerHTML=updHtml('ready')}})})}).catch(function(){});
+ var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.reload()});
+ if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){})}}
+function updHtml(st,info){
+ if(st==='ready')return '<p style="font-weight:800">Neue Version bereit'+(info&&info.version?' ('+esc(info.version)+')':'')+'.</p>'+notes(info)+'<p class="muted">Alle Daten bleiben erhalten: Gepacktes, Tagebuch, Sterne, Wunderwesen.</p><button class="btn d" data-act="applyUpdate">Jetzt aktualisieren</button>';
+ if(st==='latest')return '<p style="font-weight:800">Du hast die neueste Version ('+APP_VERSION+').</p>';
+ if(st==='offline')return '<p style="font-weight:800">Keine Verbindung. Mit WLAN erneut versuchen.</p>';
+ if(st==='checking')return '<p class="muted">Suche nach Updates …</p>';
+ return '<p class="muted">Version '+APP_VERSION+'. Noch nicht nach Updates gesucht.</p>'}
+function notes(i){return i&&i.notes&&i.notes.length?'<ul style="margin:6px 0 10px;padding-left:20px">'+i.notes.map(function(n){return '<li>'+esc(n)+'</li>'}).join('')+'</ul>':''}
+ACT.checkUpdate=function(){var box=$('#updstate');if(!box)return;box.innerHTML=updHtml('checking');
+ fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(info){
+  var p=SWREG?SWREG.update().catch(function(){}):Promise.resolve();
+  return p.then(function(){return new Promise(function(res){setTimeout(res,1200)})}).then(function(){
+   if(info.version!==APP_VERSION||UPD.waiting||(SWREG&&SWREG.waiting)){UPD.waiting=UPD.waiting||(SWREG&&SWREG.waiting);UPD.info=info;box.innerHTML=updHtml('ready',info);
+    if(!UPD.waiting&&!SWREG){box.innerHTML+='<p class="muted">Seite wird neu geladen …</p>';setTimeout(function(){location.reload()},800)}}
+   else box.innerHTML=updHtml('latest')})}).catch(function(){box.innerHTML=updHtml('offline')})};
+ACT.applyUpdate=function(){save();var w=UPD.waiting||(SWREG&&SWREG.waiting);
+ if(w){w.postMessage({type:'SKIP_WAITING'});setTimeout(function(){location.reload()},2500)}
+ else if('caches' in window){caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}).then(function(){location.reload()})}
+ else location.reload()};
+
+/* ---------- boot ---------- */
+window.addEventListener('DOMContentLoaded',function(){applyTs();if(!location.hash)location.hash='#/';route();initSW()});
+
+/* ===== Home, Packliste/Briefing, Stadtplan ===== */
+function tripInfo(){var t=S.trip,d=daysBetween(today(),t.depart),back=daysBetween(today(),t.back);
+ if(d>1)return{big:d,u:'Tage bis zum Abflug'};if(d===1)return{big:1,u:'Tag bis zum Abflug'};if(d===0)return{big:'HEUTE',u:'ist Abflugtag!'};
+ if(back>=0)return{big:'TAG '+(-d+1),u:'der Reise'};return{big:'ZURÜCK',u:'schön war es'}}
+function packStats(){var r=S.pack.allRegions?null:S.pack.region,n=0,d=0;
+ PACK.forEach(function(c){c.items.forEach(function(i){if(!r||i.r.indexOf(r)>-1){n++;if(S.pack.done[i.id])d++}})});
+ S.pack.custom.forEach(function(i){n++;if(S.pack.done['c'+i.id])d++});return{n:n,d:d}}
+
+ROUTES.home=function(){var st=tripInfo(),ps=packStats(),ts=tripInfo();
+ var win=WINDOWS.map(function(w,i){var s=winState(w.id),pa=s!=='open';
+  return '<button class="win'+(pa?' paused':'')+'" data-act="openWin" data-a="'+w.id+'" aria-label="'+esc(w.t)+'"><span class="bezel" id="bz-'+w.id+'"><span class="glass" style="--i:'+i+'"><span class="shade" style="--sh:'+(pa?'100%':'34%')+'"></span></span><span class="ic" style="background:'+w.c+'">'+ICON(w.ic)+'</span></span><span class="lb">'+esc(w.t)+'</span><span class="st">'+(pa?(s==='limit'?'Pause':'Rollo zu'):(w.id==='vor'?ps.d+' / '+ps.n+' gepackt':esc(w.s)))+'</span></button>'}).join('');
+ var legs=S.trip.legs.map(function(l){return esc(l.code||l.city)}).join(' → ');
+ return '<div class="top"><div><div class="mono">'+esc(S.names.mascot)+' ist startklar</div><h1 class="disp" style="font-size:clamp(34px,5vw,56px)">Kofferforscher</h1></div><div class="sp"></div><a class="pill l" href="#/samm"><i>'+ICON('M5 4h12a2 2 0 012 2v14H7a2 2 0 01-2-2V4z')+'</i>Entdecker-Buch</a></div>'+
+ '<div class="windows" id="windows">'+win+'</div>'+
+ '<div class="dark" style="margin-top:34px"><span class="tab">NÄCHSTER HALT</span><div class="row" style="flex-wrap:wrap;gap:22px">'+
+ '<div><div class="disp" style="font-size:clamp(38px,5.5vw,64px)">'+esc(S.trip.name)+'</div><div class="mono" style="color:#B1EAC4;margin-top:6px">'+legs+'</div></div><div class="sp"></div>'+
+ '<div style="text-align:right"><div class="disp" style="font-size:clamp(44px,6vw,76px);color:#ECD06F">'+ts.big+'</div><div class="mono" style="color:#CFE0EA">'+ts.u+'</div></div></div>'+
+ '<div class="wrap" style="margin-top:16px"><a class="pill" href="#/stadt" style="background:#fff;color:#13324A"><i>'+arrow()+'</i>Unsere Route · Stadtplan</a><a class="pill" href="#/eltern" style="background:rgba(255,255,255,.14)"><i style="background:#49C5B6">'+ICON('M12 15a3 3 0 100-6 3 3 0 000 6zM19 12a7 7 0 00-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 00-1.7-1L14.5 3h-4l-.4 3.1a7 7 0 00-1.7 1l-2.3-1-2 3.4 2 1.5a7 7 0 000 2l-2 1.5 2 3.4 2.3-1a7 7 0 001.7 1l.4 3.1h4l.4-3.1a7 7 0 001.7-1l2.3 1 2-3.4-2-1.5a7 7 0 00.1-1z')+'</i>Für Eltern</a></div></div>'+
+ '<p class="muted" style="text-align:center;margin-top:18px;font-size:13px">Tippe auf ein Fenster. Ist das Rollo ganz zu, haben Mama und Papa eine Pause eingelegt.</p>'};
+ACT.openWin=function(id){var w=WINDOWS.filter(function(x){return x.id===id})[0],s=winState(id);
+ if(s!=='open'){toast(s==='limit'?'Pause: Das Rollo ist heute zu.':'Dieses Fenster ruht gerade. Frag Mama oder Papa.');return}
+ var bz=$('#bz-'+id),sh=bz&&$('.shade',bz);if(sh)sh.style.setProperty('--sh','4%');
+ var r=bz.getBoundingClientRect(),cx=innerWidth/2-(r.left+r.width/2),cy=innerHeight/2-(r.top+r.height/2),sc=Math.max(innerWidth/r.width,innerHeight/r.height)*1.4;
+ bz.style.position='relative';bz.style.zIndex=50;bz.style.transform='translate('+cx+'px,'+cy+'px) scale('+sc+')';
+ var z=document.createElement('div');z.className='zoomer';z.style.background=w.c;document.body.appendChild(z);setTimeout(function(){z.classList.add('on')},350);
+ setTimeout(function(){location.hash='#/'+id;setTimeout(function(){z.style.opacity=0;setTimeout(function(){z.remove()},350)},60)},850)};
+
+/* ---------- Vor dem Abflug ---------- */
+var PERSON=[['alle','Alle'],['papa','Papa'],['mama','Mama'],['kind','Kind'],['haus','Haus']];
+var CATCOL=['#ECD06F','#49C5B6','#FF6A52','#B5D5FF','#B1EAC4','#FFB288','#2779A7','#9ACDEB'];
+function visibleItems(ci){var p=S.pack,res=[];var r=p.allRegions?null:p.region;
+ var c=PACK[ci];c.items.forEach(function(i){if(r&&i.r.indexOf(r)<0)return;
+  if(p.person!=='alle'){var ok=i.w==='alle'||(i.w==='eltern'&&(p.person==='papa'||p.person==='mama'))||i.w===p.person;if(!ok)return}
+  res.push({id:i.id,key:i.id,t:i.t,n:i.n,w:i.w})});
+ p.custom.forEach(function(i){if(i.cat===ci)res.push({id:i.id,key:'c'+i.id,t:i.t,n:'eigene Sache',w:i.who||'alle',cu:1})});return res}
+ROUTES.vor=function(a){var sub=a[0]||'liste';var seg=[['liste','Packliste'],['brief','Briefing'],['vorher','Vorhersagen']].map(function(x){return '<a class="chip'+(sub===x[0]?' on':'')+'" href="#/vor/'+x[0]+'">'+x[1]+'</a>'}).join('');
+ var ps=packStats();var body=sub==='brief'?briefHtml():sub==='vorher'?vorherHtml():listHtml();
+ return topbar('VOR DEM ABFLUG · '+esc(S.trip.name).toUpperCase(),'Packliste als Album','/','<div class="mono" style="text-align:right">'+ps.d+' / '+ps.n+'<br>gepackt</div>')+'<div class="chips" style="margin-bottom:16px">'+seg+'</div>'+body};
+function listHtml(){var p=S.pack,ci=p.cat;var tabs=PACK.map(function(c,i){var v=visibleItems(i),d=v.filter(function(x){return p.done[x.key]}).length;
+  return '<button class="ctab'+(i===ci?' on':'')+'" style="--c:'+CATCOL[i]+'" data-act="packCat" data-a="'+i+'"><span>'+c.name+'</span><small>'+d+'/'+v.length+'</small></button>'}).join('');
+ var items=visibleItems(ci).map(function(i){var d=p.done[i.key];
+  return '<button class="item'+(d?' done':'')+'" data-act="packTick" data-a="'+i.key+'"><span class="bx">'+(d?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#13324A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>':'')+'</span><span class="tx">'+esc(i.t)+(i.n?'<small>'+esc(i.n)+'</small>':'')+'</span><span class="who">'+({alle:'Alle',kind:'Kind',eltern:'Eltern',papa:'Papa',mama:'Mama',haus:'Haus'}[i.w]||i.w)+'</span></button>'}).join('');
+ var ps=packStats();var pct=ps.n?Math.round(ps.d/ps.n*100):0;
+ var reg=['DE','EU','NonEU','IN','US','AF'];var rn={DE:'Deutschland',EU:'EU',NonEU:'Nicht-EU',IN:'Indien',US:'USA',AF:'Afrika'};
+ return '<div class="card" style="margin-bottom:16px"><div class="row" style="flex-wrap:wrap;gap:14px"><div style="flex:1;min-width:200px"><div class="mono">Familie · eine gemeinsame Liste</div><div class="bar" style="margin:8px 0 6px"><i style="width:'+pct+'%"></i></div><b>'+pct+' % gepackt</b> <span class="muted">· '+(p.allRegions?'alle Reiseziele':'Ziel: '+rn[p.region])+'</span></div>'+
+ '<div class="chips">'+PERSON.map(function(x){return '<button class="chip'+(p.person===x[0]?' on':'')+'" data-act="packWho" data-a="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div></div>'+
+ '<div class="row" style="margin-top:12px;flex-wrap:wrap"><span class="mono">Region</span><select class="inp" style="width:auto;height:44px" data-ch="packReg">'+reg.map(function(r){return '<option value="'+r+'"'+(p.region===r?' selected':'')+'>'+rn[r]+'</option>'}).join('')+'</select><button class="chip'+(p.allRegions?' on':'')+'" data-act="packAll">Alle Regionen zeigen</button></div></div>'+
+ '<div class="album"><div class="tabs">'+tabs+'</div><div class="paper"><div class="row" style="padding:6px 0"><h2 class="disp" style="font-size:34px;border-bottom:5px solid '+CATCOL[ci]+'">'+PACK[ci].name+'</h2><div class="sp"></div><button class="btn s" data-act="packAdd">+ Eigene Sache</button></div>'+(items||'<p class="muted" style="padding:20px 0">Hier ist nichts zu packen. Wechsle Person oder Region.</p>')+'</div></div>'+
+ '<div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn g" data-act="packReset">Für nächste Reise leeren</button><span class="muted">Alle Häkchen weg, deine eigenen Sachen bleiben.</span></div>'}
+ACT.packCat=function(i){S.pack.cat=+i;save();rerender()};
+ACT.packTick=function(k){S.pack.done[k]=!S.pack.done[k];if(!S.pack.done[k])delete S.pack.done[k];save();rerender()};
+ACT.packWho=function(w){S.pack.person=w;save();rerender()};
+ACT.packReg=function(v){S.pack.region=v;save();rerender()};
+ACT.packAll=function(){S.pack.allRegions=!S.pack.allRegions;save();rerender()};
+ACT.packReset=function(){var s=sheet('<h2 class="disp" style="font-size:32px">Alle Häkchen löschen?</h2><p class="muted" style="margin:10px 0 16px">Die Packliste ist dann wieder leer, bereit für die nächste Reise. Eigene Sachen bleiben.</p><div class="row"><button class="btn d" data-act="packResetGo">Ja, leeren</button><button class="btn g" data-act="closeSheet">Abbrechen</button></div>')};
+ACT.packResetGo=function(){S.pack.done={};save();closeSheet();rerender()};
+ACT.closeSheet=closeSheet;
+ACT.packAdd=function(){sheet('<h2 class="disp" style="font-size:32px">Eigene Sache</h2><div class="col" style="margin-top:12px"><input id="ni" class="inp" placeholder="Was kommt in den Koffer?" maxlength="60"><select id="nc" class="inp">'+PACK.map(function(c,i){return '<option value="'+i+'"'+(i===S.pack.cat?' selected':'')+'>'+c.name+'</option>'}).join('')+'</select><select id="nw" class="inp"><option value="alle">Für alle</option><option value="papa">Papa</option><option value="mama">Mama</option><option value="kind">Kind</option></select><button class="btn d" data-act="packAddGo">Hinzufügen</button></div>')};
+ACT.packAddGo=function(){var t=$('#ni').value.trim();if(!t)return;S.pack.custom.push({id:Date.now(),t:t,cat:+$('#nc').value,who:$('#nw').value});save();closeSheet();rerender()};
+function briefHtml(){return '<p class="muted" style="margin-bottom:12px">Der Weg von der Haustür bis zum Gate, Schritt für Schritt. Tippe Schritte ab, wenn du sie kennst.</p><div class="col">'+BRIEFING.map(function(b,i){var cnt=b[2].filter(function(_,j){return S.brief.done[i+'-'+j]}).length;
+  return '<details class="acc"'+(i===0?' open':'')+'><summary><span class="disp" style="font-size:30px;color:#2779A7">'+(i+1)+'</span>'+esc(b[0])+'<span class="tag">'+cnt+'/'+b[2].length+'</span></summary><div class="c"><p>'+esc(b[1])+'</p>'+b[2].map(function(x,j){var d=S.brief.done[i+'-'+j];return '<button class="item'+(d?' done':'')+'" data-act="briefTick" data-a="'+i+'-'+j+'"><span class="bx">'+(d?'✓':'')+'</span><span class="tx">'+esc(x)+'</span></button>'}).join('')+'</div></details>'}).join('')+'</div>'}
+ACT.briefTick=function(k){S.brief.done[k]=!S.brief.done[k];save();var d=document.querySelectorAll('details.acc');var open=[];$$('details.acc').forEach(function(x,i){if(x.open)open.push(i)});rerender();$$('details.acc').forEach(function(x,i){x.open=open.indexOf(i)>-1})};
+function vorherHtml(){return '<p class="muted" style="margin-bottom:12px">Was glaubst du? Schreibe deine Tipps jetzt auf und vergleiche sie nach dem Flug. Es gibt kein Richtig oder Falsch.</p><div class="col">'+VORHER.map(function(q,i){return '<div class="card"><div class="mono">Tipp '+(i+1)+'</div><b>'+esc(q)+'</b><input class="inp" style="margin-top:8px" data-in="predSet" data-a="'+i+'" value="'+esc(S.pred[i]||'')+'" placeholder="Mein Tipp …"></div>'}).join('')+'</div>'}
+ACT.predSet=function(v,el){S.pred[el.getAttribute('data-a')]=v;save()};
+
+/* ---------- Stadtplan (integrierter Familien-Plan) ---------- */
+function allStops(d){return d.stops}
+function kmd(a,b){var r=Math.PI/180,dl=(b.lat-a.lat)*r,dn=(b.lng-a.lng)*r;var x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a.lat*r)*Math.cos(b.lat*r)*Math.sin(dn/2)*Math.sin(dn/2);return 12742*Math.asin(Math.sqrt(x))}
+function walkKm(a,b){return kmd(a,b)*1.3}
+function minsOf(k){return Math.max(1,Math.round(k/4.3*60))}
+function fmtKm(k){return k<1?Math.round(k*100)*10+' m':fmt(k.toFixed(1))+' km'}
+function mapsUrl(n){return 'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(n.replace(/\s*\(.*?\)/g,'')+', Barcelona')}
+function dayKm(d){var t=0;for(var i=1;i<d.stops.length;i++){if(!TRANSIT[d.id+':'+d.stops[i].id])t+=walkKm(d.stops[i-1],d.stops[i])}return t}
+function stadtMap(d,sel){var pts=d.stops.concat(S.stadt.showX?d.extras:[]);var la=pts.map(function(p){return p.lat}),lo=pts.map(function(p){return p.lng});
+ var minLa=Math.min.apply(0,la),maxLa=Math.max.apply(0,la),minLo=Math.min.apply(0,lo),maxLo=Math.max.apply(0,lo);var k=Math.cos(41.39*Math.PI/180);var W=640,H=360,pad=34;
+ var sx=(W-2*pad)/Math.max(.002,(maxLo-minLo)*k),sy=(H-2*pad)/Math.max(.002,(maxLa-minLa));var sc=Math.min(sx,sy);
+ var ox=(W-(maxLo-minLo)*k*sc)/2,oy=(H-(maxLa-minLa)*sc)/2;
+ function X(p){return ox+(p.lng-minLo)*k*sc}function Y(p){return oy+(maxLa-p.lat)*sc}
+ var line=d.stops.map(function(p){return X(p).toFixed(1)+','+Y(p).toFixed(1)}).join(' ');
+ var dots=d.stops.map(function(p,i){var on=p.id===sel,dn=S.stadt.done[p.id];return '<g data-act="stadtSel" data-a="'+p.id+'" style="cursor:pointer"><circle cx="'+X(p).toFixed(1)+'" cy="'+Y(p).toFixed(1)+'" r="'+(on?19:15)+'" fill="'+(dn?'#49C5B6':on?'#FF6A52':'#13324A')+'" stroke="#fff" stroke-width="3"/><text x="'+X(p).toFixed(1)+'" y="'+(Y(p)+5).toFixed(1)+'" text-anchor="middle" font-size="14" font-weight="800" fill="'+(dn?'#13324A':'#fff')+'">'+(i+1)+'</text></g>'}).join('');
+ var ex=S.stadt.showX?d.extras.map(function(p){return '<g data-act="stadtSel" data-a="'+p.id+'" style="cursor:pointer"><circle cx="'+X(p).toFixed(1)+'" cy="'+Y(p).toFixed(1)+'" r="9" fill="#ECD06F" stroke="#13324A" stroke-width="2"/></g>'}).join(''):'';
+ return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;border-radius:20px;background:linear-gradient(180deg,#EAF3F3,#F7F1DF)"><polyline points="'+line+'" fill="none" stroke="#2779A7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 9"/>'+ex+dots+'</svg>'}
+ROUTES.stadt=function(a){var di=Math.min(CITY.length-1,Math.max(0,S.stadt.day)),d=CITY[di],sel=S.stadt.sel||null;var P={};d.stops.concat(d.extras).forEach(function(s){P[s.id]=s});
+ var done=d.stops.filter(function(s){return S.stadt.done[s.id]}).length;
+ var days=CITY.map(function(x,i){return '<button class="chip'+(i===di?' on':'')+'" data-act="stadtDay" data-a="'+i+'">Tag '+(i+1)+'<small class="mono" style="margin-left:6px;color:inherit;letter-spacing:0">'+x.dow+'</small></button>'}).join('');
+ var list=d.stops.map(function(s,i){var tr=TRANSIT[d.id+':'+s.id],leg=i>0?'<div class="leg">'+(tr?esc(tr):'Zu Fuß '+minsOf(walkKm(d.stops[i-1],s))+' Min. · '+fmtKm(walkKm(d.stops[i-1],s)))+'</div>':'';
+  var dn=S.stadt.done[s.id],open=sel===s.id;
+  return leg+'<div class="stop'+(dn?' done':'')+'" id="st-'+s.id+'"><button class="no" data-act="stadtDone" data-a="'+s.id+'" aria-label="besucht">'+(dn?'✓':(i+1))+'</button><div style="flex:1"><button data-act="stadtSel" data-a="'+(open?'':s.id)+'" style="text-align:left;width:100%"><b style="font-size:18px">'+esc(s.n)+'</b><div class="mono">'+KIND[s.k]+' · '+esc(s.t)+' · '+esc(s.c)+'</div></button>'+(open?stopDetail(s):'')+'</div></div>'}).join('');
+ var extras=S.stadt.showX?'<div class="card" style="margin-top:12px"><div class="mono">Wenn noch Zeit ist</div>'+d.extras.map(function(s){return '<div class="stop"><span class="no" style="background:#ECD06F;color:#13324A">+</span><div><b>'+esc(s.n)+'</b> <span class="tag">'+esc(s.cat)+'</span>'+stopDetail(s)+'</div></div>'}).join('')+'</div>':'';
+ var spot=d.spot.map(function(s,i){var k=d.id+'-'+i,on=S.wes.spot[k];return '<button class="item'+(on?' done':'')+'" data-act="spotTick" data-a="'+k+'"><span class="bx">'+(on?'✓':'')+'</span><span class="tx">'+esc(s)+'</span></button>'}).join('');
+ var tips=STADT_TIPS.map(function(t){return '<details class="acc"'+(t[2]?' open':'')+'><summary>'+t[0]+'</summary><div class="c">'+t[1]+'</div></details>'}).join('');
+ return topbar('STADTPLAN · '+esc(S.trip.name).toUpperCase(),'Unsere Route','/','<button class="chip'+(S.stadt.showX?' on':'')+'" data-act="stadtX">Mehr entdecken</button>')+
+ '<div class="chips" style="margin-bottom:14px">'+days+'</div>'+
+ '<div class="grid2" style="align-items:start"><div class="col"><div class="dark"><span class="tab">TAG '+(di+1)+' · '+d.area.toUpperCase()+'</span><h2 class="disp" style="font-size:36px">'+esc(d.title)+'</h2><p style="margin:8px 0">'+esc(d.lede)+'</p><div class="wrap"><span class="tag">'+dayKm(d).toFixed(1).replace('.',',')+' km zu Fuß</span><span class="tag">'+d.stops.length+' Stopps</span><span class="tag">'+esc(d.budget)+'</span><span class="tag" style="background:#ECD06F">Beste Wochentage: '+d.dow+'</span></div><p class="muted" style="color:#CFE0EA;font-size:13px;margin-top:8px">Start: '+esc(d.start)+'. '+esc(d.budgetNote)+'</p></div>'+
+ stadtMap(d,sel)+
+ '<div class="card"><div class="mono">Such-Liste des Tages</div>'+spot+'</div>'+
+ '<details class="acc"><summary>Wenn es regnet</summary><div class="c"><ul>'+d.rain.map(function(r){return '<li>'+esc(r)+'</li>'}).join('')+'</ul></div></details>'+
+ '<details class="acc"><summary>Wusstest du?</summary><div class="c"><ul>'+d.facts.map(function(r){return '<li>'+esc(r)+'</li>'}).join('')+'</ul></div></details></div>'+
+ '<div class="col"><div class="card"><div class="row"><b>Heute besucht</b><div class="sp"></div><span class="mono">'+done+' von '+d.stops.length+'</span></div><div class="bar" style="margin:8px 0"><i style="width:'+(done/d.stops.length*100)+'%"></i></div>'+list+'</div>'+extras+'</div></div>'+
+ '<h2 class="disp" style="font-size:34px;margin:26px 0 12px">Vor der Reise</h2><div class="col">'+tips+'</div><p class="muted" style="margin-top:12px;font-size:13px">Preise und Zeiten Oktober 2026. Nur auf offiziellen Seiten buchen. Karte und Texte funktionieren ohne Internet, die Google-Maps-Links brauchen WLAN.</p>'};
+function stopDetail(s){return '<div style="margin-top:6px"><p>'+esc(s.why)+'</p>'+(s.kid?'<div class="kid">Für dich: '+esc(s.kid)+'</div>':'')+(s.tip?'<p class="muted" style="margin-top:6px"><b>Tipp:</b> '+esc(s.tip)+'</p>':'')+(s.h?'<p class="muted"><b>Öffnungszeiten:</b> '+esc(s.h)+'</p>':'')+'<a class="chip" style="display:inline-block;line-height:44px;margin-top:8px" href="'+mapsUrl(s.n)+'" target="_blank" rel="noopener">In Google Maps</a></div>'}
+ACT.stadtDay=function(i){S.stadt.day=+i;S.stadt.sel=null;save();rerender()};
+ACT.stadtSel=function(id){S.stadt.sel=id||null;rerender();if(id){var e=$('#st-'+id);if(e)e.scrollIntoView({block:'center'})}};
+ACT.stadtDone=function(id){S.stadt.done[id]=!S.stadt.done[id];if(!S.stadt.done[id])delete S.stadt.done[id];save();rerender()};
+ACT.stadtX=function(){S.stadt.showX=!S.stadt.showX;save();rerender()};
+ACT.spotTick=function(k){S.wes.spot[k]=!S.wes.spot[k];save();rerender()};
+
+/* ===== Eltern, Reise, Wunderwesen, Rekorde, Tagebuch, Entdecker-Buch ===== */
+var pinBuf='',pinStep=0,pinTmp='';
+function keypad(){return '<div class="dots">'+[0,1,2,3].map(function(i){return '<i class="'+(i<pinBuf.length?'f':'')+'"></i>'}).join('')+'</div><div class="pin">'+[1,2,3,4,5,6,7,8,9,'',0,'⌫'].map(function(k){return k===''?'<span></span>':'<button data-act="pinKey" data-a="'+k+'">'+k+'</button>'}).join('')+'</div>'}
+ACT.pinKey=function(k){if(k==='⌫')pinBuf=pinBuf.slice(0,-1);else if(pinBuf.length<4)pinBuf+=k;
+ if(pinBuf.length<4){rerender();return}
+ var buf=pinBuf;pinBuf='';
+ if(!S.pin){if(pinStep===0){pinTmp=buf;pinStep=1;rerender();return}
+  if(buf===pinTmp){sha(buf).then(function(h){S.pin=h;save();unlocked=true;pinStep=0;pinTmp='';rerender();toast('PIN gespeichert')})}else{pinStep=0;pinTmp='';toast('Die PINs waren nicht gleich. Nochmal.');rerender()}return}
+ sha(buf).then(function(h){if(h===S.pin){unlocked=true;rerender()}else{toast('Falsche PIN');rerender()}})};
+function stepper(id,v,u,dec,inc){return '<div class="row"><button class="round" aria-label="weniger" data-act="'+dec+'" data-a="'+id+'">−</button><b style="min-width:76px;text-align:center" class="mono">'+v+' '+u+'</b><button class="round" aria-label="mehr" data-act="'+inc+'" data-a="'+id+'">+</button></div>'}
+ROUTES.eltern=function(){
+ if(!S.pin||!unlocked){var head=!S.pin?(pinStep===0?'Neue Eltern-PIN festlegen (4 Ziffern)':'PIN noch einmal eingeben'):'Eltern-PIN eingeben';
+  return topbar('FÜR ELTERN','Bitte PIN','/')+'<div class="card" style="max-width:420px;margin:20px auto;text-align:center"><b>'+head+'</b>'+keypad()+(!S.pin?'<p class="muted" style="font-size:13px;margin-top:12px">Du kannst dieselbe PIN wie bei Denkzauber nehmen.</p>':'')+'</div>'}
+ var usedPct=S.lim?Math.min(100,Math.round(usedToday()/S.lim*100)):0;
+ var wins=WINDOWS.map(function(w){var p=!!S.wpaused[w.id];return '<div class="row" style="padding:10px 0;border-top:1px solid rgba(19,50,74,.08);flex-wrap:wrap"><span style="width:12px;height:12px;border-radius:50%;background:'+w.c+'"></span><b style="flex:1;min-width:140px">'+esc(w.t)+'</b>'+stepper(w.id,S.mins[w.id],'Min','minDec','minInc')+'<span class="mono">heute '+Math.round(winUsed(w.id))+'</span><button class="tgl'+(p?'':' on')+'" data-act="winTgl" data-a="'+w.id+'" aria-label="'+esc(w.t)+(p?' freigeben':' pausieren')+'"></button></div>'}).join('');
+ var pu=S.pauseUntil&&Date.now()<S.pauseUntil;
+ return topbar('PIN BESTÄTIGT','Für Eltern','/','<a class="pill" href="#/reise"><i>'+arrow()+'</i>Reise planen</a>')+
+ '<div class="grid2" style="align-items:start"><div class="col">'+
+ '<div class="dark"><span class="tab">HEUTE</span><div class="row" style="align-items:flex-end"><span class="disp" style="font-size:72px">'+usedToday()+'</span><span class="disp" style="font-size:26px;color:#9FB6C6;padding-bottom:6px">/ '+(S.lim||'∞')+' MIN</span></div><div class="bar" style="margin:10px 0 14px;background:rgba(255,255,255,.14)"><i style="width:'+usedPct+'%"></i></div><div class="row"><span style="flex:1;font-weight:700">Zeit pro Tag (0 = ohne Limit)</span>'+stepper('lim',S.lim,'Min','limDec','limInc').replace(/class="round"/g,'class="round" style="background:rgba(255,255,255,.14);color:#fff"')+'</div></div>'+
+ '<div class="card"><div class="mono">Alles pausieren</div><div class="row" style="margin-top:10px">'+[['15 Min',15],['30 Min',30],['Bis morgen',-1]].map(function(x){return '<button class="btn g" style="flex:1" data-act="pauseAll" data-a="'+x[1]+'">'+x[0]+'</button>'}).join('')+'</div><p class="muted" style="margin-top:8px">'+(pu?'Alle Rollos sind zu bis '+new Date(S.pauseUntil).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+'. <button class="chip" data-act="pauseAll" data-a="0">Aufheben</button>':'Schließt alle Rollos auf einmal.')+'</p></div>'+
+ '<div class="card"><div class="mono">Namen &amp; Anzeige</div><div class="col" style="margin-top:8px"><label class="muted">Kuscheltier<input class="inp" data-in="setName" data-a="mascot" value="'+esc(S.names.mascot)+'" maxlength="20"></label><label class="muted">Name für Wunderwesen<input class="inp" data-in="setName" data-a="wesen" value="'+esc(S.names.wesen)+'" maxlength="24"></label><label class="muted">Name des Kindes (optional)<input class="inp" data-in="setName" data-a="kind" value="'+esc(S.names.kind)+'" maxlength="20"></label><div class="row"><span class="muted">Schriftgröße</span>'+[[1,'Normal'],[1.15,'Groß'],[1.3,'Sehr groß']].map(function(x){return '<button class="chip'+(S.ts===x[0]?' on':'')+'" data-act="setTs" data-a="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div></div></div>'+
+ '</div><div class="col">'+
+ '<div class="card"><div class="mono">Fenster · Rollo zu = Pause · Minuten pro Tag</div>'+wins+'</div>'+
+ '<div class="card"><div class="mono">App &amp; Updates</div><div id="updstate" style="margin:8px 0">'+(UPD.waiting?updHtml('ready',UPD.info):updHtml())+'</div><button class="btn d" data-act="checkUpdate">Nach Updates suchen</button><p class="muted" style="font-size:13px;margin-top:8px">Updates ändern nur die App. Gepacktes, Tagebuch, Sterne und alle Einstellungen bleiben auf dem Tablet erhalten.</p></div>'+
+ '<div class="card"><div class="mono">Daten sichern</div><p class="muted" style="margin:6px 0 10px">Eine Datei mit allem, was das Kind gespeichert hat.</p><div class="wrap"><button class="btn g" data-act="exportData">Sichern (Datei)</button><label class="btn g" style="display:inline-grid;place-items:center;line-height:50px">Laden<input type="file" accept="application/json" data-ch="importData" style="display:none"></label></div></div>'+
+ '<div class="card"><div class="mono">Sicherheit</div><div class="wrap" style="margin-top:8px"><button class="btn g" data-act="pinChange">PIN ändern</button><button class="btn c" data-act="wipe">Alle Daten löschen</button></div></div>'+
+ '</div></div>'};
+ACT.limDec=function(){S.lim=Math.max(0,S.lim-15);save();rerender()};
+ACT.limInc=function(){S.lim=Math.min(240,S.lim+15);save();rerender()};
+ACT.minDec=function(id){S.mins[id]=Math.max(5,S.mins[id]-5);save();rerender()};
+ACT.minInc=function(id){S.mins[id]=Math.min(120,S.mins[id]+5);save();rerender()};
+ACT.winTgl=function(id){S.wpaused[id]=!S.wpaused[id];save();rerender()};
+ACT.pauseAll=function(m){m=+m;if(m===0)S.pauseUntil=0;else if(m<0){var d=new Date();d.setHours(24,0,0,0);S.pauseUntil=d.getTime()}else S.pauseUntil=Date.now()+m*60000;save();rerender()};
+ACT.setName=function(v,el){S.names[el.getAttribute('data-a')]=v.trim()||DEFAULTS.names[el.getAttribute('data-a')];save()};
+ACT.setTs=function(v){S.ts=+v;save();applyTs();rerender()};
+ACT.pinChange=function(){S.pin=null;save();pinStep=0;unlocked=false;rerender()};
+ACT.exportData=function(){var b=new Blob([JSON.stringify({app:'kofferforscher',version:APP_VERSION,date:new Date().toISOString(),data:S},null,1)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='kofferforscher-sicherung-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();URL.revokeObjectURL(a.href)},500)};
+ACT.importData=function(v,el){var f=el.files&&el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(!j||j.app!=='kofferforscher'||!j.data)throw 0;S=deepMerge(DEFAULTS,j.data);save();applyTs();toast('Daten geladen');rerender()}catch(e){toast('Das ist keine Sicherung der App')}};r.readAsText(f)};
+ACT.wipe=function(){sheet('<h2 class="disp" style="font-size:32px">Wirklich alles löschen?</h2><p class="muted" style="margin:10px 0 16px">Gepacktes, Tagebuch, Sterne, Wunderwesen und Einstellungen werden gelöscht. Das geht nicht rückgängig. Tipp: erst „Sichern“.</p><div class="row"><button class="btn c" data-act="wipeGo">Ja, löschen</button><button class="btn g" data-act="closeSheet">Abbrechen</button></div>')};
+ACT.wipeGo=function(){try{localStorage.removeItem(KEY)}catch(e){}load();unlocked=false;closeSheet();location.hash='#/';route()};
+
+/* ---------- Reiseplan (mehrere Stationen A→B→C…) ---------- */
+var REG=[['DE','Deutschland'],['EU','EU'],['NonEU','Nicht-EU'],['IN','Indien'],['US','USA'],['AF','Afrika']];
+ROUTES.reise=function(){if(!S.pin||!unlocked){location.hash='#/eltern';return ''}
+ var t=S.trip;var legs=t.legs.map(function(l,i){return '<div class="row" style="padding:10px 0;border-top:1px solid rgba(19,50,74,.08);flex-wrap:wrap"><span class="disp" style="font-size:28px;color:#2779A7;width:34px">'+'ABCDEFGH'[i]+'</span><input class="inp" style="flex:2;min-width:140px" data-in="legCity" data-a="'+i+'" value="'+esc(l.city)+'" placeholder="Stadt"><input class="inp" style="width:90px" data-in="legCode" data-a="'+i+'" value="'+esc(l.code||'')+'" placeholder="Code" maxlength="4"><select class="inp" style="width:150px" data-ch="legReg" data-a="'+i+'">'+REG.map(function(r){return '<option value="'+r[0]+'"'+(l.region===r[0]?' selected':'')+'>'+r[1]+'</option>'}).join('')+'</select>'+(t.legs.length>2?'<button class="round" data-act="legDel" data-a="'+i+'" aria-label="entfernen">×</button>':'')+'</div>'+(i<t.legs.length-1?'<div class="row" style="margin-left:46px"><button class="chip" data-act="legAdd" data-a="'+(i+1)+'">+ Stopp einfügen</button></div>':'')}).join('');
+ var arch=S.archive.length?S.archive.map(function(a){return '<div class="row" style="padding:8px 0;border-top:1px solid rgba(19,50,74,.08)"><b style="flex:1">'+esc(a.name)+'</b><span class="mono">'+esc(a.depart)+' → '+esc(a.back)+' · '+a.packed+' gepackt · '+a.found+' Wesen</span></div>'}).join(''):'<p class="muted">Noch keine abgeschlossene Reise.</p>';
+ return topbar('REISE PLANEN','Reiseplan','/eltern')+'<div class="grid2" style="align-items:start"><div class="col"><div class="card"><div class="mono">Diese Reise</div><div class="col" style="margin-top:8px"><label class="muted">Name<input class="inp" data-in="tripName" value="'+esc(t.name)+'"></label><div class="row"><label class="muted" style="flex:1">Abflug<input type="date" class="inp" data-ch="tripDep" value="'+t.depart+'"></label><label class="muted" style="flex:1">Rückkehr<input type="date" class="inp" data-ch="tripBack" value="'+t.back+'"></label></div><label class="muted">Packlisten-Region<select class="inp" data-ch="tripReg">'+REG.map(function(r){return '<option value="'+r[0]+'"'+(S.pack.region===r[0]?' selected':'')+'>'+r[1]+'</option>'}).join('')+'</select></label></div></div>'+
+ '<div class="card"><div class="mono">Stationen A → B → C …</div>'+legs+'<p class="muted" style="font-size:13px;margin-top:10px">Mit „+ Stopp einfügen“ planst du Reisen mit mehreren Stationen. Die Region steuert die Packliste.</p></div></div>'+
+ '<div class="col"><div class="card"><div class="mono">Das ändert sich pro Reise</div><ul style="padding-left:20px"><li>Packliste (Region, Häkchen) – wird geleert</li><li>Countdown, Route und Tagebuch-Tage</li><li>Tagebuch – neues Buch</li></ul><div class="mono" style="margin-top:8px">Das bleibt</div><ul style="padding-left:20px"><li>Sterne, Kapitel, Rekorde, Titel im Entdecker-Buch</li><li>Wie fliegt das?, Tüftel-Hangar, Aufträge</li></ul><p class="muted" style="font-size:13px">Stadtplan und Wunderwesen sind für Barcelona. Für ein anderes Ziel kommen sie mit einem App-Update.</p></div>'+
+ '<div class="card"><div class="mono">Reise abschließen</div><p class="muted" style="margin:6px 0 10px">Legt diese Reise ins Archiv und startet eine neue.</p><button class="btn d" data-act="tripEnd">Reise abschließen · neue beginnen</button></div>'+
+ '<div class="card"><div class="mono">Frühere Reisen</div>'+arch+'</div></div></div>'};
+ACT.tripName=function(v){S.trip.name=v||'Reise';save()};
+ACT.tripDep=function(v){if(v){S.trip.depart=v;save()}};
+ACT.tripBack=function(v){if(v){S.trip.back=v;save()}};
+ACT.tripReg=function(v){S.pack.region=v;save()};
+ACT.legCity=function(v,el){S.trip.legs[+el.getAttribute('data-a')].city=v;save()};
+ACT.legCode=function(v,el){S.trip.legs[+el.getAttribute('data-a')].code=v.toUpperCase();save()};
+ACT.legReg=function(v,el){S.trip.legs[+el.getAttribute('data-a')].region=v;save()};
+ACT.legAdd=function(i){S.trip.legs.splice(+i,0,{city:'',code:'',region:'EU'});save();rerender()};
+ACT.legDel=function(i){S.trip.legs.splice(+i,1);save();rerender()};
+ACT.tripEnd=function(){var ps=packStats();S.archive.push({name:S.trip.name,depart:S.trip.depart,back:S.trip.back,packed:ps.d,found:Object.keys(S.wes.found).length,diary:S.diary});
+ var home=S.trip.legs[0];S.trip={id:'t'+Date.now(),name:'Neue Reise',depart:today(),back:today(),region:'EU',legs:[home,{city:'',code:'',region:'EU'},home]};
+ S.pack.done={};S.brief.done={};S.pred={};S.diary={};S.stadt.done={};S.wes.spot={};save();toast('Neue Reise bereit');rerender()};
+
+/* ---------- Wunderwesen ---------- */
+ROUTES.wes=function(){var f=Object.keys(S.wes.found).length;
+ var cards=WESEN.map(function(w){var on=S.wes.found[w.id];return '<button class="tile" style="background:'+(on?w.c:'var(--paper)')+'" data-act="wesOpen" data-a="'+w.id+'"><div class="disp" style="font-size:44px;opacity:'+(on?1:.25)+'">'+(on?'★':'?')+'</div><h3 class="disp" style="font-size:24px">'+(on?esc(w.n):'Noch unbekannt')+'</h3><span class="mono">'+esc(placeName(w.stop))+'</span></button>'}).join('');
+ return topbar('BARCELONA ENTDECKEN',esc(S.names.wesen),'/','<div class="mono" style="text-align:right">'+f+' von '+WESEN.length+'<br>gefunden</div>')+'<div class="bar" style="margin-bottom:16px"><i style="width:'+(f/WESEN.length*100)+'%"></i></div><p class="muted" style="margin-bottom:14px">Jedes Wesen versteckt sich an einem Ort der Reise. Geh hin, schau genau hin und tippe, wenn du es gefunden hast. '+esc(S.names.mascot)+' hilft dir.</p><div class="grid3">'+cards+'</div><div class="row" style="margin-top:18px"><a class="pill" href="#/stadt"><i>'+arrow()+'</i>Zum Stadtplan</a></div>'};
+function placeName(id){for(var i=0;i<CITY.length;i++){var all=CITY[i].stops.concat(CITY[i].extras);for(var j=0;j<all.length;j++)if(all[j].id===id)return all[j].n.replace(/\s*\(.*?\)/g,'')}return ''}
+function placeDay(id){for(var i=0;i<CITY.length;i++){var all=CITY[i].stops.concat(CITY[i].extras);for(var j=0;j<all.length;j++)if(all[j].id===id)return i}return 0}
+ACT.wesOpen=function(id){var w=WESEN.filter(function(x){return x.id===id})[0],on=S.wes.found[id];
+ sheet('<div class="mono">'+esc(S.names.wesen)+'</div><h2 class="disp" style="font-size:38px;color:#2779A7">'+esc(w.n)+'</h2><p style="margin:10px 0"><b>Ort:</b> '+esc(placeName(w.stop))+' (Stadtplan Tag '+(placeDay(w.stop)+1)+')</p><p>'+esc(w.txt)+'</p><div class="kid">Suchtipp: '+esc(w.tip)+'</div><div class="row" style="margin-top:16px;flex-wrap:wrap"><button class="btn '+(on?'g':'s')+'" data-act="wesFound" data-a="'+id+'">'+(on?'Doch nicht gefunden':'Ich habe es gefunden!')+'</button><a class="btn g" style="display:inline-grid;place-items:center;line-height:50px" href="'+mapsUrl(placeName(w.stop))+'" target="_blank" rel="noopener">Karte</a></div>')};
+ACT.wesFound=function(id){if(S.wes.found[id])delete S.wes.found[id];else{S.wes.found[id]=today()}save();closeSheet();rerender();if(S.wes.found[id])toast(S.names.mascot+' freut sich!')};
+
+/* ---------- Weltrekorde ---------- */
+ROUTES.rek=function(){var c=S.rek.cat,R=REKORDE[c],items=R.items;var A=S.rek.a!=null&&S.rek.a<items.length?S.rek.a:0,B=S.rek.b!=null&&S.rek.b<items.length?S.rek.b:items.length-1;
+ var a=items[A],b=items[B],mx=Math.max(a[1],b[1]),lo=Math.min(a[1],b[1]),hi=mx;var ratio=lo>0?hi/lo:0;
+ var sel=function(id,cur){return '<select class="inp" data-ch="rekSel" data-a="'+id+'">'+items.map(function(x,i){return '<option value="'+i+'"'+(i===cur?' selected':'')+'>'+esc(x[0])+'</option>'}).join('')+'</select>'};
+ var big=a[1]>=b[1]?a:b,small=a[1]>=b[1]?b:a;
+ var sentence=A===B?'Beide sind gleich.':(ratio<1.05?esc(a[0])+' und '+esc(b[0])+' sind fast gleich.':esc(big[0])+' ist etwa '+fmt((Math.round(ratio*10)/10).toString())+'-mal so '+({'Höhe':'hoch','Tempo':'schnell','Länge':'lang','Gewicht':'schwer'}[c])+' wie '+esc(small[0])+'.');
+ return topbar('REKORDE','Weltrekorde','/')+'<div class="chips" style="margin-bottom:14px">'+Object.keys(REKORDE).map(function(k){return '<button class="chip'+(k===c?' on':'')+'" data-act="rekCat" data-a="'+k+'">'+k+'</button>'}).join('')+'</div>'+
+ '<div class="card"><div class="mono">Vergleiche zwei</div><div class="grid2" style="margin:10px 0">'+sel('a',A)+sel('b',B)+'</div>'+
+ [a,b].map(function(x){return '<div style="margin:12px 0"><div class="row"><b>'+esc(x[0])+'</b><div class="sp"></div><span class="mono">'+fmt(x[1])+' '+R.unit+'</span></div><div class="bar" style="height:22px"><i style="width:'+Math.max(2,x[1]/mx*100)+'%;background:'+(x===a?'#49C5B6':'#FF6A52')+'"></i></div></div>'}).join('')+'<p style="font-weight:800;font-size:18px;margin-top:10px">'+sentence+'</p></div>'+
+ '<div class="col" style="margin-top:16px">'+items.slice().sort(function(x,y){return y[1]-x[1]}).map(function(x){return '<div class="card" style="padding:12px 18px"><div class="row"><b>'+esc(x[0])+'</b><div class="sp"></div><span class="mono">'+fmt(x[1])+' '+R.unit+'</span></div>'+(x[2]?'<div class="muted">'+esc(x[2])+'</div>':'')+'</div>'}).join('')+'</div>'};
+ACT.rekCat=function(k){S.rek.cat=k;S.rek.a=null;S.rek.b=null;save();rerender()};
+ACT.rekSel=function(v,el){S.rek[el.getAttribute('data-a')]=+v;save();rerender()};
+
+/* ---------- Reise-Tagebuch ---------- */
+var MOODS=[['Super','M12 21 Q18 27 24 21'],['Gut','M12 22 H24'],['Müde','M12 24 Q18 20 24 24']];
+var BESTS=['Strand','Essen','Spielplatz','Metro','Flugzeug','Neue Freunde','Sagrada Família','Park Güell','Wunderwesen'];
+var WEATHERS=['Sonne','Wolken','Regen'];
+function tripDays(){var out=[],n=Math.max(1,Math.min(21,daysBetween(S.trip.depart,S.trip.back)+1));var d=new Date(S.trip.depart+'T00:00:00');for(var i=0;i<n;i++){var x=new Date(d.getTime()+i*864e5);out.push(x.getFullYear()+'-'+('0'+(x.getMonth()+1)).slice(-2)+'-'+('0'+x.getDate()).slice(-2))}return out}
+function dayLabel(iso){var d=new Date(iso+'T00:00:00');return['SO','MO','DI','MI','DO','FR','SA'][d.getDay()]+' '+d.getDate()+'.'+(d.getMonth()+1)+'.'}
+ROUTES.tag=function(a){var days=tripDays();var cur=a[0]==='buch'?'buch':(a[0]&&days.indexOf(a[0])>-1?a[0]:(days.indexOf(today())>-1?today():days[0]));
+ var tabs=days.map(function(d,i){return '<a class="chip'+(d===cur?' on':'')+'" href="#/tag/'+d+'" style="display:inline-block;line-height:44px">'+(i+1)+'<small class="mono" style="margin-left:6px;color:inherit;letter-spacing:0">'+dayLabel(d)+'</small></a>'}).join('')+'<a class="chip'+(cur==='buch'?' on':'')+'" href="#/tag/buch" style="display:inline-block;line-height:44px">Reise-Buch</a>';
+ if(cur==='buch'){return topbar('REISE-TAGEBUCH',esc(S.trip.name)+' · Reise-Buch','/','<button class="chip" onclick="window.print()">Drucken</button>')+'<div class="chips" style="margin-bottom:14px">'+tabs+'</div><div class="col">'+days.map(function(d,i){var e=S.diary[d]||{};return '<div class="card"><div class="mono">Tag '+(i+1)+' · '+dayLabel(d)+' · '+(e.w!=null?WEATHERS[e.w]:'')+' '+(e.mood!=null?'· '+MOODS[e.mood][0]:'')+'</div>'+(e.best&&e.best.length?'<p><b>Das Beste:</b> '+e.best.map(esc).join(', ')+'</p>':'')+'<p class="hand" style="font-size:28px;color:#2779A7">'+esc(e.text||'–')+'</p></div>'}).join('')+'</div>'}
+ var e=S.diary[cur]||(S.diary[cur]={});var i=days.indexOf(cur);
+ var moods=MOODS.map(function(m,j){return '<button class="tile" style="min-height:90px;align-items:center;background:'+(e.mood===j?'#ECD06F':'#F7F2E6')+'" data-act="tagMood" data-a="'+j+'"><svg width="40" height="40" viewBox="0 0 36 36"><circle cx="18" cy="18" r="15" fill="#fff" stroke="#13324A" stroke-width="2.5"/><circle cx="13" cy="15" r="2" fill="#13324A"/><circle cx="23" cy="15" r="2" fill="#13324A"/><path d="'+m[1]+'" fill="none" stroke="#13324A" stroke-width="2.5" stroke-linecap="round"/></svg><b>'+m[0]+'</b></button>'}).join('');
+ var bests=BESTS.map(function(b){var on=e.best&&e.best.indexOf(b)>-1;return '<button class="chip'+(on?' on':'')+'" data-act="tagBest" data-a="'+esc(b)+'">'+esc(b)+'</button>'}).join('');
+ var wea=WEATHERS.map(function(w,j){return '<button class="chip'+(e.w===j?' on':'')+'" data-act="tagW" data-a="'+j+'">'+w+'</button>'}).join('');
+ var found=Object.keys(S.wes.found).length,stops=Object.keys(S.stadt.done).length;
+ return topbar('REISE-TAGEBUCH · '+esc(S.trip.name).toUpperCase(),'Tag '+(i+1)+' · '+dayLabel(cur),'/')+'<div class="chips" style="margin-bottom:14px">'+tabs+'</div><div class="grid2" style="align-items:start"><div class="paper"><div class="mono">Wie war dein Tag?</div><div class="grid3" style="margin:10px 0">'+moods+'</div><div class="mono">Das Beste heute</div><div class="chips" style="margin:10px 0 16px">'+bests+'</div><div class="mono">Wetter</div><div class="chips" style="margin:10px 0 16px">'+wea+'</div><div class="mono">Ein Satz von mir</div><textarea id="tt" class="inp hand" style="height:120px;padding:10px 14px;font-size:28px;color:#2779A7;resize:none" data-in="tagText" placeholder="Heute habe ich …">'+esc(e.text||'')+'</textarea><p class="hand" style="text-align:right;font-size:26px">– '+esc(S.names.mascot)+' war dabei</p></div>'+
+ '<div class="col"><div class="card"><div class="mono">Bisher gesammelt</div><div class="row" style="margin-top:8px"><span class="disp" style="font-size:44px;color:#49C5B6">'+found+'</span><b>'+esc(S.names.wesen)+'</b></div><div class="row"><span class="disp" style="font-size:44px;color:#FF6A52">'+stops+'</span><b>Orte besucht (Stadtplan)</b></div><div class="row"><span class="disp" style="font-size:44px;color:#2779A7">'+Object.keys(S.wissen.read).length+'</span><b>Kapitel gelesen</b></div></div><div class="card" style="border:2px dashed rgba(19,50,74,.2);box-shadow:none">Nach der Reise wird aus allen Tagen ein kleines Reise-Buch zum Anschauen (Reiter „Reise-Buch“).</div></div></div>'};
+ACT.tagMood=function(j){var d=currentDay();S.diary[d].mood=+j;save();rerender()};
+ACT.tagBest=function(b){var e=S.diary[currentDay()];e.best=e.best||[];var i=e.best.indexOf(b);if(i>-1)e.best.splice(i,1);else e.best.push(b);save();rerender()};
+ACT.tagW=function(j){S.diary[currentDay()].w=+j;save();rerender()};
+ACT.tagText=function(v){S.diary[currentDay()].text=v;save()};
+function currentDay(){var p=(location.hash.replace(/^#/,'')||'').split('/');var d=p[2];var days=tripDays();var cur=days.indexOf(d)>-1?d:(days.indexOf(today())>-1?today():days[0]);S.diary[cur]=S.diary[cur]||{};return cur}
+
+/* ---------- Entdecker-Buch ---------- */
+function starsTotal(){var n=0;for(var k in S.auf.stars)n+=S.auf.stars[k];return n}
+var TITLES=[
+ ['Packprofi','Mindestens die Hälfte der Packliste abgehakt',function(){var p=packStats();return p.n&&p.d/p.n>=.5}],
+ ['Schildkröten-Spürnase','Die Säulen-Schildkröten gefunden',function(){return !!S.wes.found.schild}],
+ ['Drachenjäger','Den Dach-Drachen gefunden',function(){return !!S.wes.found.drache}],
+ ['Wunder-Sammler','5 Wesen gefunden',function(){return Object.keys(S.wes.found).length>=5}],
+ ['Kapitän','10 Sterne bei den Aufträgen',function(){return starsTotal()>=10}],
+ ['Windflüsterer','3 Kapitel gelesen',function(){return Object.keys(S.wissen.read).length>=3}],
+ ['Flug-Professor','Alle 8 Kapitel gelesen',function(){return Object.keys(S.wissen.read).length>=8}],
+ ['Tüftler','10 Papierflieger-Würfe',function(){return S.hgr.log.length>=10}],
+ ['Stadtläufer','10 Orte im Stadtplan besucht',function(){return Object.keys(S.stadt.done).length>=10}],
+ ['Tagebuch-Autor','3 Tage Tagebuch geschrieben',function(){var n=0;for(var k in S.diary)if(S.diary[k].text)n++;return n>=3}]
+];
+ROUTES.samm=function(){var t=TITLES.map(function(x){var ok=x[2]();return '<div class="card" style="padding:14px 18px;opacity:'+(ok?1:.55)+'"><div class="row"><span class="disp" style="font-size:34px;color:'+(ok?'#49C5B6':'#B8BEC2')+'">'+(ok?'★':'☆')+'</span><div><b>'+esc(x[0])+'</b><div class="muted">'+esc(x[1])+'</div></div></div></div>'}).join('');
+ var got=TITLES.filter(function(x){return x[2]()}).length;var ch=WISSEN.map(function(w){return '<span class="tag" style="background:'+(S.wissen.read[w.id]?w.c:'#E5E5E5')+'">'+esc(w.t)+'</span>'}).join(' ');
+ return topbar('ENTDECKER-BUCH','Dein Buch','/')+'<div class="grid2" style="align-items:start"><div class="col"><div class="dark"><span class="tab">DEIN STAND</span><div class="grid3"><div><div class="disp" style="font-size:54px;color:#ECD06F">'+got+'</div><div class="mono">Titel</div></div><div><div class="disp" style="font-size:54px;color:#ECD06F">'+Object.keys(S.wes.found).length+'</div><div class="mono">Wesen</div></div><div><div class="disp" style="font-size:54px;color:#ECD06F">'+starsTotal()+'</div><div class="mono">Sterne</div></div></div></div><div class="card"><div class="mono">Kapitel gelesen</div><div class="wrap" style="margin-top:8px">'+ch+'</div></div><div class="card"><div class="mono">Tüftel-Hangar</div><p>Weitester Wurf: <b>'+fmt(S.hgr.best)+' m</b> · Würfe: <b>'+S.hgr.log.length+'</b></p></div></div><div class="col">'+t+'</div></div>'};
+
+/* ===== Wie fliegt das? (mit Simulationen), Tüftel-Hangar, Kapitäns-Aufträge ===== */
+var PLANE_TOP='M0 -60 L8 -30 L70 0 L70 12 L8 6 L6 40 L26 54 L26 62 L0 56 L-26 62 L-26 54 L-6 40 L-8 6 L-70 12 L-70 0 L-8 -30 Z';
+var PLANE_SIDE='M-72 0 Q-60 -15 -28 -15 L50 -15 Q72 -10 76 0 Q72 10 50 13 L-44 13 Z M42 -15 L62 -48 L74 -48 L66 -14 Z';
+ROUTES.wie=function(a){if(a[0]){var i=-1;WISSEN.forEach(function(w,j){if(w.id===a[0])i=j});if(i>-1)return chapter(i)}
+ var done=Object.keys(S.wissen.read).length;
+ var cards=WISSEN.map(function(w,i){var q=S.wissen.quiz[w.id];return '<a class="chap" href="#/wie/'+w.id+'"><span class="nm disp" style="background:'+w.c+'">'+(i+1)+'</span><span style="flex:1"><b style="font-size:20px">'+esc(w.t)+'</b><br><span class="muted">'+w.secs.length+' Abschnitte · '+w.facts.length+' Wusstest-du · Quiz</span></span>'+(S.wissen.read[w.id]?'<span class="tag" style="background:#B1EAC4">gelesen</span>':'')+(q!=null?'<span class="tag" style="background:#ECD06F">'+q+'/3</span>':'')+'</a>'}).join('');
+ return topbar('WIE FLIEGT DAS?','Flug-Wissen','/','<div class="mono" style="text-align:right">'+done+' von '+WISSEN.length+'<br>Kapitel</div>')+'<p class="muted" style="margin-bottom:14px">Acht Kapitel, jedes mit Mitmach-Versuch, Erklärungen, Wusstest-du-Karten und einem kleinen Quiz. Du kannst sie in beliebiger Reihenfolge lesen und jederzeit wiederkommen.</p><div class="grid2">'+cards+'</div>'};
+var QZ={};
+function chapter(i){var w=WISSEN[i];S.wissen.read[w.id]=1;save();QZ[w.id]=QZ[w.id]||{};
+ var secs=w.secs.map(function(s,j){return '<details class="acc"'+(j===0?' open':'')+'><summary><span class="disp" style="color:'+(w.c==='#B5D5FF'?'#2779A7':w.c)+';font-size:28px">'+(j+1)+'</span>'+esc(s[0])+'</summary><div class="c"><p>'+esc(s[1])+'</p></div></details>'}).join('');
+ var facts=w.facts.map(function(f){return '<div class="fact" style="--c:'+w.c+'">'+esc(f)+'</div>'}).join('');
+ var q=w.quiz.map(function(x,qi){var a=QZ[w.id][qi];return '<div class="card" id="q-'+w.id+'-'+qi+'"><b>'+(qi+1)+'. '+esc(x[0])+'</b>'+x[1].map(function(o,oi){var cls=a==null?'':(oi===x[2]?' ok':(oi===a?' no':''));return '<button class="opt'+cls+'" data-act="qz" data-a="'+w.id+'|'+qi+'|'+oi+'">'+esc(o)+'</button>'}).join('')+(a!=null?'<p class="muted"><b>'+(a===x[2]?'Richtig! ':'Fast. ')+'</b>'+esc(x[3])+'</p>':'')+'</div>'}).join('');
+ var prev=i>0?'<a class="pill l plain" href="#/wie/'+WISSEN[i-1].id+'">← '+esc(WISSEN[i-1].t)+'</a>':'',next=i<WISSEN.length-1?'<a class="pill" href="#/wie/'+WISSEN[i+1].id+'"><i>'+arrow()+'</i>'+esc(WISSEN[i+1].t)+'</a>':'';
+ return topbar('KAPITEL '+(i+1)+' VON '+WISSEN.length,esc(w.t),'/wie')+'<div class="dark" style="margin:20px 0 16px"><span class="tab" style="background:'+w.c+'">'+esc(S.names.mascot).toUpperCase()+' ERKLÄRT</span><p style="font-size:18px">'+esc(w.intro)+'</p></div>'+
+ '<div class="mono" style="margin:6px 0">Probier es aus</div><div id="sim">'+SIM[w.sim](w)+'</div>'+
+ '<div class="mono" style="margin:22px 0 8px">Erklärt in Abschnitten</div><div class="col">'+secs+'</div>'+
+ '<div class="mono" style="margin:22px 0 8px">Wusstest du?</div><div class="grid2">'+facts+'</div>'+
+ '<div class="mono" style="margin:22px 0 8px">Kleines Quiz</div><div class="col" id="quiz">'+q+'</div><div class="row" style="margin-top:22px;justify-content:space-between;flex-wrap:wrap">'+prev+'<span class="sp"></span>'+next+'</div>'}
+ACT.qz=function(v){var p=v.split('|'),id=p[0],qi=+p[1],oi=+p[2];QZ[id]=QZ[id]||{};if(QZ[id][qi]!=null)return;QZ[id][qi]=oi;var w=WISSEN.filter(function(x){return x.id===id})[0];
+ var score=0,n=0;w.quiz.forEach(function(x,k){if(QZ[id][k]!=null){n++;if(QZ[id][k]===x[2])score++}});if(n===w.quiz.length){S.wissen.quiz[id]=Math.max(S.wissen.quiz[id]||0,score);save()}
+ var y=window.scrollY;var i=WISSEN.indexOf(w);var h=chapter(i);$('#app').firstChild.innerHTML=h;SIMPOST[w.sim]&&SIMPOST[w.sim]();window.scrollTo(0,y)};
+ROUTES['post:wie']=function(a){if(!a[0])return;var w=WISSEN.filter(function(x){return x.id===a[0]})[0];if(w&&SIMPOST[w.sim])SIMPOST[w.sim]()};
+
+var SIM={},SIMPOST={};
+function sl(id,min,max,val,label,unit,act){return '<div class="row" style="margin:6px 0"><b style="width:130px">'+label+'</b><input type="range" id="'+id+'" min="'+min+'" max="'+max+'" value="'+val+'" data-in="'+act+'"><span class="mono" style="width:80px;text-align:right" id="'+id+'v">'+val+' '+unit+'</span></div>'}
+/* Auftrieb */
+SIM.lift=function(){return '<div class="card"><svg id="lsvg" viewBox="0 0 520 240" style="width:100%;border-radius:18px;background:linear-gradient(#DFF0FF,#F6F0DC)"><g id="streams">'+[60,90,130,150,180].map(function(y,i){return '<path class="str" d="M10 '+y+' Q130 '+(y-8)+' 260 '+(y-10)+' T510 '+y+'" fill="none" stroke="#2779A7" stroke-width="3" stroke-linecap="round" stroke-dasharray="14 18" opacity=".55"/>'}).join('')+'</g><g id="wing" transform="rotate(-6 260 112)"><path d="M150 112 C170 78 270 70 370 110 C300 120 220 124 150 112 Z" fill="#13324A"/></g><g id="arL"><line id="lupl" x1="260" y1="100" x2="260" y2="40" stroke="#49C5B6" stroke-width="9" stroke-linecap="round"/><text x="272" y="38" font-weight="800" fill="#13324A" font-size="14">Auftrieb</text></g><g><line id="wdn" x1="260" y1="124" x2="260" y2="184" stroke="#FF6A52" stroke-width="9" stroke-linecap="round"/><text x="272" y="196" font-weight="800" fill="#13324A" font-size="14">Gewicht</text></g></svg>'+
+ sl('lsp',100,900,450,'Tempo','km/h','simLift')+sl('lan',0,20,6,'Anstellwinkel','°','simLift')+'<p id="ltxt" style="font-weight:800;font-size:18px;margin-top:6px"></p></div>'};
+SIMPOST.lift=function(){ACT.simLift()};
+ACT.simLift=function(){var sp=+$('#lsp').value,an=+$('#lan').value;$('#lspv').textContent=sp+' km/h';$('#lanv').textContent=an+' °';
+ var L=100*Math.pow(sp/450,2)*(Math.min(an,15)/6);if(an>15)L*=Math.max(.15,1-(an-15)/6);
+ var lenL=Math.max(6,Math.min(95,L*0.6));$('#lupl').setAttribute('y2',100-lenL);$('#wing').setAttribute('transform','rotate('+(-an)+' 260 112)');
+ $$('#streams .str').forEach(function(p){p.style.animation='dash '+(3.2-sp/320)+'s linear infinite'});
+ $('#ltxt').textContent=an>15?'Zu steil: Die Luft kommt nicht mehr mit. Zurück auf 5 bis 10 Grad!':(L>=105?'Auftrieb größer als Gewicht: Das Flugzeug steigt.':(L>=90?'Auftrieb und Gewicht sind gleich: Das Flugzeug schwebt.':'Noch zu wenig Auftrieb. Mehr Tempo oder etwas mehr Winkel.'))};
+/* Vier Kräfte */
+var FORCES=[['Startlauf',[70,100,100,40],'Viel Schub, Auftrieb wächst mit dem Tempo.'],['Steigflug',[110,100,90,50],'Auftrieb etwas größer als Gewicht: Es steigt.'],['Reiseflug',[100,100,60,60],'Alles im Gleichgewicht, es fliegt geradeaus.'],['Sinkflug',[90,100,30,40],'Weniger Schub, Auftrieb etwas kleiner als Gewicht.'],['Landung',[60,95,25,70],'Spoiler erhöhen den Widerstand, das Flugzeug bremst.']];
+SIM.forces=function(w){return '<div class="card"><div class="chips" style="margin-bottom:10px">'+FORCES.map(function(f,i){return '<button class="chip'+(i===2?' on':'')+'" data-act="simForce" data-a="'+i+'">'+f[0]+'</button>'}).join('')+'</div><svg id="fsvg" viewBox="0 0 520 280" style="width:100%;border-radius:18px;background:#EAF3F3"><g transform="translate(260 140) rotate(90)"><path d="'+PLANE_TOP+'" fill="#13324A"/></g><g id="fa"></g></svg><p id="ftxt" style="font-weight:800;font-size:18px"></p></div>'};
+SIMPOST.forces=function(){ACT.simForce(2)};
+ACT.simForce=function(i){i=+i;var f=FORCES[i],v=f[1];$$('#quiz').length;$$('.chip[data-act=simForce]').forEach(function(b,j){b.classList.toggle('on',j===i)});
+ function ar(x1,y1,x2,y2,c,l,tx,ty){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" stroke="'+c+'" stroke-width="10" stroke-linecap="round"/><text x="'+tx+'" y="'+ty+'" font-weight="800" font-size="14" fill="#13324A">'+l+'</text>'}
+ $('#fa').innerHTML=ar(260,130,260,130-v[0]*1.1,'#49C5B6','Auftrieb',272,130-v[0]*1.1)+ar(260,150,260,150+v[1]*1.1,'#FF6A52','Gewicht',272,150+v[1]*1.1+14)+ar(300,140,300+v[2]*1.4,140,'#ECD06F','Schub',300+v[2]*1.4-30,126)+ar(220,140,220-v[3]*1.4,140,'#2779A7','Widerstand',220-v[3]*1.4,126);$('#ftxt').textContent=f[0]+': '+f[2]};
+/* Steuern */
+SIM.steer=function(){return '<div class="card"><div class="grid3" style="text-align:center">'+
+ '<div><svg viewBox="-90 -90 180 180" style="width:100%;background:#EAF3F3;border-radius:18px"><g id="s1"><rect x="-70" y="-4" width="140" height="8" rx="4" fill="#13324A"/><circle r="12" fill="#13324A"/><rect x="-3" y="-30" width="6" height="20" fill="#13324A"/></g></svg><b>Rollen</b><br><span class="muted">Querruder</span></div>'+
+ '<div><svg viewBox="-90 -90 180 180" style="width:100%;background:#EAF3F3;border-radius:18px"><g id="s2"><path d="'+PLANE_SIDE+'" fill="#13324A"/></g></svg><b>Nicken</b><br><span class="muted">Höhenruder</span></div>'+
+ '<div><svg viewBox="-90 -90 180 180" style="width:100%;background:#EAF3F3;border-radius:18px"><g id="s3" transform="scale(.9)"><path d="'+PLANE_TOP+'" fill="#13324A"/></g></svg><b>Gieren</b><br><span class="muted">Seitenruder</span></div></div>'+
+ sl('sro',-30,30,0,'Querruder','°','simSteer')+sl('spi',-25,25,0,'Höhenruder','°','simSteer')+sl('sya',-30,30,0,'Seitenruder','°','simSteer')+'<p id="stxt" class="muted" style="font-weight:700"></p></div>'};
+SIMPOST.steer=function(){ACT.simSteer()};
+ACT.simSteer=function(){var r=+$('#sro').value,p=+$('#spi').value,y=+$('#sya').value;$('#srov').textContent=r+' °';$('#spiv').textContent=p+' °';$('#syav').textContent=y+' °';
+ $('#s1').setAttribute('transform','rotate('+r+')');$('#s2').setAttribute('transform','rotate('+(-p)+')');$('#s3').setAttribute('transform','scale(.9) rotate('+y+')');
+ $('#stxt').textContent=(r?(r>0?'Rechte Fläche geneigt: Das Flugzeug rollt nach rechts.':'Das Flugzeug rollt nach links.'):'')+(p?(p>0?' Nase hebt sich: Es steigt.':' Nase senkt sich: Es sinkt.'):'')+(y?(y>0?' Nase dreht nach rechts.':' Nase dreht nach links.'):'')||'Bewege die Regler und beobachte das Flugzeug.'};
+/* Triebwerke */
+var ENG=[['Ansaugen','Der Fan saugt große Mengen Luft an.','#B5D5FF'],['Verdichten','Schaufelräder drücken die Luft zusammen.','#49C5B6'],['Verbrennen','Treibstoff brennt in der verdichteten Luft.','#FF6A52'],['Ausstoßen','Die Turbine treibt den Fan an, der Strahl schiebt nach hinten.','#ECD06F']];
+SIM.engine=function(){return '<div class="card"><div class="chips" style="margin-bottom:10px">'+ENG.map(function(e,i){return '<button class="chip" data-act="simEng" data-a="'+i+'">'+(i+1)+' · '+e[0]+'</button>'}).join('')+'</div><svg viewBox="0 0 520 170" style="width:100%;background:#EAF3F3;border-radius:18px"><path d="M30 40 Q30 85 30 130 L480 110 L480 60 Z" fill="#CBD1D5"/>'+ENG.map(function(e,i){return '<rect class="eg" id="eg'+i+'" x="'+(46+i*110)+'" y="'+(52+i*6)+'" width="100" height="'+(66-i*12)+'" rx="12" fill="'+e[2]+'" opacity=".35"/>'}).join('')+'<path d="M10 85 H480" stroke="#13324A" stroke-width="5" stroke-dasharray="10 12" id="eflow"/><path d="M470 78 L490 85 L470 92Z" fill="#13324A"/></svg><p id="etxt" style="font-weight:800;font-size:18px"></p></div>'};
+SIMPOST.engine=function(){ACT.simEng(0)};
+ACT.simEng=function(i){i=+i;$$('.chip[data-act=simEng]').forEach(function(b,j){b.classList.toggle('on',j===i)});$$('.eg').forEach(function(r,j){r.setAttribute('opacity',j===i?1:.3)});$('#etxt').textContent=ENG[i][0]+': '+ENG[i][1];$('#eflow').style.animation='dash 1.2s linear infinite'};
+/* Im Inneren */
+var INSIDE=[['Cockpit','Hier steuern Kapitän und Erste Offizierin das Flugzeug. Es gibt viele Bildschirme und Schalter.',30],['Kabine','Hier sitzen die Passagiere. Die Luft ist gefiltert und angenehm warm.',170],['Küche (Galley)','Hier stehen Wagen, Öfen und Getränke für die Reise.',300],['Gepäckraum','Unter dem Kabinenboden liegen Koffer und Fracht, ebenfalls warm und belüftet.',230],['Tanks','Der Treibstoff steckt in den Flügeln. Dort ist viel Platz, und das Gewicht ist verteilt.',210],['Fahrwerk','Beim Start klappt es ein, vor der Landung kommt es wieder heraus.',90]];
+SIM.inside=function(){return '<div class="card"><svg viewBox="0 0 520 170" style="width:100%;background:#EAF3F3;border-radius:18px"><path d="M20 85 Q20 40 80 40 L440 40 Q500 55 500 85 Q500 115 440 125 L80 125 Q20 125 20 85Z" fill="#fff" stroke="#13324A" stroke-width="4"/><path d="M200 125 L170 160 L330 160 L300 125Z" fill="#CBD1D5"/>'+INSIDE.map(function(h,i){var xs=[45,160,380,260,250,100],ys=[82,80,82,112,142,126];return '<circle class="hs" id="hs'+i+'" cx="'+xs[i]+'" cy="'+ys[i]+'" r="13" fill="#FF6A52" stroke="#fff" stroke-width="3" data-act="simIn" data-a="'+i+'" style="cursor:pointer"/>'}).join('')+'</svg><div class="chips" style="margin:10px 0">'+INSIDE.map(function(h,i){return '<button class="chip" data-act="simIn" data-a="'+i+'">'+h[0]+'</button>'}).join('')+'</div><p id="itxt" style="font-weight:800;font-size:18px"></p></div>'};
+SIMPOST.inside=function(){ACT.simIn(0)};
+ACT.simIn=function(i){i=+i;$$('.hs').forEach(function(c,j){c.setAttribute('fill',j===i?'#49C5B6':'#FF6A52');c.setAttribute('r',j===i?17:13)});$$('.chip[data-act=simIn]').forEach(function(b,j){b.classList.toggle('on',j===i)});$('#itxt').textContent=INSIDE[i][0]+': '+INSIDE[i][1]};
+/* Start und Landung */
+var PH=[['Rollen',0,30,'Das Flugzeug rollt zur Startbahn.'],['Startlauf',0,150,'Volle Kraft: Tempo wächst.'],['Abheben',0,270,'Etwa 250–280 km/h: Die Nase hebt sich.'],['Steigflug',6,650,'Das Flugzeug steigt in Kurven und gerade aus.'],['Reiseflug',11,850,'In 10–12 km Höhe, rund 850 km/h. Ruhig und kalt draußen.'],['Sinkflug',4,550,'Langsam sinken, Klappen aus.'],['Anflug',1,290,'Fahrwerk aus, Landebahn voraus.'],['Landung',0,250,'Aufsetzen bei etwa 250 km/h, dann bremsen.']];
+SIM.phases=function(){return '<div class="card"><svg viewBox="0 0 520 190" style="width:100%;background:linear-gradient(#DFF0FF,#F6F0DC);border-radius:18px"><path d="M10 170 H80 Q150 168 190 110 T290 40 H350 Q420 60 460 130 T510 170" fill="none" stroke="#2779A7" stroke-width="5" stroke-dasharray="3 9" stroke-linecap="round"/><circle id="pdot" r="11" fill="#FF6A52" stroke="#fff" stroke-width="3" cx="40" cy="170"/></svg>'+sl('pph',0,7,0,'Abschnitt','','simPh')+'<p id="ptxt" style="font-weight:800;font-size:18px"></p></div>'};
+SIMPOST.phases=function(){ACT.simPh()};
+ACT.simPh=function(){var i=+$('#pph').value,p=PH[i];var X=[40,100,160,210,320,420,470,505],Y=[170,168,150,95,40,90,150,170];$('#pdot').setAttribute('cx',X[i]);$('#pdot').setAttribute('cy',Y[i]);$('#pphv').textContent=(i+1)+' / 8';$('#ptxt').innerHTML=p[0]+' · Höhe '+(p[1]?'etwa '+p[1]+' km':'am Boden')+' · Tempo '+p[2]+' km/h<br><span class="muted" style="font-weight:600">'+p[3]+'</span>'};
+/* Wetter */
+SIM.weather=function(){return '<div class="card"><div id="wsky" style="height:180px;border-radius:18px;position:relative;overflow:hidden"><div id="wlay" style="position:absolute;left:0;right:0;bottom:0"></div><div id="wpl" style="position:absolute;left:50%;transform:translateX(-50%);font-size:34px"></div></div>'+sl('wal',0,12,0,'Höhe','km','simWea')+'<p id="wtxt" style="font-weight:800;font-size:18px"></p></div>'};
+SIMPOST.weather=function(){ACT.simWea()};
+ACT.simWea=function(){var h=+$('#wal').value;$('#walv').textContent=h+' km';var T=h<=11?15-6.5*h:-56.5;var lay=h<2?'Hier entstehen Haufenwolken (Cumulus).':h<6?'Mittlere Wolken, Regen und Gewitter entstehen oft hier.':h<10?'Hohe Wolken aus Eiskristallen (Cirrus).':'Reiseflughöhe: dünne Luft, strahlender Himmel, kalte -55 °C.';
+ var b=Math.round((1-h/12)*70+20);$('#wsky').style.background='linear-gradient(180deg,hsl(210,70%,'+(35+h*2)+'%),hsl(200,70%,'+(75-h)+'%))';$('#wpl').style.bottom=Math.min(150,h*12)+'px';$('#wpl').innerHTML=h>9?'<svg width="46" height="30" viewBox="-80 -20 160 40"><path d="'+PLANE_SIDE+'" fill="#fff" transform="scale(.9)"/></svg>':'<svg width="46" height="30" viewBox="-80 -20 160 40"><path d="'+PLANE_SIDE+'" fill="#fff" opacity=".65" transform="scale(.9)"/></svg>';
+ $('#wlay').innerHTML=(h<9?'<div style="height:50px;background:radial-gradient(60px 24px at 20% 80%,#fff,transparent),radial-gradient(70px 28px at 70% 70%,#fff,transparent)"></div>':'');$('#wtxt').innerHTML='Temperatur etwa <b>'+Math.round(T)+' °C</b><br><span style="font-weight:600" class="muted">'+lay+'</span>'};
+/* Wege am Himmel */
+function bearing(a,b){var r=Math.PI/180,y=Math.sin((b.lng-a.lng)*r)*Math.cos(b.lat*r),x=Math.cos(a.lat*r)*Math.sin(b.lat*r)-Math.sin(a.lat*r)*Math.cos(b.lat*r)*Math.cos((b.lng-a.lng)*r);return(Math.atan2(y,x)/r+360)%360}
+var HAJ={lat:52.46,lng:9.69},BCNp={lat:41.30,lng:2.08};
+SIM.routes=function(){var bx=function(p){return 60+(p.lng+2)*26},by=function(p){return 20+(54-p.lat)*13};
+ return '<div class="card"><svg viewBox="0 0 520 190" style="width:100%;background:#EAF3F3;border-radius:18px"><rect x="40" y="25" width="360" height="150" rx="14" fill="#F7F1DF"/><line x1="'+bx(HAJ)+'" y1="'+by(HAJ)+'" x2="'+bx(BCNp)+'" y2="'+by(BCNp)+'" stroke="#2779A7" stroke-width="5" stroke-dasharray="2 9" stroke-linecap="round"/><circle cx="'+bx(HAJ)+'" cy="'+by(HAJ)+'" r="9" fill="#13324A"/><text x="'+(bx(HAJ)+12)+'" y="'+(by(HAJ)+5)+'" font-weight="800" fill="#13324A">HAJ</text><circle cx="'+bx(BCNp)+'" cy="'+by(BCNp)+'" r="9" fill="#FF6A52"/><text x="'+(bx(BCNp)+12)+'" y="'+(by(BCNp)+5)+'" font-weight="800" fill="#13324A">BCN</text>'+
+ '<g transform="translate(450 100)"><circle r="62" fill="#fff" stroke="#13324A" stroke-width="4"/><text y="-44" text-anchor="middle" font-weight="800" font-size="13">N</text><text y="52" text-anchor="middle" font-weight="800" font-size="13">S</text><text x="48" y="5" text-anchor="middle" font-weight="800" font-size="13">O</text><text x="-48" y="5" text-anchor="middle" font-weight="800" font-size="13">W</text><g id="need"><path d="M0 -50 L9 0 L0 8 L-9 0Z" fill="#FF6A52"/><path d="M0 50 L9 0 L0 8 L-9 0Z" fill="#13324A"/></g></g></svg>'+
+ sl('rhd',0,359,0,'Kurs','°','simRoute')+'<p id="rtxt" style="font-weight:800;font-size:18px"></p><p class="muted">Luftlinie Hannover → Barcelona: rund '+Math.round(kmd(HAJ,BCNp)/10)*10+' km. Dreh den Kompass, bis die rote Nadel nach Barcelona zeigt.</p></div>'};
+SIMPOST.routes=function(){ACT.simRoute()};
+ACT.simRoute=function(){var h=+$('#rhd').value,tg=bearing(HAJ,BCNp);$('#rhdv').textContent=h+' °';$('#need').setAttribute('transform','rotate('+h+')');var d=Math.abs(((h-tg+540)%360)-180);var dirs=['Nord','Nordost','Ost','Südost','Süd','Südwest','West','Nordwest'];
+ $('#rtxt').textContent=d<=12?'Genau richtig! Kurs '+Math.round(tg)+' ° = '+dirs[Math.round(tg/45)%8]+'.':'Du zeigst nach '+dirs[Math.round(h/45)%8]+'. Barcelona liegt anders.'};
+
+/* ---------- Tüftel-Hangar ---------- */
+var FOLDS={
+ 'Klassiker-Pfeil':['Blatt der Länge nach falten und wieder öffnen (Mittellinie).','Beide obere Ecken zur Mittellinie falten.','Die schrägen Kanten noch einmal zur Mitte falten.','Alles entlang der Mittellinie zusammenklappen.','Jede Seite als Flügel nach unten falten, Kante an Kante mit dem Rumpf.','Flügel leicht V-förmig nach oben stellen.','Büroklammer an die Nase (zum Ausprobieren).'],
+ 'Weit-Gleiter':['Wie beim Klassiker: Mittellinie falten.','Obere Ecken zur Mitte falten.','Spitze nach hinten umlegen, dann Ecken nochmal zur Mitte.','Zusammenklappen und lange, schmale Flügel falten.','Hinten 1 cm der Flügel nach oben knicken (Höhenruder).','Nase beschweren mit 1 bis 2 Büroklammern.']};
+var HP={span:['Spannweite','schmal','breit',1,5],nose:['Nase beschwert','Büroklammern',null,0,3],angle:['Flügelwinkel','°',null,-5,12],elev:['Höhenruder','mm hoch',null,0,3],power:['Wurfkraft','Stufe',null,1,5]};
+function hSlider(k,v){var d=HP[k];return sl('h-'+k,d[3],d[4],v,d[0],d[1]==='schmal'?'':d[1],'hCfg')}
+ROUTES.hgr=function(){var c=S.hgr.cfg;var log=S.hgr.log.slice(-8).reverse().map(function(l){return '<div class="row" style="padding:6px 0;border-top:1px solid rgba(19,50,74,.08)"><b style="width:70px">'+fmt(l.d)+' m</b><span class="muted">Breite '+l.c.span+' · Nase '+l.c.nose+' · Winkel '+l.c.angle+'° · Höhenruder '+l.c.elev+' · Kraft '+l.c.power+'</span></div>'}).join('')||'<p class="muted">Noch keine Würfe. Los geht’s!</p>';
+ return topbar('TÜFTEL-HANGAR','Papierflieger-Labor','/','<div class="mono" style="text-align:right">Rekord<br><b style="font-size:20px">'+fmt(S.hgr.best)+' m</b></div>')+
+ '<div class="grid2" style="align-items:start"><div class="col"><div class="card"><div id="hrun" style="height:170px;border-radius:18px;background:linear-gradient(#DFF0FF,#F6F0DC);position:relative;overflow:hidden"><div style="position:absolute;left:0;right:0;bottom:0;height:22px;background:repeating-linear-gradient(90deg,#B1EAC4 0 40px,#9BDDB0 40px 80px)"></div><div id="hpl" style="position:absolute;left:10px;bottom:26px;transition:none"><svg width="64" height="32" viewBox="-80 -20 160 40"><path d="'+PLANE_SIDE+'" fill="#13324A" transform="scale(.9)"/></svg></div><div id="hmeter" class="mono" style="position:absolute;right:12px;top:10px"></div></div>'+
+ hSlider('span',c.span)+hSlider('nose',c.nose)+hSlider('angle',c.angle)+hSlider('elev',c.elev)+hSlider('power',c.power)+
+ '<div class="row" style="margin-top:8px;flex-wrap:wrap"><button class="btn" data-act="hThrow">Werfen!</button>'+Object.keys(FOLDS).map(function(k){return '<button class="chip" data-act="hFold" data-a="'+k+'">'+k+'</button>'}).join('')+'</div><p id="hmsg" style="font-weight:800;margin-top:10px"></p></div>'+
+ '<div class="card"><div class="mono">Tüftelbuch · letzte Würfe</div>'+log+'</div></div>'+
+ '<div class="col"><div class="card"><div class="mono">So tüftelst du</div><ol style="padding-left:20px"><li>Ändere immer nur <b>einen</b> Regler und wirf neu.</li><li>Schreibe auf, was besser oder schlechter wird.</li><li>Finde den „Sweet Spot“: Nase nicht zu leicht, nicht zu schwer.</li><li>Echte Forscher wiederholen jeden Versuch mehrmals.</li></ol></div>'+
+ '<details class="acc" open><summary>Falt-Anleitung: Klassiker-Pfeil</summary><div class="c"><ol>'+FOLDS['Klassiker-Pfeil'].map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></div></details><details class="acc"><summary>Falt-Anleitung: Weit-Gleiter</summary><div class="c"><ol>'+FOLDS['Weit-Gleiter'].map(function(s){return '<li>'+esc(s)+'</li>'}).join('')+'</ol></div></details>'+
+ '<details class="acc"><summary>Was bewirkt was?</summary><div class="c"><ul><li><b>Spannweite:</b> breite Flügel tragen länger, aber bremsen mehr.</li><li><b>Nase beschwert:</b> Ohne Gewicht taumelt der Flieger. Mit zu viel stürzt er vorn ab.</li><li><b>Flügelwinkel:</b> wie beim echten Flugzeug: ein kleiner Winkel trägt, ein zu steiler lässt die Luft abreißen.</li><li><b>Höhenruder:</b> hinten ein winziges Knick nach oben hebt die Nase.</li><li><b>Wurfkraft:</b> mehr Kraft heißt mehr Tempo, aber nur wenn der Flieger gut ausgewogen ist.</li></ul></div></details>'+
+ '<div class="card"><div class="mono">Weltrekord zum Staunen</div><p>Der weiteste Papierflieger-Flug war etwa <b>69 Meter</b> weit (2012). Der längste Flug dauerte rund <b>29 Sekunden</b> (2010). Schaffst du 20 Meter?</p></div></div></div>'};
+ACT.hCfg=function(v,el){var k=el.id.slice(2);S.hgr.cfg[k]=+v;save();$('#'+el.id+'v').textContent=v+' '+(HP[k][1]==='schmal'?'':HP[k][1])};
+ACT.hFold=function(k){sheet('<h2 class="disp" style="font-size:32px">'+esc(k)+'</h2><ol style="padding-left:20px">'+FOLDS[k].map(function(s){return '<li style="margin:8px 0">'+esc(s)+'</li>'}).join('')+'</ol><button class="btn d" data-act="closeSheet">Fertig</button>')};
+function gauss(x,m,s){return Math.exp(-Math.pow((x-m)/s,2))}
+function simThrow(c,seed){var g=gauss(c.nose,1.5,1.1)*gauss(c.angle,4,4.5)*gauss(c.elev,1,1.5);var span=.55+.09*c.span;var power=.45+.13*c.power;var stall=c.angle>8&&c.power>=4?.7:1;var r=rnd(seed)();var d=2+26*g*span*power*stall*(0.94+0.12*r);return Math.round(d*10)/10}
+function advice(c,d){if(c.nose<.5)return 'Die Nase ist zu leicht: Der Flieger taumelt. Probiere eine Büroklammer.';if(c.nose>2.5)return 'Zu schwere Nase: Er stürzt vorne ab.';if(c.angle>9)return 'Zu steil: Die Luft reißt ab. Stell den Flügel flacher.';if(c.angle<0)return 'Die Flügel stehen nach unten: Er sinkt zu schnell.';if(c.elev<.5)return 'Ein kleines Höhenruder (1 mm) hilft beim Gleiten.';return d>14?'Sehr gut gewählt! Jetzt noch die Wurfkraft oder Spannweite testen.':'Das geht noch besser. Verändere einen Regler.'}
+ACT.hThrow=function(){var c=JSON.parse(JSON.stringify(S.hgr.cfg)),n=S.hgr.log.length+1;var d=simThrow(c,n*7919+c.span*13+c.nose*17+c.angle*19+c.elev*23+c.power*29);
+ S.hgr.log.push({d:d,c:c});var rec=d>S.hgr.best;if(rec)S.hgr.best=d;save();
+ var pl=$('#hpl'),W=$('#hrun').clientWidth-90,t0=null,dur=2200,dist=Math.min(1,d/30);$('#hmeter').textContent='';$('#hmsg').textContent='';
+ function f(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/dur),e=1-Math.pow(1-p,2.2);pl.style.left=(10+W*dist*e)+'px';pl.style.bottom=(26+Math.sin(p*Math.PI)*60*Math.min(1,.4+dist))+'px';pl.style.transform='rotate('+((p<.5?-8:6)*(1-p))+'deg)';
+  if(p<1)requestAnimationFrame(f);else{$('#hmeter').textContent=fmt(d)+' m';$('#hmsg').textContent=(rec?'Neuer Rekord! ':'')+advice(c,d)}}
+ requestAnimationFrame(f)};
+
+/* ---------- Kapitäns-Aufträge ---------- */
+var AIRP=[['HAJ','Hannover'],['BCN','Barcelona'],['FRA','Frankfurt'],['MUC','München'],['BER','Berlin'],['HAM','Hamburg'],['CDG','Paris'],['LHR','London'],['AMS','Amsterdam'],['MAD','Madrid'],['ZRH','Zürich'],['VIE','Wien'],['CPH','Kopenhagen'],['LIS','Lissabon'],['FCO','Rom'],['ATH','Athen'],['DUB','Dublin'],['OSL','Oslo'],['ARN','Stockholm'],['PRG','Prag']];
+var MISSIONS=[['tafel','Abflugtafel','Zeiten rechnen','#ECD06F'],['code','Flugcodes','Orte und Kürzel','#49C5B6'],['waage','Gepäck-Waage','Kilos rechnen','#FF6A52'],['kompass','Kompass','Barcelona-Karte','#B5D5FF']];
+function tm(m){m=((m%1440)+1440)%1440;return('0'+Math.floor(m/60)).slice(-2)+':'+('0'+(m%60)).slice(-2)}
+function opts3(r,right,wrongs){var o=[right].concat(wrongs.filter(function(x){return x!==right}).slice(0,2));return shuffle(r,o)}
+var GEN={
+ tafel:function(r,lv,i){var dep=(6+Math.floor(r()*15))*60+5*Math.floor(r()*12),kind=(lv+i)%3;
+  if(kind===0){var b=[20,25,30,35,40,45][Math.floor(r()*6)];return{q:'Dein Flug fliegt um '+tm(dep)+'. Das Boarding beginnt '+b+' Minuten vorher. Wann beginnt das Boarding?',a:tm(dep-b),o:opts3(r,tm(dep-b),[tm(dep-b+10),tm(dep-b-10),tm(dep+b)]),w:'Rückwärts rechnen: '+tm(dep)+' minus '+b+' Minuten.'}}
+  if(kind===1){var h=1+Math.floor(r()*3),mi=5*Math.floor(r()*12);var arr=dep+h*60+mi;return{q:'Der Flug startet um '+tm(dep)+' und dauert '+h+' Stunden und '+mi+' Minuten. Wann landet er?',a:tm(arr),o:opts3(r,tm(arr),[tm(arr+30),tm(arr-30),tm(arr+60)]),w:'Zuerst die Stunden, dann die Minuten dazu.'}}
+  var gap=[35,45,50,55,65,70,80][Math.floor(r()*7)];return{q:'Du landest um '+tm(dep)+' und dein Anschlussflug geht um '+tm(dep+gap)+'. Wie viele Minuten hast du Zeit?',a:gap+' Min',o:opts3(r,gap+' Min',[(gap+10)+' Min',(gap-10)+' Min',(gap+20)+' Min']),w:'Von '+tm(dep)+' bis '+tm(dep+gap)+' sind es '+gap+' Minuten.'}},
+ code:function(r,lv,i){var p=AIRP[Math.floor(r()*AIRP.length)],rev=(i+lv)%2;var others=shuffle(r,AIRP.filter(function(x){return x!==p}));
+  if(rev)return{q:'Welcher Code gehört zum Flughafen '+p[1]+'?',a:p[0],o:shuffle(r,[p[0],others[0][0],others[1][0]]),w:p[0]+' = '+p[1]+'.'};
+  return{q:'Welche Stadt gehört zum Code '+p[0]+'?',a:p[1],o:shuffle(r,[p[1],others[0][1],others[1][1]]),w:p[0]+' = '+p[1]+'.'}},
+ waage:function(r,lv,i){var hf=lv>2,K=function(){var v=8+Math.floor(r()*16);return hf?v+(r()<.5?.5:0):v},k1=K(),k2=3+Math.floor(r()*8)+(hf&&r()<.5?.5:0),lim=hf?23:Math.max(k1+k2+2,23);var kind=i%2;
+  if(kind===0){var left=lim-k1-k2;return{q:'Limit '+fmt(lim)+' kg. Dein Koffer wiegt '+fmt(k1)+' kg und der Rucksack '+fmt(k2)+' kg. Wie viel Platz bleibt noch?',a:fmt(left)+' kg',o:opts3(r,fmt(left)+' kg',[fmt(left+1)+' kg',fmt(left-1)+' kg',fmt(left+2)+' kg']),w:'Zusammen '+fmt(k1+k2)+' kg. Limit minus Gewicht = '+fmt(left)+' kg.'}}
+  var n=2+Math.floor(r()*3),e=Math.floor(r()*4)+1;return{q:'Ein Koffer wiegt '+(e*3)+' kg. Wie schwer sind '+n+' solche Koffer zusammen?',a:(e*3*n)+' kg',o:opts3(r,(e*3*n)+' kg',[(e*3*n+3)+' kg',(e*3*n-3)+' kg',(e*3*(n+1))+' kg']),w:n+' mal '+(e*3)+' kg = '+(e*3*n)+' kg.'}},
+ kompass:function(r,lv,i){var d=CITY[Math.floor(r()*CITY.length)],s=d.stops,a=s[Math.floor(r()*s.length)],b;var tries=0;do{b=s[Math.floor(r()*s.length)];tries++}while((b===a||kmd(a,b)<.25)&&tries<30);
+  var dirs=['Norden','Nordosten','Osten','Südosten','Süden','Südwesten','Westen','Nordwesten'];var br=bearing(a,b),k=Math.round(br/45)%8;var an=a.n.replace(/\s*\(.*?\)/g,''),bn=b.n.replace(/\s*\(.*?\)/g,'');
+  if((lv+i)%3===2){var m=Math.round(kmd(a,b)*1000/50)*50;return{q:'Von '+an+' nach '+bn+': Wie weit ist es ungefähr in Luftlinie?',a:m+' m',o:opts3(r,m+' m',[Math.round(m*1.8/50)*50+' m',Math.max(50,Math.round(m*.5/50)*50)+' m',Math.round(m*2.6/50)*50+' m']),w:'Gerade Linie zwischen den beiden Orten: etwa '+m+' Meter.'}}
+  return{q:'Du stehst bei '+an+'. In welcher Richtung liegt '+bn+'?',a:dirs[k],o:shuffle(r,[dirs[k],dirs[(k+4)%8],dirs[(k+2)%8]]),w:'Von '+an+' aus liegt '+bn+' im '+dirs[k].replace(/n$/,'')+'.'}}
+};
+var AUF=null;
+ROUTES.auf=function(a){if(a[0]&&AUF&&AUF.type===a[0])return roundHtml();
+ var cards=MISSIONS.map(function(m){var st=S.auf.stars[m[0]]||0,rd=S.auf.rounds[m[0]]||0;return '<button class="tile" style="background:'+m[3]+'" data-act="aufStart" data-a="'+m[0]+'"><div class="mono" style="color:#13324A">Auftrag</div><h3 class="disp" style="font-size:32px">'+m[1]+'</h3><span>'+m[2]+'</span><span class="mono" style="color:#13324A">Stufe '+(rd+1)+' · beste Runde '+'★'.repeat(st)+'☆'.repeat(3-st)+'</span></button>'}).join('');
+ return topbar('KAPITÄNS-AUFTRÄGE','Aufträge','/','<div class="mono" style="text-align:right">'+starsTotal()+'<br>Sterne</div>')+'<p class="muted" style="margin-bottom:14px">Jede Runde hat 5 Fragen. Die Aufgaben werden mit jeder Stufe etwas schwerer und sind jedes Mal neu. Es gibt nie ein Ende.</p><div class="grid2">'+cards+'</div>'};
+ACT.aufStart=function(t){var lv=(S.auf.rounds[t]||0)+1,r=rnd(Date.now()%100000+lv*97),qs=[];for(var i=0;i<5;i++){var q=GEN[t](r,lv,i);qs.push(q)}AUF={type:t,qs:qs,i:0,score:0,done:false,lv:lv,sel:null};location.hash='#/auf/'+t;if(location.hash==='#/auf/'+t)rerender()};
+function roundHtml(){var m=MISSIONS.filter(function(x){return x[0]===AUF.type})[0];
+ if(AUF.done){var st=AUF.score>=5?3:AUF.score>=4?2:AUF.score>=3?1:0;return topbar('AUFTRAG GESCHAFFT',m[1],'/auf')+'<div class="card" style="text-align:center;max-width:520px;margin:20px auto"><div class="disp" style="font-size:80px;color:#ECD06F">'+'★'.repeat(st)+'<span style="color:#D9D6CC">'+'★'.repeat(3-st)+'</span></div><h2 class="disp" style="font-size:40px">'+AUF.score+' von 5</h2><p class="muted">'+esc(S.names.mascot)+' sagt: '+(st>=2?'Tolle Arbeit, Kapitän!':'Jede Runde macht dich besser.')+'</p><div class="row" style="justify-content:center;margin-top:14px"><button class="btn d" data-act="aufStart" data-a="'+AUF.type+'">Nächste Stufe</button><a class="btn g" style="display:inline-grid;place-items:center;line-height:50px" href="#/auf">Zur Übersicht</a></div></div>'}
+ var q=AUF.qs[AUF.i];return topbar('STUFE '+AUF.lv+' · FRAGE '+(AUF.i+1)+' VON 5',m[1],'/auf')+'<div class="bar" style="margin-bottom:16px"><i style="width:'+(AUF.i/5*100)+'%"></i></div><div class="card" style="max-width:640px;margin:0 auto"><h2 style="font-size:24px;line-height:1.3">'+esc(q.q)+'</h2><div style="margin-top:12px">'+q.o.map(function(o,k){var cls='';if(AUF.sel!=null){cls=o===q.a?' ok':(k===AUF.sel?' no':'')}return '<button class="opt'+cls+'" data-act="aufAns" data-a="'+k+'">'+esc(o)+'</button>'}).join('')+'</div>'+(AUF.sel!=null?'<p class="muted"><b>'+(q.o[AUF.sel]===q.a?'Richtig! ':'Fast. ')+'</b>'+esc(q.w)+'</p><button class="btn d" data-act="aufNext">'+(AUF.i<4?'Weiter':'Fertig')+'</button>':'')+'</div>'};
+ACT.aufAns=function(k){if(AUF.sel!=null)return;AUF.sel=+k;if(AUF.qs[AUF.i].o[AUF.sel]===AUF.qs[AUF.i].a)AUF.score++;rerender()};
+ACT.aufNext=function(){AUF.sel=null;if(AUF.i<4)AUF.i++;else{AUF.done=true;var st=AUF.score>=5?3:AUF.score>=4?2:AUF.score>=3?1:0;S.auf.stars[AUF.type]=Math.max(S.auf.stars[AUF.type]||0,st);S.auf.rounds[AUF.type]=(S.auf.rounds[AUF.type]||0)+1;save()}rerender()};
+
+</script></body></html>
