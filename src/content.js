@@ -5,7 +5,7 @@ var WINDOWS=[
  {id:'auf',t:'Kapitän Muya',s:'Flughafen-Missionen',c:'#FF6A52',ic:'M4 7h16v10H4zM14 7v10M7 11h4'},
  {id:'wie',t:'Wie fliegt das?',s:'8 Kapitel zum Ausprobieren',c:'#B5D5FF',ic:'M4 16c4-1 6-5 8-9 2 4 4 8 8 9M4 20h16'},
  {id:'wes',t:'Schatzsuche',s:'Schätze an jedem Ort',c:'#B1EAC4',ic:'M12 21s-7-5-7-11a7 7 0 0114 0c0 6-7 11-7 11zM12 8v4'},
- {id:'rek',t:'Weltrekorde',s:'Schätzen & vergleichen',c:'#FFB288',ic:'M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z'},
+ {id:'rek',t:'Weltrekorde',s:'Echte Rekorde & Quiz',c:'#FFB288',ic:'M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z'},
  {id:'tag',t:'Reise-Tagebuch',s:'Deine Erinnerungen',c:'#2779A7',ic:'M5 4h12a2 2 0 012 2v14H7a2 2 0 01-2-2V4zM9 8h6M9 12h6'}
 ];
 function mascotName(){return (typeof S!=='undefined'&&S&&S.names&&S.names.mascot)||'Muya'}

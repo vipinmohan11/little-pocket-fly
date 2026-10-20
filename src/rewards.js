@@ -43,6 +43,8 @@ function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n
  mkStamp('w-know','wes','Forscher','15 Wesen erforscht',IC.bulb,Y,function(){return Object.keys(S.wes.known).length},15);
  mkStamp('w-30','wes','Stadt-Entdecker','30 Wesen entdeckt',IC.map,C,function(){return Object.keys(S.wes.found).length},30);
  /* Rekorde */
+ mkStamp('r-read','rek','Rekord-Kenner','20 echte Rekorde gelesen',IC.book,T,function(){return Object.keys(S.rek.seen||{}).length},20);
+ mkStamp('r-all','rek','Rekord-Lexikon','Alle echten Rekorde gelesen',IC.trophy,Y,function(){return Object.keys(S.rek.seen||{}).length},function(){return RECS.length});
  mkStamp('r-cats','rek','Rekordjäger','Alle 4 Rekord-Arten erkundet',IC.trophy,P,function(){return Object.keys(S.rek.cats||{}).length},4);
  mkStamp('r-10','rek','Schätz-Profi','10 Duelle richtig geschätzt',IC.star,Y,function(){return S.rek.right},10);
  mkStamp('r-streak','rek','Volltreffer-Serie','5 richtige Schätzungen am Stück',IC.check,C,function(){return S.rek.best},5);
