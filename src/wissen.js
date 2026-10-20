@@ -158,14 +158,14 @@ var WISSEN=[
  ['Die Nadel','Eine Kompassnadel ist ein kleiner Magnet. Egal wie du dich drehst: Sie zeigt immer nach Norden. Dreh das Flugzeug und beobachte sie!',{h:0}],
  ['Himmelsrichtungen','Norden, Osten, Süden, Westen. Merksatz im Uhrzeigersinn: „Nie Ohne Seife Waschen“.',{h:90}],
  ['Grad','Piloten sagen Richtungen in Grad: Norden 0°, Osten 90°, Süden 180°, Westen 270°. Ein ganzer Kreis hat 360°.',{h:180}],
- ['Kurs Barcelona','Von Hannover liegt Barcelona im Südwesten, ungefähr bei 218°. Luftlinie rund 1 370 km.',{h:218}],
- ['Gebogener Weg','Die Erde ist rund. Der kürzeste Weg ist ein Bogen, der Großkreis. Auf flachen Karten sieht er gebogen aus.',{h:218}],
- ['Lotsen und Wind','Fluglotsen halten Abstand zwischen den Flugzeugen und sprechen Englisch. In großer Höhe weht der Jetstream meist von West nach Ost.',{h:218}]],
+ ['Kurs Barcelona','Von Hannover liegt Barcelona im Südwesten, ungefähr bei 208°. Luftlinie rund 1 370 km.',{h:208}],
+ ['Gebogener Weg','Die Erde ist rund. Der kürzeste Weg ist ein Bogen, der Großkreis. Auf flachen Karten sieht er gebogen aus.',{h:208}],
+ ['Lotsen und Wind','Fluglotsen halten Abstand zwischen den Flugzeugen und sprechen Englisch. In großer Höhe weht der Jetstream meist von West nach Ost.',{h:208}]],
  facts:['HAJ ist der Code für Hannover, BCN für Barcelona.','Flugzeuge in Gegenrichtung fliegen auf unterschiedlichen Höhen.','Heute navigieren Flugzeuge mit Satelliten, einen Magnetkompass haben sie trotzdem an Bord.'],
  qs:[
  {t:'goal',q:'Drehe das Flugzeug nach Osten.',chk:'cEast',w:'Osten = 90°.'},
  {t:'goal',q:'Drehe das Flugzeug nach Süden.',chk:'cSouth',w:'Süden = 180°.'},
- {t:'goal',q:'Stelle Kurs auf Barcelona ein.',chk:'cBcn',w:'Südwest, etwa 218°.'},
+ {t:'goal',q:'Stelle Kurs auf Barcelona ein.',chk:'cBcn',w:'Südwest, etwa 208°.'},
  {t:'mc',q:'Wohin zeigt eine Kompassnadel?',o:['Immer nach Norden','Immer nach vorne','Zur Sonne'],a:0,w:'Sie ist ein Magnet und richtet sich nach Norden aus.'},
  {t:'mc',q:'Wie viel Grad ist Westen?',o:['90°','180°','270°'],a:2,w:'N 0°, O 90°, S 180°, W 270°.'},
  {t:'pred',q:'Du drehst das Flugzeug nach Osten. Wohin zeigt die Nadel?',o:['Immer noch nach Norden','Nach Osten','Nach Süden'],a:0,set:{h:90},w:'Die Nadel bleibt im Norden, nur das Flugzeug dreht sich.'},
@@ -174,4 +174,5 @@ var WISSEN=[
  {t:'tf',q:'Auf einer flachen Karte sieht der kürzeste Flugweg manchmal gebogen aus.',a:true,w:'Wegen der runden Erde.'},
  {t:'match',q:'Welche Gradzahl gehört zu welcher Richtung?',p:[['Norden','0°'],['Osten','90°'],['Süden','180°'],['Westen','270°']],w:'Kompass-Profi!'}]}
 ];
-WISSEN.forEach(function(w){w.qs.forEach(function(q,i){q.id=w.id+'-'+i})});
+function qhash(q){var s=JSON.stringify([q.t,q.q,q.p,q.o,q.w]),h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return h.toString(36)}
+WISSEN.forEach(function(w){w.qs.forEach(function(q,i){q.lid=w.id+'-'+i;q.id=w.id+'-'+qhash(q)})});
