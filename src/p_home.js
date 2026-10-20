@@ -18,7 +18,7 @@ function packItems(person){var p=S.pack,r=p.allRegions?null:p.region;person=pers
  if(person!=='alle')return packFor(person,r);
  var seen={},res=[];['kind','mama','papa','haus'].forEach(function(x){packFor(x,r).forEach(function(i){if(seen[i.key])return;seen[i.key]=1;res.push(i)})});return res}
 function packStats(person){var it=packItems(person||'alle').filter(function(i){return !S.pack.na[i.key]}),d=it.filter(function(i){return S.pack.done[i.key]}).length;return{n:it.length,d:d}}
-function dayProgress(i){var dates=tripDates(),d=dates[i];var m=S.mem.filter(function(x){return x.date===d}).length;var c=CITY[i];var v=c?c.stops.filter(function(s){return S.stadt.done[s.id]}).length:0;return Math.min(1,(m*1.5+v)/8)}
+function dayProgress(i){var dates=tripDates(),d=dates[i];var m=S.mem.filter(function(x){return x.date===d}).length;var c=CT(i);var v=c?c.stops.filter(function(s){return S.stadt.done[s.id]}).length:0;return Math.min(1,(m*1.5+v)/8)}
 
 ROUTES.home=function(){var ps=packStats('alle'),ti=tripInfo(),n=earnedCount(),rk=rankOf(n);
  var win=WINDOWS.map(function(w,i){var s=winState(w.id),pa=s!=='open';var goal=nextGoals(1,w.id)[0];
@@ -95,7 +95,7 @@ ACT.predTap=function(v){var x=v.split('|'),p=S.pred2[x[0]]||{};if(p.p!=null&&pre
 ACT.predReal=function(v){var x=v.split('|');S.pred2[x[0]].r=+x[1];save();rerender()};
 
 function homeStatus(){var td=tripDayOf(today());function bar(l,v,of,h){var p=of?v/of:0;return '<a href="'+h+'" class="row" style="gap:10px;padding:5px 0"><span style="width:150px;font-size:14px;font-weight:700">'+l+'</span><div class="bar" style="flex:1;background:rgba(255,255,255,.14)"><i style="width:'+(p*100)+'%;background:'+(p>=1?'#49C5B6':'#ECD06F')+'"></i></div><span class="lab" style="color:#CFE0EA;width:56px;text-align:right">'+v+'/'+of+'</span></a>'}
- if(td>-1&&CITY[td]){var d=CITY[td],v=d.stops.filter(function(s){return S.stadt.done[s.id]}).length,m=memsOn(today()).length;
-  return '<div style="margin-top:14px"><span class="lab">Heute · Tag '+(td+1)+'</span><div style="font-size:19px;font-weight:800;margin:4px 0 6px">'+esc(d.title)+'</div>'+bar('Orte besucht',v,d.stops.length,'#/stadt')+bar('Erinnerungen',Math.min(3,m),3,'#/tag')+bar('Such-Liste',d.spot.filter(function(_,k){return S.wes.spot[d.id+'-'+k]}).length,d.spot.length,'#/stadt')+'</div>'}
+ if(td>-1&&CT(td)){var d=CT(td),v=d.stops.filter(function(s){return S.stadt.done[s.id]}).length,m=memsOn(today()).length;
+  return '<div style="margin-top:14px"><span class="lab">Heute · Tag '+(td+1)+'</span><div style="font-size:19px;font-weight:800;margin:4px 0 6px">'+esc(d.title)+'</div>'+bar('Orte besucht',v,stopsAct(d).length,'#/stadt')+bar('Erinnerungen',Math.min(3,m),3,'#/tag')+bar('Such-Liste',d.spot.filter(function(_,k){return S.wes.spot[d.id+'-'+k]}).length,d.spot.length,'#/stadt')+'</div>'}
  var ps=packStats('alle'),bd=Object.keys(S.brief.done).length,bt=BRIEFING.reduce(function(a,b){return a+b[4].length},0),pr=Object.keys(S.pred2).filter(function(k){return S.pred2[k].p!=null}).length;
  return '<div style="margin-top:14px"><span class="lab">Startklar?</span>'+bar('Packliste',ps.d,ps.n,'#/vor')+bar('Briefing',bd,bt,'#/vor/brief')+bar('Vorhersagen',pr,VORHER2.length,'#/vor/vorher')+'</div>'}

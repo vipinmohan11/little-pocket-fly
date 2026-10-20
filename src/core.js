@@ -15,7 +15,7 @@ var DEFAULTS={
  wes:{found:{},known:{},spot:{},cat:'gaudi'},
  rek:{cat:'Höhe',a:null,b:null,n:0,right:0,streak:0,best:0},
  diary:{},mem:[],
- stadt:{done:{},day:0,showX:true,zoom:1.6,osm:false},
+ stadt:{done:{},order:{},skip:{},add:{},day:0,showX:true,zoom:1.6,osm:false},
  earned:{},seen:{}
 };
 var S;
