@@ -3,7 +3,7 @@ var APP_VERSION='1.1.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  v:6,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
- names:{mascot:'Muya',wesen:'Schatzsuche',kind:''},ts:1,
+ names:{mascot:'Muya',wesen:'Schatzsuche',kind:'',people:[]},ts:1,
  trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
  archive:[],
  pack:{done:{},na:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
