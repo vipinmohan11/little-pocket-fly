@@ -141,30 +141,30 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .scr.free{height:auto;min-height:100vh;min-height:100dvh;overflow:visible}
 
 /* ===== Cockpit (Wie fliegt das?) ===== */
-.ckpt{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:10px;height:100%}
-.ck-top{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;min-height:0}
-.ck-wind{position:relative;min-height:0;background:linear-gradient(180deg,#1B3247,#0F2233);border-radius:48px 48px 18px 18px;padding:12px;box-shadow:inset 0 0 0 3px #2A4A66,0 8px 22px rgba(15,34,51,.28)}
+.ckpt{display:flex;flex-direction:column;gap:10px;height:100%}
+.ck-gauges{display:flex;align-items:center;gap:6px;justify-content:space-between;background:linear-gradient(180deg,#1E3347,#12253A);border-radius:18px;padding:6px 14px;flex:none;box-shadow:inset 0 2px 0 #2E4C68}
+.ck-hint{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;color:#9FB6C8;text-transform:uppercase;writing-mode:horizontal-tb;margin-right:6px}
+.ck-g{display:flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;border-radius:14px;font-weight:800;font-size:12.5px;color:#CFE0EA;flex:1;min-width:0;justify-content:center}
+.ck-g svg{width:42px;height:42px;flex:none}
+.ck-g span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:.06em}
+.ck-g.on{background:#ECD06F;color:#13324A}
+.ck-g.on svg{filter:drop-shadow(0 0 4px rgba(19,50,74,.4))}
+.ck-top{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;flex:1;min-height:0}
+.ck-left{display:flex;flex-direction:column;gap:10px;min-height:0}
+.ck-wind{position:relative;flex:1;min-height:0;background:linear-gradient(180deg,#1B3247,#0F2233);border-radius:44px 44px 16px 16px;padding:12px;box-shadow:inset 0 0 0 3px #2A4A66,0 8px 22px rgba(15,34,51,.28)}
 .ck-wind #stage{box-shadow:inset 0 0 0 2px #0B1C2B}
 .ck-scr{position:absolute;width:8px;height:8px;border-radius:50%;background:#5E7A92;box-shadow:inset -1px -1px 0 #2A445C;z-index:2}
-.ck-check{position:relative;display:flex;flex-direction:column;gap:8px;min-height:0;background:linear-gradient(180deg,#C9A574,#B58B57);border-radius:18px;padding:22px 10px 10px;box-shadow:0 8px 22px rgba(15,34,51,.2)}
-.ck-clip{position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:linear-gradient(#E3E7EA,#9AA3A8);border-radius:9px;border:2px solid #13324A;z-index:2}
-.ck-radio{background:#13263A;color:#E8F1F6;border-radius:12px;padding:8px 10px;font-family:inherit}
-.ck-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;background:linear-gradient(180deg,#1E3347,#12253A);border-radius:22px;padding:10px 16px;box-shadow:inset 0 2px 0 #2E4C68,0 8px 22px rgba(15,34,51,.25)}
-.ck-cap{display:flex;gap:10px;align-items:center;min-width:0}
+.ck-badge{position:absolute;top:-11px;left:40px;z-index:3;background:#ECD06F;color:#13324A;font-weight:800;font-size:12px;border-radius:12px;padding:3px 10px;border:2px solid #13324A}
+.ck-panel{position:relative;flex:none;display:flex;gap:10px;align-items:center;background:linear-gradient(180deg,#1E3347,#12253A);border-radius:20px;padding:12px 14px 10px;box-shadow:inset 0 2px 0 #2E4C68}
 .ck-bubble{position:relative;flex:1;min-width:0;background:#FFFDF8;color:#13324A;border-radius:16px;padding:8px 12px;display:flex;flex-direction:column;gap:6px}
-.ck-bubble:before{content:"";position:absolute;left:-9px;top:24px;border:9px solid transparent;border-right-color:#FFFDF8;border-left:0}
-.ck-switches{display:flex;gap:6px;flex-wrap:wrap}
-.ck-switches .chip{height:28px;padding:0 10px;font-size:12px;background:#E8EEF2;border-color:#C9D4DC;gap:6px}
-.ck-switches .chip.on{background:#13324A;color:#fff;border-color:#13324A}
-.ck-switches .chip.ck-next{background:#ECD06F;border-color:#ECD06F;color:#13324A;font-weight:800}
-.ck-led{width:8px;height:8px;border-radius:50%;background:#9AA3A8;display:inline-block}
-.ck-switches .chip.on .ck-led{background:#7FD39E;box-shadow:0 0 6px #7FD39E}
-.ck-gauges{display:grid;grid-template-columns:repeat(8,60px);gap:8px}
-.ck-g{display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:#9FB6C8}
-.ck-g.on{color:#ECD06F}
-.ck-g.on svg{filter:drop-shadow(0 0 6px rgba(236,208,111,.55))}
-@media (max-width:1180px){.ck-gauges{grid-template-columns:repeat(4,52px);gap:4px 8px}.ck-g svg{width:46px;height:46px}.ck-top{grid-template-columns:minmax(0,1fr) 310px}}
-
-/* calm selection: navy frame, lifted card, magnifier badge (no orange glow) */
-.sel{position:relative;border:2.5px solid #13324A!important;transform:translateY(-2px);box-shadow:0 8px 18px rgba(19,50,74,.16)!important;transition:transform .15s}
-.sel::after{content:"";position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:#13324A url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'%3E%3Ccircle cx='10' cy='10' r='6'/%3E%3Cpath d='M15 15l5 5'/%3E%3C/svg%3E") center/13px no-repeat;box-shadow:0 2px 6px rgba(19,50,74,.25)}
+.ck-bubble:before{content:"";position:absolute;left:-9px;top:22px;border:9px solid transparent;border-right-color:#FFFDF8;border-left:0}
+.ck-switches{display:flex;gap:8px;align-items:center}
+.ck-dots{display:flex;gap:5px;flex-wrap:wrap}
+.ck-dot{width:30px;height:30px;border-radius:50%;background:#E8EEF2;border:1.5px solid #C9D4DC;font-weight:800;font-size:13px}
+.ck-dot.done{background:#B1EAC4;border-color:#7FD39E}
+.ck-dot.on{background:#13324A;color:#fff;border-color:#13324A}
+.ck-go{height:44px;padding:0 22px;font-size:16px}
+.ck-check{position:relative;display:flex;flex-direction:column;gap:8px;min-height:0;background:linear-gradient(180deg,#C9A574,#B58B57);border-radius:18px;padding:22px 10px 10px;box-shadow:0 8px 22px rgba(15,34,51,.2)}
+.ck-clip{position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:110px;height:24px;background:linear-gradient(#E3E7EA,#9AA3A8);border-radius:9px;border:2px solid #13324A;z-index:2}
+.ck-radio{background:#13263A;color:#E8F1F6;border-radius:12px;padding:8px 10px}
+@media (max-width:1180px){.ck-g{flex-direction:column;gap:0;padding:3px 4px}.ck-g svg{width:34px;height:34px}.ck-g span{font-size:9px}.ck-hint{display:none}.ck-top{grid-template-columns:minmax(0,1fr) 310px}}
