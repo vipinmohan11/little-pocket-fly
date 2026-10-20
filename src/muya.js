@@ -67,13 +67,13 @@ var BS={find:[1,'u'],explore:[1,'u'],chalok:[1,'u'],stop:[1,'u'],pass:[2,'u'],fo
 function bsGain(k,uid){var b=BS[k];if(!b)return;var m=S.mu,D=muDay(),n=b[0];
  if(b[1]==='u'){if(uid==null)return;var key=k+':'+uid;if(m.bbk[key])return;m.bbk[key]=1}
  else{var cap=b[1]==='d1'?1:2;D.b=D.b||{};if((D.b[k]||0)>=cap)return;D.b[k]=(D.b[k]||0)+1}
- m.bb=(m.bb||0)+n;bchip(n)}
+ m.bb=(m.bb||0)+n;var Dd=muDay();Dd.bbn=(Dd.bbn||0)+n;bchip(n)}
 function bchip(n){var h=gbox();while(h.children.length>=3)h.removeChild(h.firstChild);var e=document.createElement('div');e.style.cssText='display:flex;align-items:center;gap:6px;background:#2779A7;color:#fff;border-radius:18px;padding:5px 12px 5px 8px;font-weight:800;font-size:14px;animation:pop .35s both;box-shadow:0 4px 14px rgba(19,50,74,.25)';e.innerHTML=brickIcon(20)+'+'+n+' Baustein'+(n>1?'e':'');h.appendChild(e);setTimeout(function(){e.style.transition='opacity .4s';e.style.opacity=0;setTimeout(function(){e.remove()},420)},1500)}
 function brickIcon(sz){return '<svg viewBox="0 0 24 24" width="'+(sz||22)+'" height="'+(sz||22)+'" style="flex:none"><rect x="2" y="9" width="20" height="11" rx="2" fill="#FF9E8C" stroke="#13324A" stroke-width="1.7"/><rect x="5" y="5" width="4" height="4" rx="1" fill="#FF9E8C" stroke="#13324A" stroke-width="1.5"/><rect x="15" y="5" width="4" height="4" rx="1" fill="#FF9E8C" stroke="#13324A" stroke-width="1.5"/></svg>'}
 function muDay(){var m=S.mu,d=today();return m.days[d]||(m.days[d]={c:{},done:{}})}
 function ev(k,x,uid){var e=EVT[k];if(!e||!S.mu)return;bsGain(k,uid);var m=S.mu,x1=x||1,n=e[1]*x1,D=muDay();m.cnt[k]=(m.cnt[k]||0)+x1;D.c[k]=(D.c[k]||0)+x1;if(k==='chalok'){m.cnt.chal=(m.cnt.chal||0)+1;D.c.chal=(D.c.chal||0)+1}
  var w=n;if(n<1){m.frac=(m.frac||0)+n;w=Math.floor(m.frac+1e-9);m.frac-=w}
- if(w>0){m.mat[e[0]]=(m.mat[e[0]]||0)+w;m.life[e[0]]=(m.life[e[0]]||0)+w;chip(e[0],w);muEvo()}
+ if(w>0){D.m=D.m||{};D.m[e[0]]=(D.m[e[0]]||0)+w;m.mat[e[0]]=(m.mat[e[0]]||0)+w;m.life[e[0]]=(m.life[e[0]]||0)+w;chip(e[0],w);muEvo()}
  save()}
 function gbox(){var h=document.getElementById('gainbox');if(!h){h=document.createElement('div');h.id='gainbox';h.style.cssText='position:fixed;left:16px;bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:60;pointer-events:none';document.body.appendChild(h)}return h}
 function chip(mk,n){var h=gbox();
@@ -103,7 +103,7 @@ function questsToday(){var d=today(),inTrip=tripDayOf(d)>-1,pre=daysBetween(d,S.
 function questState(){var D=muDay();return questsToday().map(function(q,i){var n=Math.min(q[1],D.c[q[0]]||0);return{k:q[0],g:q[1],n:n,t:q[2],go:q[3],ok:n>=q[1],claimed:!!D.done[q[0]]}})}
 ACT.muClaim=function(k){var D=muDay(),q=questState().filter(function(x){return x.k===k})[0];if(!q||!q.ok||q.claimed)return;D.done[k]=1;S.mu.qdone=(S.mu.qdone||0)+1;bsGain0('qc:'+today()+k,1);
  var got={},n=3;for(var i=0;i<n;i++){var mk=MATS[Math.floor(Math.random()*MATS.length)],a=1+Math.floor(Math.random()*2);got[mk]=(got[mk]||0)+a}
- Object.keys(got).forEach(function(mk){S.mu.mat[mk]=(S.mu.mat[mk]||0)+got[mk];S.mu.life[mk]=(S.mu.life[mk]||0)+got[mk]});
+ Object.keys(got).forEach(function(mk){D.m=D.m||{};D.m[mk]=(D.m[mk]||0)+got[mk];S.mu.mat[mk]=(S.mu.mat[mk]||0)+got[mk];S.mu.life[mk]=(S.mu.life[mk]||0)+got[mk]});
  var all=questState().every(function(x){return x.claimed});if(all&&!D.bonus){D.bonus=1;S.mu.free=(S.mu.free||0)+1}
  muEvo();save();checkRewards&&checkRewards();
  sheet('<div style="text-align:center;padding:6px 10px"><span class="lab">Kiste geöffnet</span><div style="display:flex;gap:12px;justify-content:center;margin:16px 0">'+Object.keys(got).map(function(mk){return '<div style="animation:pop .5s both;display:flex;flex-direction:column;align-items:center;gap:4px">'+matIcon(mk,48)+'<b>+'+got[mk]+'</b><span class="lab">'+MAT[mk].n+'</span></div>'}).join('')+'</div>'+(all?'<p style="font-weight:800;color:#2779A7;margin-bottom:12px">Alle drei Aufträge geschafft! Du bekommst ein Überraschungs-Ei.</p>':'')+'<button class="b p" data-act="closeSheetGo">Super!</button></div>');rerender()};
@@ -133,7 +133,7 @@ function questHtml(qs){var D=muDay(),all=qs.every(function(q){return q.claimed})
 
 function muBuddyChip(){var id=S.mu.buddy,sp=id&&SPEC_BY[id];return '<span style="width:30px;height:30px;display:inline-block">'+(sp?cre(sp,petStage(id)):cre(SPEC[0],1,1))+'</span>'}
 
-function bsGain0(key,n){var m=S.mu;if(m.bbk[key])return;m.bbk[key]=1;m.bb=(m.bb||0)+n;bchip(n)}
+function bsGain0(key,n){var m=S.mu;if(m.bbk[key])return;m.bbk[key]=1;m.bb=(m.bb||0)+n;var Dd=muDay();Dd.bbn=(Dd.bbn||0)+n;bchip(n)}
 
 /* ---- Muyas Forscherbasis: Bausteine werden zu Gebäuden ---- */
 var BLD=[{id:'bank',n:'Werkbank',c:2,x:95,h:'Hier tüftelt Muya an Papierfliegern. Die erste Werkbank ist schnell gebaut.'},{id:'turm',n:'Beobachtungsturm',c:4,x:255,h:'Von hier oben sieht man Flugzeuge, Wolken und weit entfernte Städte.'},{id:'garten',n:'Mosaik-Garten',c:4,x:415,h:'Ein Garten aus bunten Mosaik-Scherben, wie in Barcelona.'},{id:'labor',n:'Wolkenlabor',c:6,x:575,h:'Hier werden Wolken, Wind und Wetter untersucht.'},{id:'haus',n:'Erinnerungshaus',c:6,x:735,h:'Ein gemütliches Haus für alle schönen Erinnerungen deiner Reise.'}];
