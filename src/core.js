@@ -2,8 +2,8 @@
 var APP_VERSION='1.1.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
- v:5,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
- names:{mascot:'Muya',wesen:'Wunderwesen',kind:''},ts:1,
+ v:6,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
+ names:{mascot:'Muya',wesen:'Schatzsuche',kind:''},ts:1,
  trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
  archive:[],
  pack:{done:{},na:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
@@ -12,7 +12,7 @@ var DEFAULTS={
  mu:{mat:{},life:{},pets:{},free:1,cnt:{},days:{},buddy:null,sel:null,tab:'dex',news:[],qdone:0,frac:0,bb:0,bbk:{},base:{}},
  auf:{stars:{},rounds:{},dest:{},board:{},bingo:{},sel:'pass'},
  wissen:{read:{},quiz:{},ok:{},seen:{}},
- wes:{found:{},known:{},spot:{},cat:'gaudi'},
+ wes:{found:{},known:{},spot:{},cat:'gaudi',slot:null,loc:null},
  rek:{cat:'Höhe',a:null,b:null,n:0,right:0,streak:0,best:0},
  diary:{},mem:[],
  stadt:{done:{},order:{},skip:{},add:{},day:0,showX:true,zoom:1.6,osm:false},
@@ -42,9 +42,10 @@ function migrate(){
   if(typeof WISSEN!=='undefined')WISSEN.forEach(function(w){w.qs.forEach(function(q){if(S.wissen.ok[q.lid])S.wissen.ok[q.id]=1;if(S.wissen.seen[q.lid]&&!S.wissen.seen[q.id])S.wissen.seen[q.id]=S.wissen.seen[q.lid]})});
   S.v=4}
  if(S.v<5){ // shared items per ChatGPT policy: some ids became shared, one became personal
-  var d5=S.pack.done||{},n5={};Object.keys(d5).forEach(function(k){var id=k.split('@')[0];if(k.indexOf('@')>0&&SHARED_PACK[id]){n5[id]=1}else if(k==='15'){n5['15@kind']=1}else n5[k]=1});S.pack.done=n5;S.v=5}}
+  var d5=S.pack.done||{},n5={};Object.keys(d5).forEach(function(k){var id=k.split('@')[0];if(k.indexOf('@')>0&&SHARED_PACK[id]){n5[id]=1}else if(k==='15'){n5['15@kind']=1}else n5[k]=1});S.pack.done=n5;S.v=5}
+ if(S.v<6){if(S.names&&S.names.wesen==='Wunderwesen')S.names.wesen='Schatzsuche';S.v=6}}
 function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
- S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=5;migrate()}
+ S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=6;migrate()}
 var saveT=null;
 window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{S=deepMerge(DEFAULTS,JSON.parse(e.newValue));migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
@@ -136,7 +137,7 @@ function initSW(){if(!('serviceWorker' in navigator))return;
  var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.reload()});
  if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){})}}
 function updHtml(st,info){
- if(st==='ready')return '<p style="font-weight:800">Neue Version bereit'+(info&&info.version?' ('+esc(info.version)+')':'')+'.</p>'+notes(info)+'<p class="muted" style="font-size:13px;margin-bottom:8px">Alle Daten bleiben erhalten: Gepacktes, Tagebuch, Stempel, Wunderwesen.</p><button class="b p" data-act="applyUpdate">Jetzt aktualisieren</button>';
+ if(st==='ready')return '<p style="font-weight:800">Neue Version bereit'+(info&&info.version?' ('+esc(info.version)+')':'')+'.</p>'+notes(info)+'<p class="muted" style="font-size:13px;margin-bottom:8px">Alle Daten bleiben erhalten: Gepacktes, Tagebuch, Stempel, Schätze.</p><button class="b p" data-act="applyUpdate">Jetzt aktualisieren</button>';
  if(st==='latest')return '<p style="font-weight:800">Du hast die neueste Version ('+APP_VERSION+').</p>';
  if(st==='offline')return '<p style="font-weight:800">Keine Verbindung. Mit WLAN erneut versuchen.</p>';
  if(st==='checking')return '<p class="muted">Suche nach Updates …</p>';

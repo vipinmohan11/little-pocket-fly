@@ -2,12 +2,15 @@
 var WINDOWS=[
  {id:'vor',t:'Vor dem Abflug',s:'Packliste & Briefing',c:'#ECD06F',ic:'M5 13l4 4L19 7'},
  {id:'hgr',t:'Tüftel-Hangar',s:'Papierflieger-Labor',c:'#49C5B6',ic:'M3 12l18-8-6 16-3-7-9-1z'},
- {id:'auf',t:'Kapitäns-Aufträge',s:'Flughafen-Missionen',c:'#FF6A52',ic:'M4 7h16v10H4zM14 7v10M7 11h4'},
+ {id:'auf',t:'Kapitän Muya',s:'Flughafen-Missionen',c:'#FF6A52',ic:'M4 7h16v10H4zM14 7v10M7 11h4'},
  {id:'wie',t:'Wie fliegt das?',s:'8 Kapitel zum Ausprobieren',c:'#B5D5FF',ic:'M4 16c4-1 6-5 8-9 2 4 4 8 8 9M4 20h16'},
- {id:'wes',t:'Wunderwesen',s:'Barcelona entdecken',c:'#B1EAC4',ic:'M12 21s-7-5-7-11a7 7 0 0114 0c0 6-7 11-7 11zM12 8v4'},
+ {id:'wes',t:'Schatzsuche',s:'Schätze an jedem Ort',c:'#B1EAC4',ic:'M12 21s-7-5-7-11a7 7 0 0114 0c0 6-7 11-7 11zM12 8v4'},
  {id:'rek',t:'Weltrekorde',s:'Schätzen & vergleichen',c:'#FFB288',ic:'M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z'},
  {id:'tag',t:'Reise-Tagebuch',s:'Deine Erinnerungen',c:'#2779A7',ic:'M5 4h12a2 2 0 012 2v14H7a2 2 0 01-2-2V4zM9 8h6M9 12h6'}
 ];
+function mascotName(){return (typeof S!=='undefined'&&S&&S.names&&S.names.mascot)||'Muya'}
+Object.defineProperty(WINDOWS[2],'t',{get:function(){return 'Kapitän '+mascotName()}});
+Object.defineProperty(WINDOWS[4],'t',{get:function(){return (typeof S!=='undefined'&&S&&S.names&&S.names.wesen)||'Schatzsuche'}});
 var ICON=function(p,col,w){return '<svg viewBox="0 0 24 24" fill="none" stroke="'+(col||'#13324A')+'" stroke-width="'+(w||2.4)+'" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>'};
 var IC={check:'M5 13l4 4L19 7',suitcase:'M8 7V5h8v2M4 7h16v12H4zM9 11v4M15 11v4',plane:'M2 13l20-6-4 6 4 6-20-6zM8 13l-2 5',ticket:'M3 7h18v4a2 2 0 000 4v4H3v-4a2 2 0 000-4zM14 7v12',star:'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z',
  book:'M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z',map:'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14',heart:'M12 20s-8-5-8-11a4 4 0 018-1 4 4 0 018 1c0 6-8 11-8 11z',
@@ -24,7 +27,7 @@ var BRIEFING=[
  ['Gate','Warten',IC.tower,'Auf der Anzeigetafel stehen Gate (zum Beispiel „B12“) und Boarding-Zeit. Beobachte die Flugzeuge: Wer lädt Koffer ein? Welche Fahrzeuge fahren herum?',['Gate-Nummer merken','Toilette vor dem Boarding','Kennzeichen am Flugzeug lesen (D-…)']],
  ['Boarding','Einsteigen',IC.plane,'Bordkarte zeigen, durch die Röhre oder über die Treppe ins Flugzeug. Die Crew begrüßt dich. Dein Platz steht auf der Bordkarte.',['Reihe und Buchstabe finden','Rucksack unter den Sitz','Anschnallen, sobald du sitzt']],
  ['Start','Abheben',IC.wing,'Das Licht wird gedimmt, die Triebwerke werden lauter, du wirst sanft in den Sitz gedrückt. Schlucken oder Gähnen hilft den Ohren.',['Tisch hochklappen','Fensterblende offen','Beschleunigung spüren']],
- ['Im Flug','Reiseflug',IC.cloud,'Etwa zwei Stunden geht es über Deutschland, Frankreich und die Pyrenäen. Wenn das Anschnallzeichen aus ist, darfst du kurz aufstehen.',['Wolkenarten erkennen','Pyrenäen suchen','Kapitäns-Aufträge lösen']],
+ ['Im Flug','Reiseflug',IC.cloud,'Etwa zwei Stunden geht es über Deutschland, Frankreich und die Pyrenäen. Wenn das Anschnallzeichen aus ist, darfst du kurz aufstehen.',['Wolkenarten erkennen','Pyrenäen suchen','Missionen vom Kapitän lösen']],
  ['Ankunft','Barcelona',IC.flag,'Beim Sinkflug knackt es wieder in den Ohren. Nach der Landung rollt das Flugzeug zum Gate. Dann holst du deinen Koffer vom Band. Benvinguts a Barcelona!',['Koffer am Band erkennen','Erstes katalanisches Wort lesen','Stadtplan öffnen']]
 ];
 /* Tipps vorher abgeben, nach der Reise auflösen. a = richtige Antwort (null = deine eigene Beobachtung) */
