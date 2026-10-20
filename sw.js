@@ -1,5 +1,5 @@
 /* Kofferforscher service worker. Only caches app files; the child's data lives in localStorage and is never touched. */
-const VERSION='1.3.1';
+const VERSION='1.3.2';
 const CACHE='kofferforscher-'+VERSION;
 const FILES=['./','index.html','manifest.webmanifest','assets/pano.svg','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png',
 'fonts/big-shoulders-display-latin-800-normal.woff2','fonts/big-shoulders-display-latin-900-normal.woff2','fonts/figtree-latin-500-normal.woff2','fonts/figtree-latin-700-normal.woff2','fonts/figtree-latin-800-normal.woff2','fonts/dm-mono-latin-500-normal.woff2','fonts/caveat-latin-700-normal.woff2'];

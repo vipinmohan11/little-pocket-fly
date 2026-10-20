@@ -211,3 +211,21 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
  .hg-bot>.pn svg{max-height:220px}
  .hg-bot>div:last-child{grid-template-columns:1fr 1fr!important}
 }
+/* v1.3.2: Startseite passt auch auf niedrige Tablet-Bildschirme */
+.win .bezel{width:min(100%,max(64px,calc((100vh - 480px)*.74)));margin:0 auto}
+@media (max-height:720px){
+ .home-hd h1{font-size:34px!important}
+ .win{gap:4px}.win .lb{font-size:13px}.win .st{font-size:9.5px;line-height:1.2}
+ .hm-grid{gap:12px!important;padding-top:4px!important}
+ .hm-dark{padding:14px 18px!important}.hm-dark .disp{line-height:1}
+ .hm-dark .bar{height:8px}
+ .hm-pn{gap:8px!important}
+}
+@media (max-height:600px){
+ .hm-dark{padding:10px 16px!important}
+ .hm-dark .hm-stat{margin-top:6px!important}
+ .hm-dark .hm-stat>div{margin:2px 0 2px!important;font-size:16px!important}
+ .hm-dark .row.hm-btn{margin-top:8px!important}
+ .hm-goals{display:none!important}
+}
+.mupic svg{height:100%;width:auto;max-width:100%}
