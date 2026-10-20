@@ -186,3 +186,28 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .ck-step-d{color:#13324A;padding:0 4px}.ck-step-d .ck-sub{color:#4A3A22}.ck-step-d .ck-num{background:#13324A;color:#ECD06F}
 .ck-step-l{color:#13324A;padding:0}.ck-step-l .ck-sub{color:#55677A}.ck-step-l .ck-num{background:#13324A;color:#ECD06F}
 .ck-badge{display:none}
+
+/* ===== Eltern-Seite: immer scrollbar ===== */
+.eltgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;padding-bottom:20px}
+/* Sicherheitsnetz: wenn etwas nicht passt, darf die Seite scrollen */
+.scr{overflow-y:auto}
+/* ===== Hochformat (Tablet gedreht): alles untereinander, Seite scrollt ===== */
+@media (orientation:portrait){
+ .scr{height:auto;min-height:100vh;min-height:100dvh;overflow:visible}
+ .scr>.bd{flex:none}
+ .hd{height:auto;min-height:68px;flex-wrap:wrap;padding:8px 0}
+ .bd [style*="grid-template-columns"]{grid-template-columns:1fr!important}
+ .bd [style*="height:100%"]:not(#stage *):not(#hstage *):not(#mapbox *):not(svg):not(#stage):not(#hstage){height:auto!important}
+ .bd .scroll,.bd [data-keep]{max-height:none}
+ .eltgrid,.hg-grid,.hg-bot,.ck-top{grid-template-columns:1fr!important;height:auto}
+ .ckpt{height:auto}
+ .ck-gauges{flex-wrap:wrap;justify-content:center}
+ .ck-wind{min-height:auto} #stage{height:520px!important;flex:none!important} #hstage{height:420px!important;flex:none!important}
+ .ck-check{min-height:520px}
+ #mapbox{position:relative!important;height:480px}
+ .windows{flex-wrap:wrap;justify-content:center}
+ .bd [style*="columns:4"]{columns:2 250px!important}
+ .hg-grid>.col:first-child svg{max-height:340px}
+ .hg-bot>.pn svg{max-height:220px}
+ .hg-bot>div:last-child{grid-template-columns:1fr 1fr!important}
+}
