@@ -41,6 +41,7 @@ function migrate(){
 function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
  S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=3;migrate()}
 var saveT=null;
+window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{S=deepMerge(DEFAULTS,JSON.parse(e.newValue));migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
 load();
 
