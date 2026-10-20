@@ -174,3 +174,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .hg-mini{width:52px;height:52px;flex:none}
 .hg-pm{width:34px;height:34px;font-size:17px}
 @media (max-width:1180px){.hg-grid{grid-template-columns:300px minmax(0,1fr);gap:10px}.hg-bot{grid-template-columns:220px minmax(0,1fr)}.hg-mini{width:36px;height:36px}.hg-mini svg{width:32px;height:32px}.hg-pm{width:30px;height:30px;font-size:15px}}
+
+.rcard{padding:10px 12px;display:flex;flex-direction:column;gap:8px;text-align:left;position:relative;transition:transform .15s}
+.rcard:active{transform:scale(.97)}
+.rpic{width:52px;height:48px;border-radius:12px;display:grid;place-items:center;flex:none}
+.rdet{display:flex;flex-direction:column;gap:10px;height:100%;animation:vin .25s ease both}
