@@ -133,7 +133,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 /* quiz */
 .qo{display:block;width:100%;text-align:left;padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:15px;margin:6px 0;transition:background .2s}
 .qo.ok{background:var(--mint);border-color:#7FD39E}
-.qo.no{background:#FFD5CC;border-color:#FFB3A3;animation:shake .3s}
+.qo.no{background:#FFF1CC;border-color:#ECD06F}
 .qo.dim{opacity:.5}
 .okmsg{font-size:14px;margin-top:6px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

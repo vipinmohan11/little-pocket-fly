@@ -137,7 +137,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 /* quiz */
 .qo{display:block;width:100%;text-align:left;padding:11px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:15px;margin:6px 0;transition:background .2s}
 .qo.ok{background:var(--mint);border-color:#7FD39E}
-.qo.no{background:#FFD5CC;border-color:#FFB3A3;animation:shake .3s}
+.qo.no{background:#FFF1CC;border-color:#ECD06F}
 .qo.dim{opacity:.5}
 .okmsg{font-size:14px;margin-top:6px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
@@ -635,6 +635,7 @@ var DEFAULTS={
  pack:{done:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
  brief:{done:{},step:0},pred:{},pred2:{},sealed:false,
  hgr:{best:0,log:[],cfg:{span:3,nose:1,angle:4,elev:1,power:3},model:'pfeil',fold:{},tab:'fold',sel:'nose',lim:{n:0,last:0,rest:0}},
+ mu:{mat:{},life:{},pets:{},free:1,cnt:{},days:{},buddy:null,sel:null,tab:'dex',news:[],qdone:0,frac:0},
  auf:{stars:{},rounds:{},dest:{},board:{},bingo:{},sel:'pass'},
  wissen:{read:{},quiz:{},ok:{},seen:{}},
  wes:{found:{},known:{},spot:{},cat:'gaudi'},
@@ -806,7 +807,7 @@ ROUTES.home=function(){var ps=packStats('alle'),ti=tripInfo(),n=earnedCount(),rk
  var track=dates.map(function(d,i){var p=dayProgress(i);return '<a href="#/tag/'+d+'" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="position:relative;width:40px;height:40px;display:grid;place-items:center">'+ring(p,40,i===td?'#FF6A52':'#49C5B6',5)+'<b style="position:absolute;font-size:14px">'+(i+1)+'</b></span><span class="lab" style="font-size:9.5px;'+(i===td?'color:#FF6A52':'')+'">'+(i===td?'heute':'Tag '+(i+1))+'</span></a>'}).join('');
  var goals=nextGoals(2).map(function(g){return '<div class="row" style="gap:10px"><span style="width:34px;flex:none">'+stampSvg(g.s,false)+'</span><span style="flex:1;min-width:0"><b style="font-size:14px">'+esc(g.s.t)+'</b><span class="muted" style="font-size:12px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(g.s.d)+'</span></span><span class="lab">'+stampProg(g.s)+'/'+g.s.of+'</span></div>'}).join('');
  var pct=rk.next?Math.round((n-RANKS.filter(function(r){return r[1]===rk.name})[0][0])/(rk.next[0]-RANKS.filter(function(r){return r[1]===rk.name})[0][0])*100):100;
- return '<div class="scr"><div class="hd"><div class="t"><span class="lab">'+esc(S.names.mascot)+' ist startklar</span><h1 class="disp" style="font-size:44px">Kofferforscher</h1></div><div class="sp"></div><a class="b" href="#/samm"><span style="width:26px">'+ICON(IC.book)+'</span>Reisepass · '+esc(rk.name)+'</a></div><div class="bd" style="display:flex;flex-direction:column;gap:18px">'+
+ return '<div class="scr"><div class="hd"><div class="t"><span class="lab">'+esc(S.names.mascot)+' ist startklar</span><h1 class="disp" style="font-size:44px">Kofferforscher</h1></div><div class="sp"></div><a class="b" href="#/freunde">'+muBuddyChip()+'Muya-Freunde · '+muOwned().length+'/'+SPEC.length+(questState().some(function(q){return q.ok&&!q.claimed})?' · Kiste bereit':'')+'</a><a class="b" href="#/samm"><span style="width:26px">'+ICON(IC.book)+'</span>Reisepass · '+esc(rk.name)+'</a></div><div class="bd" style="display:flex;flex-direction:column;gap:18px">'+
  '<div class="windows" id="windows">'+win+'</div>'+
  '<div style="display:grid;grid-template-columns:1.25fr 1fr;gap:16px;flex:1;min-height:0;padding-top:10px">'+
  '<div class="dark" style="padding:20px 22px;display:flex;flex-direction:column"><span class="ftab">NÄCHSTER HALT</span><div class="row" style="align-items:flex-start"><div><div class="disp" style="font-size:clamp(38px,5vw,60px)">'+esc(S.trip.name)+'</div><div class="lab" style="margin-top:6px">'+legs+'</div></div><div class="sp"></div><div style="text-align:right"><div class="disp" style="font-size:clamp(40px,5.5vw,68px);color:#ECD06F">'+ti.big+'</div><div class="lab" style="color:#CFE0EA">'+ti.u+'</div></div></div><div class="sp"></div>'+homeStatus()+
@@ -840,7 +841,7 @@ function listHtml(){var p=S.pack;var it=packItems();
  '<div style="columns:4 250px;column-gap:14px">'+(groups||'<p class="muted">Für diese Person gibt es hier nichts zu packen.</p>')+'</div>'}
 ACT.packWho=function(w){S.pack.person=w;save();rerender()};
 ACT.packFold=function(ci){S.pack['o'+ci]=!S.pack['o'+ci];save();rerender()};
-ACT.packTick=function(k,el){var on=!S.pack.done[k];if(on)S.pack.done[k]=1;else delete S.pack.done[k];save();
+ACT.packTick=function(k,el){var on=!S.pack.done[k];if(on){S.pack.done[k]=1;ev('pack')}else delete S.pack.done[k];save();
  /* update in place so the tick animation is visible, then refresh counters */
  el.classList.toggle('on',on);$('.bx',el).innerHTML=on?CHECK:'';setTimeout(rerender,on?380:0)};
 ACT.packAll=function(){S.pack.allRegions=!S.pack.allRegions;save();rerender()};
@@ -962,7 +963,7 @@ ACT.mapZoom=function(z){var box=$('#mapbox');var fx=box?(box.scrollLeft+box.clie
  S.stadt.zoom=Math.max(1,Math.min(4,S.stadt.zoom*(+z>0?1.35:1/1.35)));save();rerender();box=$('#mapbox');if(box){box.scrollLeft=fx*box.scrollWidth-box.clientWidth/2;box.scrollTop=fy*box.scrollHeight-box.clientHeight/2}};
 ACT.mapX=function(){S.stadt.showX=!S.stadt.showX;save();rerender()};
 ACT.mapOsm=function(v){S.stadt.osm=v==='1';save();rerender();ROUTES['post:stadt']()};
-ACT.stadtDone=function(id){S.stadt.done[id]=!S.stadt.done[id];if(!S.stadt.done[id])delete S.stadt.done[id];else toast(S.names.mascot+' hakt '+pname(id)+' ab.');save();rerender()};
+ACT.stadtDone=function(id){S.stadt.done[id]=!S.stadt.done[id];if(!S.stadt.done[id])delete S.stadt.done[id];else{ev('stop');toast(S.names.mascot+' hakt '+pname(id)+' ab.')}save();rerender()};
 ACT.spotTick=function(k){S.wes.spot[k]=!S.wes.spot[k];if(!S.wes.spot[k])delete S.wes.spot[k];save();rerender()};
 ACT.mapGps=function(){if(!navigator.geolocation){toast('GPS ist hier nicht verfügbar.');return}toast('Suche deinen Standort …');
  navigator.geolocation.getCurrentPosition(function(p){var g={lat:p.coords.latitude,lng:p.coords.longitude};if(kmd(g,{lat:41.3870,lng:2.1701})>25){toast('Du bist noch nicht in Barcelona.');return}ME=g;
@@ -1009,18 +1010,18 @@ function drawChal(){var w=WISSEN[WZ.ch];if(!WZ.q){WZ.q=pickQ();WZ.ans=null;WZ.se
  if(q.t==='match'){h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+'<div class="col" style="gap:6px">'+q.p.map(function(p,k){var m=WZ.mt[k];return '<button class="qo'+(m?' ok':'')+'" style="margin:0;'+(WZ.ml===k?'border-color:#13324A;border-width:3px':'')+'" data-act="qML" data-a="'+k+'">'+esc(p[0])+'</button>'}).join('')+'</div><div class="col" style="gap:6px">'+WZ.shr.map(function(r){var used=q.p.some(function(p,k){return WZ.mt[k]&&p[1]===r});return '<button class="qo'+(used?' ok':'')+'" style="margin:0" data-act="qMR" data-a="'+esc(r)+'">'+esc(r)+'</button>'}).join('')+'</div></div>'}
  if(q.t==='tap')h+='<p class="muted">Tippe direkt im Bild links.</p>';
  if(q.t==='goal'&&!done)h+='<p class="muted">Benutze die Regler im Experiment. Sobald es klappt, merkt '+esc(S.names.mascot)+' es sofort.</p><button class="b s" data-act="qGive">Ich brauche einen Tipp</button>';
- if(done){var ok=WZ.res;h+='<div class="okmsg" style="margin-top:10px;padding:10px 12px;border-radius:14px;background:'+(ok?'#B1EAC4':'#FFE6DF')+'"><b>'+(ok?['Richtig!','Stark!','Genau!','Super gemacht!'][Math.floor(Math.random()*4)]:'Fast. ')+'</b> '+esc(q.w)+'</div><button class="b p" style="margin-top:12px;width:100%" data-act="qNext">Nächste Herausforderung '+arrow('#fff')+'</button>'}
+ if(done){var ok=WZ.res;h+='<div class="okmsg" style="margin-top:10px;padding:10px 12px;border-radius:14px;background:'+(ok?'#B1EAC4':'#FFF1CC')+'"><b>'+(ok?['Richtig!','Stark!','Genau!','Super gemacht!'][Math.floor(Math.random()*4)]:'Gut probiert! So ist es: ')+'</b> '+esc(q.w)+'</div><button class="b p" style="margin-top:12px;width:100%" data-act="qNext">Nächste Herausforderung '+arrow('#fff')+'</button>'}
  var m=chMastery(w);h+='<div style="margin-top:14px"><div class="row"><span class="lab">Kapitel-Meister</span><div class="sp"></div><span class="lab">'+m.n+' / '+m.of+'</span></div><div class="bar" style="margin-top:6px"><i style="width:'+(m.n/m.of*100)+'%"></i></div></div>';
  $('#chal').innerHTML=h;
  if(q.t==='goal'&&!done){clearInterval(WZ.gi);WZ.gi=setInterval(function(){if(!SIMV||WZ.ans!=null){clearInterval(WZ.gi);return}if(GOALS[q.chk]&&GOALS[q.chk](SIMV.get()))finishQ(true,'ok')},400);CLEAN.push(function(){clearInterval(WZ.gi)})}}
-function finishQ(ok,ans){var q=WZ.q;WZ.ans=ans;WZ.res=ok;S.wissen.seen[q.id]=(S.wissen.seen[q.id]||0)+1;if(ok)S.wissen.ok[q.id]=1;save();
+function finishQ(ok,ans){var q=WZ.q;WZ.ans=ans;WZ.res=ok;S.wissen.seen[q.id]=(S.wissen.seen[q.id]||0)+1;if(ok)S.wissen.ok[q.id]=1;ev(ok?'chalok':'chal');save();
  if(q.t==='pred'&&q.set&&SIMV)SIMV.set(q.set);drawChal();var w=WISSEN[WZ.ch],m=chMastery(w);var mm=$('#mast');if(mm)mm.innerHTML=ring(m.n/m.of,46,'#49C5B6',6)+'<b style="position:absolute;font-size:11px">'+m.n+'/'+m.of+'</b>'}
 ACT.qAns=function(v){if(WZ.ans!=null)return;var q=WZ.q;var a=q.t==='tf'?v==='true':+v;finishQ(a===q.a,a)};
 ACT.qNext=function(){WZ.last=WZ.q.id;WZ.q=null;drawChal()};
 ACT.qGive=function(){finishQ(false,'give')};
-ACT.qOrd=function(x){var q=WZ.q;if(WZ.ans!=null)return;if(q.o[WZ.seq.length]===x){WZ.seq.push(x);if(WZ.seq.length===q.o.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Noch nicht. Was kommt davor?')}drawChal()};
+ACT.qOrd=function(x){var q=WZ.q;if(WZ.ans!=null)return;if(q.o[WZ.seq.length]===x){WZ.seq.push(x);if(WZ.seq.length===q.o.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Fast! Probier eine andere Karte.')}drawChal()};
 ACT.qML=function(k){if(WZ.ans!=null)return;WZ.ml=+k;drawChal()};
-ACT.qMR=function(r){var q=WZ.q;if(WZ.ans!=null||WZ.ml==null)return;if(q.p[WZ.ml][1]===r){WZ.mt[WZ.ml]=1;WZ.ml=null;if(Object.keys(WZ.mt).length===q.p.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Passt nicht. Probier ein anderes.')}drawChal()};
+ACT.qMR=function(r){var q=WZ.q;if(WZ.ans!=null||WZ.ml==null)return;if(q.p[WZ.ml][1]===r){WZ.mt[WZ.ml]=1;WZ.ml=null;if(Object.keys(WZ.mt).length===q.p.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Fast! Probier ein anderes Paar.')}drawChal()};
 ACT.simHit=function(z){if(!SIMV)return;if(SIMV.hit)SIMV.hit(z);var q=WZ.q;if(q&&q.t==='tap'&&WZ.ans==null)finishQ(z===q.hit,z)};
 var GOALS={
  liftHover:function(s){return s.v>=400&&s.v<=500&&s.L>=92&&s.L<=108},liftSlow:function(s){return s.v<=320&&s.L>=95&&s.L<=120&&s.a<=15},
@@ -1328,9 +1329,9 @@ function stageSvg(){var ticks='';for(var m=0;m<=30;m+=5)ticks+='<line x1="'+hx(m
 function resCard(l){var n=flightNote(l,l.c),L=hLim(),pause=L.rest>Date.now()?'<p style="font-size:13px;font-weight:800;margin-top:6px;color:#2779A7">Das waren '+HLIM.max+' Flieger! Muya macht jetzt '+Math.round(HLIM.rest/60000)+' Minuten Flugpause. Schau dir solange die Falt-Anleitung an oder entdecke etwas Neues.</p>':'';return '<div class="pn" style="padding:10px 14px;background:rgba(255,253,248,.95)"><div class="row"><b style="font-size:26px" class="disp">'+fmt(l.d)+' m</b><div class="sp"></div>'+(l.t?'<span class="tag">'+fmt(l.t)+' s in der Luft</span>':'')+'</div><b style="font-size:15px">'+n[0]+'</b><p class="muted" style="font-size:13px">'+n[1]+'</p>'+pause+'</div>'}
 ACT.hModel=function(k){S.hgr.model=k;save();rerender()};
 ACT.hFold=function(j){S.hgr.fold[S.hgr.model+'i']=+j;save();rerender()};
-ACT.hBuilt=function(){S.hgr.fold[S.hgr.model]=1;save();toast(MODELS[S.hgr.model].n+' ist gebaut! Jetzt testen.');rerender()};
+ACT.hBuilt=function(){if(!S.hgr.fold[S.hgr.model])ev('fold');S.hgr.fold[S.hgr.model]=1;save();toast(MODELS[S.hgr.model].n+' ist gebaut! Jetzt testen.');rerender()};
 ACT.hSet=function(v){var x=v.split('|');S.hgr.sel=x[0];S.hgr.tab='set';var h=HP.filter(function(h){return h[0]===x[0]})[0];var step=x[0]==='angle'?5:1;S.hgr.cfg[x[0]]=Math.max(h[3],Math.min(h[4],S.hgr.cfg[x[0]]+(+x[1])*step));save();rerender()};
-ACT.hThrow=function(){if(HG.busy)return;var L=hLim();if(L.rest>Date.now())return;HG.busy=true;L.n++;L.last=Date.now();
+ACT.hThrow=function(){if(HG.busy)return;var L=hLim();if(L.rest>Date.now())return;HG.busy=true;ev('throw');L.n++;L.last=Date.now();
  if(L.n>=HLIM.max){L.rest=Date.now()+HLIM.rest}else if(HLIM.warn[L.n])toast(HLIM.warn[L.n]);
 var c=JSON.parse(JSON.stringify(S.hgr.cfg)),m=S.hgr.model,r=fly(m,c);var p=pathD(r.pts);
  var entry={d:r.d,t:r.t,c:c,m:m,p:p,loops:r.loops,stall:r.stall,dive:r.dive,maxy:r.maxy};var rec=r.d>S.hgr.best;S.hgr.log.push(entry);if(S.hgr.log.length>60)S.hgr.log.shift();
@@ -1443,7 +1444,7 @@ function picker(f,b){var v=b[f];function tiles(arr){return '<div class="wrap">'+
 function pad(act){return '<div style="display:grid;grid-template-columns:repeat(3,46px);gap:6px;margin-top:6px">'+[1,2,3,4,5,6,7,8,9,'⌫',0,'C'].map(function(k){return '<button class="ib" style="width:46px;height:42px;border-radius:12px" data-act="'+act+'" data-a="'+k+'">'+k+'</button>'}).join('')+'</div>'}
 function bSet(v){var b=S.auf.board[PSEL.leg];b[PSEL.f]=v;save();rerender()}
 ACT.pLeg=function(l){PSEL.leg=l;rerender()};ACT.pField=function(f){PSEL.f=f;rerender()};ACT.pVal=function(v){bSet(v);nextField()};
-function nextField(){var b=S.auf.board[PSEL.leg];var nx=BFIELDS.filter(function(f){return b[f[0]]==null||b[f[0]]===''})[0];if(nx){PSEL.f=nx[0];rerender()}else{toast('Bordkarte komplett! Sie ist jetzt in deiner Sammelmappe.');rerender()}}
+function nextField(){var b=S.auf.board[PSEL.leg];var nx=BFIELDS.filter(function(f){return b[f[0]]==null||b[f[0]]===''})[0];if(nx){PSEL.f=nx[0];rerender()}else{ev('pass');toast('Bordkarte komplett! Sie ist jetzt in deiner Sammelmappe.');rerender()}}
 function padEdit(cur,k,prefixLen,max){if(k==='C')return'';if(k==='⌫')return cur.length>prefixLen?cur.slice(0,-1):cur;var head=cur.slice(0,prefixLen),num=cur.slice(prefixLen);if(num.length>=max)return cur;return head+num+k}
 ACT.pFn=function(k){var b=S.auf.board[PSEL.leg],cur=(b.fn||'').replace(/^([A-Z0-9]{2})$/,'$1 ');if(k.charAt(0)==='P'){cur=k.slice(1)+' '+cur.replace(/^[A-Z0-9]{2} ?/,'')}else{if(!/^[A-Z0-9]{2} /.test(cur)&&k!=='C'){toast('Erst das Airline-Kürzel wählen');return}cur=k==='C'?'':padEdit(cur,k,3,4)}b.fn=cur.trim();save();rerender()};
 ACT.pGate=function(k){var b=S.auf.board[PSEL.leg],cur=b.gate||'';if(k.charAt(0)==='P'){cur=k.slice(1)+cur.replace(/^[A-Z]/,'')}else{if(!/^[A-Z]/.test(cur)&&k!=='C'){cur=''}cur=k==='C'?'':padEdit(cur,k,/^[A-Z]/.test(cur)?1:0,2)}b.gate=cur;save();rerender()};
@@ -1455,16 +1456,16 @@ function bingoLines(){var b=S.auf.bingo,n=0,ix=BINGO.map(function(x){return !!b[
 function bingoHtml(){var b=S.auf.bingo,lines=bingoLines();
  return '<div class="row" style="margin-bottom:10px"><b style="font-size:18px">Flughafen-Bingo</b><div class="sp"></div><span class="tag" style="background:#ECD06F">'+lines+' Bingo-Reihen</span><span class="lab">'+Object.keys(b).length+' / 16</span></div><div style="flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:8px">'+
  BINGO.map(function(x){var on=b[x[0]];return '<button class="tl'+(on?' on':'')+'" data-act="bTap" data-a="'+x[0]+'" style="justify-content:center;padding:8px 10px;'+(on?'background:#49C5B6;border-color:#49C5B6;color:#13324A':'')+'"><b style="font-size:15px">'+(on?'✓ ':'')+esc(x[1])+'</b><span class="muted" style="font-size:12px;'+(on?'color:#13324A':'')+'">'+(on?'entdeckt '+esc(on.ap||''):esc(x[2]))+'</span></button>'}).join('')+'</div>'}
-ACT.bTap=function(id){var b=S.auf.bingo;if(b[id]){delete b[id];save();rerender();return}var ap=tripDayOf(today())>-1?'in BCN':daysBetween(today(),S.trip.depart)<=0?'unterwegs':'in HAJ';b[id]={d:today(),ap:ap};save();rerender();var l=bingoLines();if(l>(ACT._bl||0))toast('BINGO! Eine ganze Reihe!');ACT._bl=l};
+ACT.bTap=function(id){var b=S.auf.bingo;if(b[id]){delete b[id];save();rerender();return}var ap=tripDayOf(today())>-1?'in BCN':daysBetween(today(),S.trip.depart)<=0?'unterwegs':'in HAJ';b[id]={d:today(),ap:ap};ev('bingo');save();rerender();var l=bingoLines();if(l>(ACT._bl||0))toast('BINGO! Eine ganze Reihe!');ACT._bl=l};
 /* ---------- quiz rounds ---------- */
 function newRound(t){var lv=(S.auf.rounds[t]||0)+1,r=rnd((Date.now()%100000)+lv*97),qs=[];for(var i=0;i<5;i++)qs.push(GEN[t](r,lv,i));AUF={type:t,qs:qs,i:0,score:0,done:false,lv:lv,sel:null,prize:null}}
 function quizHtml(t){if(!AUF||AUF.type!==t)newRound(t);var m=MISSIONS.filter(function(x){return x[0]===t})[0];
- if(AUF.done){var st=AUF.score>=5?3:AUF.score>=4?2:AUF.score>=3?1:0;return '<div class="row"><b style="font-size:18px">'+m[1]+' · Stufe '+AUF.lv+'</b><div class="sp"></div><span class="disp" style="font-size:34px;color:#ECD06F">'+'★'.repeat(st)+'<span style="color:#D9D6CC">'+'★'.repeat(3-st)+'</span></span></div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;text-align:center"><h2 class="disp" style="font-size:48px">'+AUF.score+' von 5</h2>'+(AUF.prize?'<p style="font-weight:700">Belohnung: eine Bordkarte nach '+esc(AUF.prize[1])+'!</p><div style="width:min(440px,100%);animation:pop .5s">'+bpCard({al:'Kofferforscher Air',from:'HAJ',fromN:'Hannover',to:AUF.prize[0],toN:AUF.prize[1],seat:S.auf.dest[AUF.prize[0]].seat,fn:S.auf.dest[AUF.prize[0]].fn,date:S.auf.dest[AUF.prize[0]].d.split('-').reverse().join('.'),c:'#B5D5FF'})+'</div>':'<p class="muted">Mit 3 oder mehr richtigen Antworten gibt es eine neue Bordkarte für die Sammelmappe.</p>')+'<button class="b p" data-act="aNext">Nächste Stufe '+arrow('#fff')+'</button></div>'}
+ if(AUF.done){var st=AUF.score>=5?3:AUF.score>=4?2:1;return '<div class="row"><b style="font-size:18px">'+m[1]+' · Stufe '+AUF.lv+'</b><div class="sp"></div><span class="disp" style="font-size:34px;color:#ECD06F">'+'★'.repeat(st)+'<span style="color:#D9D6CC">'+'★'.repeat(3-st)+'</span></span></div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;text-align:center"><h2 class="disp" style="font-size:48px">'+AUF.score+' von 5</h2>'+(AUF.prize?'<p style="font-weight:700">Belohnung: eine Bordkarte nach '+esc(AUF.prize[1])+'!</p><div style="width:min(440px,100%);animation:pop .5s">'+bpCard({al:'Kofferforscher Air',from:'HAJ',fromN:'Hannover',to:AUF.prize[0],toN:AUF.prize[1],seat:S.auf.dest[AUF.prize[0]].seat,fn:S.auf.dest[AUF.prize[0]].fn,date:S.auf.dest[AUF.prize[0]].d.split('-').reverse().join('.'),c:'#B5D5FF'})+'</div>':'<p class="muted">Mit 3 oder mehr richtigen Antworten gibt es eine neue Bordkarte für die Sammelmappe.</p>')+'<button class="b p" data-act="aNext">Nächste Stufe '+arrow('#fff')+'</button></div>'}
  var q=AUF.qs[AUF.i];return '<div class="row"><b style="font-size:18px">'+m[1]+'</b><span class="tag">Stufe '+AUF.lv+'</span><div class="sp"></div><div class="row" style="gap:5px">'+AUF.qs.map(function(_,k){return '<span style="width:12px;height:12px;border-radius:50%;background:'+(k<AUF.i?'#49C5B6':k===AUF.i?'#13324A':'var(--line)')+'"></span>'}).join('')+'</div></div><div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:640px;width:100%;margin:0 auto"><h2 style="font-size:24px;line-height:1.3;margin-bottom:12px">'+esc(q.q)+'</h2>'+q.o.map(function(o,k){var c='';if(AUF.sel!=null)c=o===q.a?' ok':k===AUF.sel?' no':' dim';return '<button class="qo'+c+'" style="font-size:18px;padding:14px 18px" data-act="aAns" data-a="'+k+'">'+esc(o)+'</button>'}).join('')+(AUF.sel!=null?'<p class="okmsg"><b>'+(q.o[AUF.sel]===q.a?'Richtig! ':'Fast. ')+'</b>'+esc(q.w)+'</p><button class="b p" style="margin-top:12px;align-self:flex-start" data-act="aNx">'+(AUF.i<4?'Weiter':'Auswertung')+'</button>':'')+'</div>'+destStrip()}
 function destStrip(){var n=Object.keys(S.auf.dest).length;return '<div style="border-top:1.5px solid var(--line);padding-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><span class="lab">Belohnung ab 3 richtigen: eine Bordkarte · '+n+'/'+AIRP.length+' Ziele</span><div class="sp"></div><div class="row" style="gap:4px;flex-wrap:wrap">'+AIRP.map(function(a){var on=S.auf.dest[a[0]];return '<span class="tag" style="'+(on?'background:#B5D5FF':'opacity:.45')+'">'+a[0]+'</span>'}).join('')+'</div></div>'}
 ACT.aAns=function(k){if(AUF.sel!=null)return;AUF.sel=+k;if(AUF.qs[AUF.i].o[AUF.sel]===AUF.qs[AUF.i].a)AUF.score++;rerender()};
-ACT.aNx=function(){AUF.sel=null;if(AUF.i<4){AUF.i++;rerender();return}AUF.done=true;var st=AUF.score>=5?3:AUF.score>=4?2:AUF.score>=3?1:0;S.auf.stars[AUF.type]=Math.max(S.auf.stars[AUF.type]||0,st);S.auf.rounds[AUF.type]=(S.auf.rounds[AUF.type]||0)+1;
- if(AUF.score>=3){var free=AIRP.filter(function(a){return !S.auf.dest[a[0]]});var pool=free.length?free:AIRP;var p=pool[Math.floor(Math.random()*pool.length)];S.auf.dest[p[0]]={d:today(),seat:(1+Math.floor(Math.random()*30))+'ABCDEF'.charAt(Math.floor(Math.random()*6)),fn:'KF '+(100+Math.floor(Math.random()*899)),n:(S.auf.dest[p[0]]&&S.auf.dest[p[0]].n||0)+1};AUF.prize=p}save();rerender()};
+ACT.aNx=function(){AUF.sel=null;if(AUF.i<4){AUF.i++;rerender();return}AUF.done=true;ev('round',AUF.score>=4?1.5:1);var st=AUF.score>=5?3:AUF.score>=4?2:1;S.auf.stars[AUF.type]=Math.max(S.auf.stars[AUF.type]||0,st);S.auf.rounds[AUF.type]=(S.auf.rounds[AUF.type]||0)+1;
+ {var free=AIRP.filter(function(a){return !S.auf.dest[a[0]]});var pool=free.length?free:AIRP;var p=pool[Math.floor(Math.random()*pool.length)];S.auf.dest[p[0]]={d:today(),seat:(1+Math.floor(Math.random()*30))+'ABCDEF'.charAt(Math.floor(Math.random()*6)),fn:'KF '+(100+Math.floor(Math.random()*899)),n:(S.auf.dest[p[0]]&&S.auf.dest[p[0]].n||0)+1};AUF.prize=p}save();rerender()};
 ACT.aNext=function(){newRound(AUF.type);rerender()};
 /* ---------- Sammelmappe ---------- */
 function mappeHtml(){var own=[['hin','Hinflug'],['rueck','Rückflug']].map(function(l){var b=S.auf.board[l[0]]||{},A=S.trip.legs[0],B=S.trip.legs[1]||A;var from=l[0]==='hin'?A:B,to=l[0]==='hin'?B:(S.trip.legs[2]||A);return passDone(l[0])?bpCard({al:b.al,from:from.code,fromN:from.city,to:to.code,toN:to.city,seat:b.seat,fn:b.fn,date:l[1],c:'#49C5B6'}):'<button class="bp" data-act="aSel" data-a="pass" style="align-items:center;justify-content:center;border-style:dashed;color:#8796A3;font-weight:700">'+l[1]+': noch nicht komplett</button>'}).join('');
@@ -1495,9 +1496,9 @@ function wesDetail(w){if(!w)return '';var on=S.wes.found[w.id],kn=S.wes.known[w.
 var WZW={};
 ACT.wCat=function(c){S.wes.cat=c;WSEL=null;save();rerender()};
 ACT.wSel=function(id){WSEL=id;rerender()};
-ACT.wFound=function(id){S.wes.found[id]=today();save();rerender();toast(S.names.mascot+' freut sich: entdeckt!')};
+ACT.wFound=function(id){if(!S.wes.found[id])ev('find');S.wes.found[id]=today();save();rerender();toast(S.names.mascot+' freut sich: entdeckt!')};
 ACT.wUnfind=function(id){delete S.wes.found[id];delete S.wes.known[id];save();rerender()};
-ACT.wQ=function(v){var x=v.split('|'),w=WESEN.filter(function(e){return e.id===x[0]})[0];if(WZW[w.id]!=null)return;WZW[w.id]=+x[1];if(+x[1]===w.a){S.wes.known[w.id]=today();save()}rerender()};
+ACT.wQ=function(v){var x=v.split('|'),w=WESEN.filter(function(e){return e.id===x[0]})[0];if(WZW[w.id]!=null)return;WZW[w.id]=+x[1];if(+x[1]===w.a){if(!S.wes.known[w.id])ev('explore');S.wes.known[w.id]=today();save()}rerender()};
 ACT.wRetry=function(id){delete WZW[id];rerender()};
 ACT.wMap=function(id,el,e){e.preventDefault();MSEL=id;S.stadt.day=PLACE[id].day;S.stadt.autoFor=today();MTAB=PLACE[id].x?'mehr':'route';save();location.hash='#/stadt'};
 
@@ -1530,7 +1531,7 @@ ACT.rRace=function(){var rs=$$('.runner'),mx=Math.max.apply(0,rs.map(function(r)
 function duellHtml(cat){var I=REK[cat].items;if(!RQ||RQ.cat!==cat){var r=Math.random;var i=Math.floor(r()*I.length),j;do{j=Math.floor(r()*I.length)}while(j===i||I[i][3]===I[j][3]);RQ={cat:cat,a:I[i],b:I[j],ans:null}}
  var q=RQ,win=q.a[3]>q.b[3]?'a':'b';function card(k){var x=q[k],res=q.ans!=null;var good=res&&k===win;return '<button class="tl" data-act="rGuess" data-a="'+k+'" style="flex:1;align-items:center;justify-content:center;text-align:center;gap:8px;'+(res?(good?'background:#B1EAC4;border-color:#7FD39E':'opacity:.7'):'')+'"><span style="font-size:76px;line-height:1">'+x[2]+'</span><b style="font-size:22px">'+esc(x[1])+'</b>'+(res?'<span class="disp" style="font-size:30px">'+esc(rekUnit(cat,x[3]))+'</span>':'<span class="lab">tippen</span>')+'</button>'}
  return '<div style="display:flex;flex-direction:column;height:100%;gap:12px"><h2 style="font-size:24px;text-align:center">Was ist '+REK[cat].cmp+'?</h2><div class="row" style="flex:1;min-height:0;gap:14px;align-items:stretch">'+card('a')+'<span class="disp" style="align-self:center;font-size:34px">oder</span>'+card('b')+'</div>'+(q.ans!=null?'<div class="row" style="justify-content:center;gap:14px"><b style="font-size:18px">'+(q.ans===win?'Richtig! Serie: '+S.rek.streak:'Knapp daneben!')+'</b><button class="b p" data-act="rNext">Nächstes Duell '+arrow('#fff')+'</button></div>':'<p class="muted" style="text-align:center">Erst schätzen, dann wird aufgedeckt.</p>')+'</div>'}
-ACT.rGuess=function(k){if(!RQ||RQ.ans!=null)return;RQ.ans=k;var win=RQ.a[3]>RQ.b[3]?'a':'b';S.rek.n++;if(k===win){S.rek.right++;S.rek.streak++;S.rek.best=Math.max(S.rek.best,S.rek.streak)}else S.rek.streak=0;save();rerender()};
+ACT.rGuess=function(k){if(!RQ||RQ.ans!=null)return;RQ.ans=k;var win=RQ.a[3]>RQ.b[3]?'a':'b';S.rek.n++;ev('rek');if(k===win){S.rek.right++;S.rek.streak++;S.rek.best=Math.max(S.rek.best,S.rek.streak)}else S.rek.streak=0;save();rerender()};
 ACT.rNext=function(){RQ=null;rerender()};
 
 /* --- p_misc.js --- */
@@ -1571,12 +1572,12 @@ ACT.mWhat=function(v){var x=v.split('|');if(x[0]==='ort'){NM.cat='ort';NM.place=
 ACT.mMood=function(r){NM.r=r;NM.step=2;rerender();setTimeout(function(){var t=$('#mnote');if(t)t.focus()},60)};
 ACT.mBack=function(){var t=$('#mnote');if(t)NM.note=t.value;NM.step=Math.max(0,NM.step-1);rerender()};
 ACT.mSave=function(){var t=$('#mnote');NM.note=t?t.value.trim():'';var d=S.tagDay;if(NM.edit){var m=S.mem.filter(function(x){return x.id===NM.edit})[0];if(m){m.what=NM.what;m.cat=NM.cat;m.place=NM.place;m.r=NM.r;m.note=NM.note}MSELT=NM.edit}
- else{var id='m'+Date.now();S.mem.push({id:id,date:d,what:NM.what,cat:NM.cat,place:NM.place||'',r:NM.r,note:NM.note,t:Date.now()});MSELT=id}NM={step:0};save();rerender();toast('Erinnerung gespeichert')};
+ else{var id='m'+Date.now();ev('mem');S.mem.push({id:id,date:d,what:NM.what,cat:NM.cat,place:NM.place||'',r:NM.r,note:NM.note,t:Date.now()});MSELT=id}NM={step:0};save();rerender();toast('Erinnerung gespeichert')};
 ACT.mEdit=function(){var m=S.mem.filter(function(x){return x.id===MSELT})[0];if(!m)return;NM={open:1,step:0,edit:m.id,what:m.what,cat:m.cat,place:m.place,r:m.r,note:m.note};rerender()};
 ACT.mDel=function(){S.mem=S.mem.filter(function(x){return x.id!==MSELT});MSELT=null;save();rerender()};
 
 /* ---------- Reisepass ---------- */
-var SCATS=[['vor','Vor dem Abflug'],['auf','Kapitäns-Aufträge'],['hgr','Tüftel-Hangar'],['wie','Wie fliegt das?'],['wes','Wunderwesen'],['rek','Weltrekorde'],['tag','Tagebuch'],['stadt','Stadtplan']];
+var SCATS=[['vor','Vor dem Abflug'],['auf','Kapitäns-Aufträge'],['hgr','Tüftel-Hangar'],['wie','Wie fliegt das?'],['wes','Wunderwesen'],['rek','Weltrekorde'],['tag','Tagebuch'],['stadt','Stadtplan'],['mu','Muya-Freunde']];
 ROUTES.samm=function(){var n=earnedCount(),rk=rankOf(n),base=RANKS.filter(function(r){return r[1]===rk.name})[0][0];var dates=tripDates(),td=tripDayOf(today());
  var track=dates.map(function(d,i){var p=dayProgress(i);return '<a href="#/tag/'+d+'" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px"><span style="position:relative;display:grid;place-items:center">'+ring(p,38,i===td?'#FF6A52':'#ECD06F',5)+'<b style="position:absolute;font-size:13px;color:#fff">'+(i+1)+'</b></span></a>'}).join('');
  var coll=[['Bordkarten',Object.keys(S.auf.dest).length+passCount(),AIRP.length+2,'#/auf'],['Wunderwesen',Object.keys(S.wes.found).length,WESEN.length,'#/wes'],['Erforscht ★',Object.keys(S.wes.known).length,WESEN.length,'#/wes'],['Flughafen-Bingo',Object.keys(S.auf.bingo).length,16,'#/auf'],['Kapitel-Meister',WISSEN.filter(function(w){return S.earned['wis-'+w.id]}).length,8,'#/wie'],['Erinnerungen',S.mem.length,null,'#/tag'],['Papierflieger-Würfe',S.hgr.log.length,null,'#/hgr']].map(function(c){return '<a href="'+c[3]+'" class="row" style="padding:6px 0;border-top:1px solid rgba(255,255,255,.12)"><span style="flex:1">'+c[0]+'</span><b>'+c[1]+(c[2]?' <span style="opacity:.6;font-weight:500">/ '+c[2]+'</span>':'')+'</b></a>'}).join('');
@@ -1634,6 +1635,134 @@ ACT.tripEnd=function(){var ps=packStats('alle');S.archive.push({name:S.trip.name
  var home=S.trip.legs[0];S.trip={id:'t'+Date.now(),name:'Neue Reise',depart:today(),back:today(),region:'EU',legs:[home,{city:'',code:'',region:'EU'},home]};
  S.pack.done={};S.brief.done={};S.pred2={};S.mem=[];S.auf.board={};S.stadt.done={};S.wes.spot={};save();toast('Neue Reise bereit');rerender()};
 
+/* --- muya.js --- */
+/* ===== Muya-Freunde: Materialien sammeln, Eier basteln, Freunde entwickeln, Tagesaufträge ===== */
+var MATS=['papier','wolken','kompass','mosaik','sterne'];
+var MAT={papier:{n:'Papier',c:'#E9E1CC',h:'Tüftel-Hangar: werfen und falten'},wolken:{n:'Wolken',c:'#B5D5FF',h:'Wie fliegt das?: Aufgaben lösen'},kompass:{n:'Kompass',c:'#FF9E8C',h:'Kapitäns-Aufträge: Runden, Bordkarten, Bingo'},mosaik:{n:'Mosaik',c:'#49C5B6',h:'Wunderwesen und Stadtplan'},sterne:{n:'Sterne',c:'#ECD06F',h:'Tagebuch, Packliste, Rekord-Labor'}};
+function matIcon(m,sz){sz=sz||22;var i={
+ papier:'<path d="M5 3h10l4 4v14H5z" fill="#FFFDF8" stroke="#13324A" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3v4h4" fill="#E9E1CC" stroke="#13324A" stroke-width="1.6" stroke-linejoin="round"/>',
+ wolken:'<path d="M7 18a4 4 0 010-8 5 5 0 019.4-1A4.5 4.5 0 0117 18z" fill="#DCEEFF" stroke="#13324A" stroke-width="1.8" stroke-linejoin="round"/>',
+ kompass:'<circle cx="12" cy="12" r="9" fill="#FFE6DF" stroke="#13324A" stroke-width="1.8"/><path d="M12 5l2.5 7-2.5 7-2.5-7z" fill="#FF6A52" stroke="#13324A" stroke-width="1.4" stroke-linejoin="round"/>',
+ mosaik:'<rect x="3" y="3" width="8" height="8" fill="#49C5B6" stroke="#13324A" stroke-width="1.6"/><rect x="13" y="3" width="8" height="8" fill="#ECD06F" stroke="#13324A" stroke-width="1.6"/><rect x="3" y="13" width="8" height="8" fill="#FFB288" stroke="#13324A" stroke-width="1.6"/><rect x="13" y="13" width="8" height="8" fill="#B5D5FF" stroke="#13324A" stroke-width="1.6"/>',
+ sterne:'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z" fill="#ECD06F" stroke="#13324A" stroke-width="1.7" stroke-linejoin="round"/>'};
+ return '<svg viewBox="0 0 24 24" width="'+sz+'" height="'+sz+'" style="flex:none">'+i[m]+'</svg>'}
+
+/* 12 eigene Freunde, je 3 Entwicklungsstufen */
+var SPEC=[
+ {id:'knick',m:'papier',n:['Knick','Knicker','Knickaro'],c:'#FFB288',c2:'#FFE2CF',sh:'round',ears:'tri',tail:'fox',mark:'fold',story:'Knick wohnt in einer Schublade voller Papier. Wenn es aufgeregt ist, faltet sich sein Schwanz von allein zu einem Fächer.'},
+ {id:'gleit',m:'papier',n:['Gleitchen','Gleiter','Gleitaro'],c:'#B5D5FF',c2:'#E4F0FF',sh:'wide',ears:'fin',tail:'star',mark:'fold',story:'Gleitchen liebt Aufwind. Es breitet die Flügel aus und segelt, bis ihm die Puste ausgeht, und dann noch ein Stück weiter.'},
+ {id:'woelk',m:'wolken',n:['Wölkli','Wolkino','Wolkano'],c:'#DCEEFF',c2:'#FFFFFF',sh:'round',ears:'round',tail:'puff',mark:'cloud',story:'Wölkli ist ganz weich und sieht aus wie ein Mini-Wölkchen. Bei Sonnenschein wird es ein bisschen rosa.'},
+ {id:'nebbi',m:'wolken',n:['Nebbi','Nebulo','Nebelor'],c:'#C9C7E8',c2:'#EEEDFA',sh:'tall',ears:'ant',tail:'puff',mark:'cloud',story:'Nebbi kennt jeden Morgennebel persönlich. Es hüllt sich ein, wenn es schüchtern ist, und taucht dann wieder auf.'},
+ {id:'kompi',m:'kompass',n:['Kompi','Kompaso','Kompanus'],c:'#FF9E8C',c2:'#FFE1DA',sh:'round',ears:'ant',tail:'star',mark:'rose',story:'Kompi findet immer Norden. Nur bei Eiscreme dreht sich seine Nase im Kreis.'},
+ {id:'nordi',m:'kompass',n:['Nordi','Nordling','Nordikus'],c:'#8BC7D9',c2:'#DDF1F7',sh:'tall',ears:'tri',tail:'fox',mark:'rose',story:'Nordi hat ein feines Gespür für Richtungen. Es zeigt mit dem Ohr dorthin, wo das nächste Abenteuer wartet.'},
+ {id:'mosi',m:'mosaik',n:['Mosi','Mosaiko','Mosaikus'],c:'#49C5B6',c2:'#CDF1EC',sh:'round',ears:'round',tail:'fox',mark:'tile',story:'Mosi ist aus bunten Scherben gemacht und glitzert in der Sonne. Es sammelt Farben wie andere Muscheln.'},
+ {id:'scherb',m:'mosaik',n:['Scherbi','Scherbino','Scherbaro'],c:'#ECD06F',c2:'#FBF0C4',sh:'wide',ears:'tri',tail:'puff',mark:'tile',story:'Scherbi liegt gern in warmen Mosaikbänken und sonnt sich. Jeder Fleck auf seinem Fell ist eine kleine Geschichte.'},
+ {id:'funki',m:'sterne',n:['Funki','Funkelo','Funkelion'],c:'#ECD06F',c2:'#FFF5CC',sh:'round',ears:'ant',tail:'star',mark:'star',story:'Funki funkelt, wenn jemand etwas Schönes erlebt. Je mehr Erinnerungen, desto heller wird es.'},
+ {id:'mondi',m:'sterne',n:['Mondi','Mondo','Mondaro'],c:'#9AA9E8',c2:'#DDE3FA',sh:'tall',ears:'round',tail:'star',mark:'moon',story:'Mondi ist ein Nachtmensch. Es erzählt dir beim Einschlafen, was am Tag alles passiert ist.'},
+ {id:'bunt',m:'sterne',n:['Bunti','Buntino','Buntaro'],c:'#FFB6C8',c2:'#FFE4EB',sh:'wide',ears:'round',tail:'puff',mark:'star',story:'Bunti steckt voller Farben. Packt man den Koffer ordentlich, wird es ganz hell vor Freude.'},
+ {id:'rakki',m:'kompass',n:['Rakki','Rakko','Rakkator'],c:'#FF6A52',c2:'#FFD2C9',sh:'tall',ears:'fin',tail:'fox',mark:'rose',story:'Rakki ist ein kleiner Abenteurer mit großem Mut. Es will bei jedem Start ganz vorne mit dabei sein.'}];
+var SPEC_BY={};SPEC.forEach(function(s){SPEC_BY[s.id]=s});
+function mStar(x,y,r,f,s){var p='',i;for(i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,q=i%2?r*.45:r;p+=(i?'L':'M')+(x+q*Math.cos(a)).toFixed(1)+','+(y+q*Math.sin(a)).toFixed(1)}return '<path d="'+p+'Z" fill="'+f+'" stroke="'+(s||'#13324A')+'" stroke-width="1.3" stroke-linejoin="round"/>'}
+function cre(sp,st,sil){var I='#13324A',sc=[.84,.97,1.1][st-1],cx=50,cy=60,c=sp.c,c2=sp.c2,
+ rx=24*sc*(sp.sh==='wide'?1.14:sp.sh==='tall'?.9:1),ry=22*sc*(sp.sh==='tall'?1.18:sp.sh==='wide'?.92:1),top=cy-ry,o='';
+ var ln='stroke="'+I+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"';
+ if(st===3)o+='<circle cx="'+cx+'" cy="'+cy+'" r="'+(rx+13)+'" fill="'+c+'" opacity=".2"/><circle cx="'+cx+'" cy="'+cy+'" r="'+(rx+9)+'" fill="none" stroke="'+c+'" stroke-width="1.6" stroke-dasharray="3 5" opacity=".7"/>';
+ /* Schwanz */
+ if(sp.tail==='fox')o+='<g transform="rotate(-32 '+(cx+rx)+' '+(cy+ry*.3)+')"><ellipse cx="'+(cx+rx+7)+'" cy="'+(cy+ry*.3)+'" rx="'+(13*sc)+'" ry="'+(7*sc)+'" fill="'+c+'" '+ln+'/><circle cx="'+(cx+rx+7+11*sc)+'" cy="'+(cy+ry*.3)+'" r="'+(4.5*sc)+'" fill="#FFFDF8" stroke="'+I+'" stroke-width="1.4"/></g>';
+ else if(sp.tail==='puff')o+=[[0,0,6],[7,-5,5],[7,6,5]].map(function(q){return '<circle cx="'+(cx+rx+q[0]*sc+2)+'" cy="'+(cy+ry*.35+q[1]*sc)+'" r="'+(q[2]*sc)+'" fill="'+c2+'" '+ln+'/>'}).join('');
+ else if(sp.tail==='star')o+='<path d="M'+(cx+rx-2)+','+(cy+ry*.5)+' Q'+(cx+rx+10)+','+(cy+ry*.5)+' '+(cx+rx+12)+','+(cy+ry*.1)+'" fill="none" '+ln+'/>'+mStar(cx+rx+13,cy+ry*.05,6*sc,'#ECD06F');
+ /* Flügel ab Stufe 2 */
+ if(st>=2){var wl=(st===3?22:15)*sc;o+='<path d="M'+(cx-rx+3)+','+(cy-2)+' L'+(cx-rx-wl)+','+(cy-ry*.55)+' L'+(cx-rx+2)+','+(cy+9)+'Z" fill="#FFFDF8" '+ln+'/><path d="M'+(cx+rx-3)+','+(cy-2)+' L'+(cx+rx+wl)+','+(cy-ry*.55)+' L'+(cx+rx-2)+','+(cy+9)+'Z" fill="#FFFDF8" '+ln+'/>'}
+ /* Füße */
+ o+='<ellipse cx="'+(cx-rx*.5)+'" cy="'+(cy+ry-1)+'" rx="'+(7*sc)+'" ry="'+(4*sc)+'" fill="'+c2+'" '+ln+'/><ellipse cx="'+(cx+rx*.5)+'" cy="'+(cy+ry-1)+'" rx="'+(7*sc)+'" ry="'+(4*sc)+'" fill="'+c2+'" '+ln+'/>';
+ /* Ohren / Fühler */
+ if(sp.ears==='tri')[-1,1].forEach(function(d){o+='<path d="M'+(cx+d*rx*.78)+','+(cy-ry*.5)+' L'+(cx+d*rx*.5)+','+(top-13*sc)+' L'+(cx+d*rx*.08)+','+(cy-ry*.92)+'Z" fill="'+c+'" '+ln+'/><path d="M'+(cx+d*rx*.55)+','+(top-3*sc)+' L'+(cx+d*rx*.5)+','+(top-8*sc)+' L'+(cx+d*rx*.35)+','+(top-1)+'Z" fill="'+c2+'"/>'});
+ else if(sp.ears==='round')[-1,1].forEach(function(d){o+='<circle cx="'+(cx+d*rx*.62)+'" cy="'+(top+2)+'" r="'+(8*sc)+'" fill="'+c+'" '+ln+'/><circle cx="'+(cx+d*rx*.62)+'" cy="'+(top+3)+'" r="'+(4*sc)+'" fill="'+c2+'"/>'});
+ else if(sp.ears==='ant')[-1,1].forEach(function(d){o+='<path d="M'+(cx+d*rx*.3)+','+(top+2)+' Q'+(cx+d*rx*.5)+','+(top-8*sc)+' '+(cx+d*rx*.7)+','+(top-13*sc)+'" fill="none" '+ln+'/><circle cx="'+(cx+d*rx*.7)+'" cy="'+(top-14*sc)+'" r="'+(3.6*sc)+'" fill="#ECD06F" stroke="'+I+'" stroke-width="1.5"/>'});
+ else if(sp.ears==='fin')[-1,1].forEach(function(d){o+='<ellipse cx="'+(cx+d*rx*.72)+'" cy="'+(top+4)+'" rx="'+(5*sc)+'" ry="'+(11*sc)+'" transform="rotate('+(d*28)+' '+(cx+d*rx*.72)+' '+(top+4)+')" fill="'+c2+'" '+ln+'/>'});
+ /* Körper */
+ o+='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+rx+'" ry="'+ry+'" fill="'+c+'" '+ln+'/><ellipse cx="'+cx+'" cy="'+(cy+ry*.36)+'" rx="'+(rx*.62)+'" ry="'+(ry*.5)+'" fill="'+c2+'" opacity=".75"/>';
+ /* Merkmal */
+ var fy=cy-ry*.58;
+ if(sp.mark==='fold')o+='<path d="M'+(cx-6)+','+(fy+2)+' L'+(cx+6)+','+(fy+2)+' L'+cx+','+(fy-8)+'Z" fill="#FFFDF8" stroke="'+I+'" stroke-width="1.4" stroke-linejoin="round"/><path d="M'+cx+','+(fy-8)+' L'+cx+','+(fy+2)+'" stroke="'+I+'" stroke-width="1" opacity=".5"/>';
+ else if(sp.mark==='cloud')o+=[[-7,1,5.5],[0,-3,6.5],[7,1,5.5]].map(function(q){return '<circle cx="'+(cx+q[0])+'" cy="'+(top+q[1]+1)+'" r="'+q[2]+'" fill="#FFFFFF" '+ln.replace('stroke-width="2"','stroke-width="1.5"')+'/>'}).join('');
+ else if(sp.mark==='rose')o+=mStar(cx,fy-1,7*sc,'#FF6A52');
+ else if(sp.mark==='tile')o+=[[-9,0,'#FF6A52'],[-1,2,'#ECD06F'],[7,-1,'#13324A']].map(function(q,k){return '<rect x="'+(cx+q[0]+(k?2:0))+'" y="'+(cy+ry*.3+q[1])+'" width="6.5" height="6.5" fill="'+q[2]+'" stroke="'+I+'" stroke-width="1.2" transform="rotate('+(k*14-8)+' '+(cx+q[0]+3)+' '+(cy+ry*.3+q[1]+3)+')"/>'}).join('');
+ else if(sp.mark==='star')o+=mStar(cx,fy-1,6.5*sc,'#ECD06F');
+ else if(sp.mark==='moon')o+='<path d="M'+(cx+4)+','+(fy-7)+' A7 7 0 1 0 '+(cx+4)+','+(fy+7)+' A5.5 5.5 0 1 1 '+(cx+4)+','+(fy-7)+'Z" fill="#FFF5CC" stroke="'+I+'" stroke-width="1.3" stroke-linejoin="round"/>';
+ /* Gesicht */
+ var ey=cy-ry*.12,ed=rx*.42;
+ [-1,1].forEach(function(d){o+='<circle cx="'+(cx+d*ed)+'" cy="'+ey+'" r="'+(5.4*sc)+'" fill="#fff" stroke="'+I+'" stroke-width="1.7"/><circle cx="'+(cx+d*ed+d*.6)+'" cy="'+(ey+.6)+'" r="'+(3*sc)+'" fill="'+I+'"/><circle cx="'+(cx+d*ed+d*.6-1)+'" cy="'+(ey-.8)+'" r="1.1" fill="#fff"/><circle cx="'+(cx+d*rx*.68)+'" cy="'+(ey+9*sc)+'" r="'+(3.2*sc)+'" fill="#FF8F7E" opacity=".55"/>'});
+ o+='<path d="M'+(cx-3.5)+','+(ey+8*sc)+' Q'+cx+','+(ey+12*sc)+' '+(cx+3.5)+','+(ey+8*sc)+'" fill="none" stroke="'+I+'" stroke-width="1.8" stroke-linecap="round"/>';
+ /* Krone und Glitzer ab Stufe 3 / 2 */
+ if(st===3){var ct=top-(sp.ears==='none'?2:7*sc);o+='<path d="M'+(cx-9)+','+(ct+5)+' L'+(cx-9)+','+(ct-3)+' L'+(cx-4.5)+','+(ct+1)+' L'+cx+','+(ct-6)+' L'+(cx+4.5)+','+(ct+1)+' L'+(cx+9)+','+(ct-3)+' L'+(cx+9)+','+(ct+5)+'Z" fill="#ECD06F" '+ln.replace('stroke-width="2"','stroke-width="1.6"')+'/>'}
+ if(st>=2)o+=mStar(14,24,4,'#fff')+mStar(88,30,3.5,'#fff')+(st===3?mStar(20,86,3,'#fff')+mStar(84,84,4,'#fff'):'');
+ return '<svg viewBox="6 8 90 90" style="width:100%;height:100%;display:block'+(sil?';filter:brightness(0);opacity:.14':'')+'" aria-hidden="true">'+o+'</svg>'}
+
+/* ---- Zustand und Ereignisse ---- */
+var EVT={throw:['papier',1],fold:['papier',3],chal:['wolken',1],chalok:['wolken',2],round:['kompass',2],pass:['kompass',3],bingo:['kompass',1],find:['mosaik',2],explore:['mosaik',1],stop:['mosaik',1],mem:['sterne',2],rek:['sterne',1],pack:['sterne',.2]};
+function muDay(){var m=S.mu,d=today();return m.days[d]||(m.days[d]={c:{},done:{}})}
+function ev(k,x){var e=EVT[k];if(!e||!S.mu)return;var m=S.mu,x1=x||1,n=e[1]*x1,D=muDay();m.cnt[k]=(m.cnt[k]||0)+x1;D.c[k]=(D.c[k]||0)+x1;if(k==='chalok'){m.cnt.chal=(m.cnt.chal||0)+1;D.c.chal=(D.c.chal||0)+1}
+ var w=n;if(n<1){m.frac=(m.frac||0)+n;w=Math.floor(m.frac+1e-9);m.frac-=w}
+ if(w>0){m.mat[e[0]]=(m.mat[e[0]]||0)+w;m.life[e[0]]=(m.life[e[0]]||0)+w;chip(e[0],w);muEvo()}
+ save()}
+function chip(mk,n){var h=document.getElementById('gainbox');if(!h){h=document.createElement('div');h.id='gainbox';h.style.cssText='position:fixed;left:16px;bottom:16px;display:flex;flex-direction:column;gap:6px;z-index:60;pointer-events:none';document.body.appendChild(h)}
+ while(h.children.length>=3)h.removeChild(h.firstChild);var e=document.createElement('div');e.style.cssText='display:flex;align-items:center;gap:6px;background:#13324A;color:#fff;border-radius:18px;padding:5px 12px 5px 8px;font-weight:800;font-size:14px;animation:pop .35s both;box-shadow:0 4px 14px rgba(19,50,74,.25)';e.innerHTML=matIcon(mk,20)+'+'+n+' '+MAT[mk].n;h.appendChild(e);setTimeout(function(){e.style.transition='opacity .4s';e.style.opacity=0;setTimeout(function(){e.remove()},420)},1500)}
+function petStage(id){var p=S.mu.pets[id];if(!p)return 0;var sp=SPEC_BY[id],g=(S.mu.life[sp.m]||0)-p.base;return g>=EVO[1]?3:g>=EVO[0]?2:1}
+var EVO=[12,30];
+function muEvo(){Object.keys(S.mu.pets).forEach(function(id){var p=S.mu.pets[id],st=petStage(id);if(st>(p.st||1)){p.st=st;S.mu.news.push({id:id,st:st});setTimeout(function(){toast(SPEC_BY[id].n[st-2]+' hat sich zu '+SPEC_BY[id].n[st-1]+' entwickelt!')},900)}})}
+function muOwned(){return SPEC.filter(function(s){return S.mu.pets[s.id]})}
+function eggCost(sp){var o=MATS[(MATS.indexOf(sp.m)+1)%MATS.length],c={};c[sp.m]=5;c[o]=3;return c}
+function canAfford(c){return Object.keys(c).every(function(k){return (S.mu.mat[k]||0)>=c[k]})}
+function costHtml(c){return Object.keys(c).map(function(k){var ok=(S.mu.mat[k]||0)>=c[k];return '<span class="tag" style="display:inline-flex;align-items:center;gap:4px;background:'+(ok?'#B1EAC4':'var(--paper)')+'">'+matIcon(k,14)+(S.mu.mat[k]||0)+'/'+c[k]+'</span>'}).join(' ')}
+function hatch(id){var sp=SPEC_BY[id];S.mu.pets[id]={t:Date.now(),base:S.mu.life[sp.m]||0,st:1};if(!S.mu.buddy)S.mu.buddy=id;S.mu.sel=id;save();checkRewards&&checkRewards();
+ var s=sheet('<div style="text-align:center;padding:6px 10px"><span class="lab">Ein Ei schlüpft!</span><div style="width:190px;height:190px;margin:6px auto;animation:pop .6s both">'+cre(sp,1)+'</div><h2 class="disp" style="font-size:40px">'+esc(sp.n[0])+'</h2><p class="muted" style="margin:8px auto 16px;max-width:340px">'+esc(sp.story)+'</p><button class="b p" data-act="closeSheetGo">Willkommen!</button></div>');rerender()}
+ACT.closeSheetGo=function(){closeSheet();rerender()};
+ACT.muCraft=function(id){var sp=SPEC_BY[id];if(!sp||S.mu.pets[id])return;var c=eggCost(sp);if(!canAfford(c))return toast('Dir fehlt noch etwas Material.');Object.keys(c).forEach(function(k){S.mu.mat[k]-=c[k]});hatch(id)};
+ACT.muSurprise=function(){if(!S.mu.free)return;var left=SPEC.filter(function(s){return !S.mu.pets[s.id]});if(!left.length)return;S.mu.free--;hatch(left[Math.floor(Math.random()*left.length)].id)};
+ACT.muSel=function(id){S.mu.sel=id;save();rerender()};
+ACT.muBuddy=function(id){S.mu.buddy=id;save();rerender();toast(SPEC_BY[id].n[petStage(id)-1]+' begleitet dich jetzt.')};
+ACT.muTab=function(t){S.mu.tab=t;save();rerender()};
+
+/* ---- Tagesaufträge (5 bis 10 Minuten) ---- */
+var QPOOL=[['throw',3,'Wirf 3 Papierflieger','/hgr','trip'],['fold',1,'Falte einen Flieger fertig','/hgr','trip'],['chal',3,'Löse 3 Aufgaben in „Wie fliegt das?“','/wie'],['round',1,'Spiele eine Runde bei den Kapitäns-Aufträgen','/auf'],['bingo',2,'Entdecke 2 Dinge im Flughafen-Bingo','/auf'],['find',1,'Entdecke ein Wunderwesen','/wes'],['rek',3,'Vergleiche 3 Rekorde im Rekord-Labor','/rek'],['mem',1,'Schreibe eine Erinnerung ins Tagebuch','/tag','in'],['stop',2,'Hake 2 Orte im Stadtplan ab','/stadt','in'],['pack',6,'Hake 6 Sachen auf der Packliste ab','/vor','pre']];
+function questsToday(){var d=today(),inTrip=tripDayOf(d)>-1,pre=daysBetween(d,S.trip.depart)>0,pool=QPOOL.filter(function(q){return !q[4]||q[4]==='trip'||(q[4]==='in'&&inTrip)||(q[4]==='pre'&&pre)||(q[4]==='trip')});
+ if(!inTrip)pool=pool.filter(function(q){return q[4]!=='in'});
+ var h=0;for(var i=0;i<d.length;i++)h=(h*31+d.charCodeAt(i))>>>0;var out=[],used={},step=(h%5)*2+1;for(var j=0;out.length<3&&j<40;j++){var q=pool[(h+j*step)%pool.length];if(used[q[0]])continue;used[q[0]]=1;out.push(q)}
+ return out}
+function questState(){var D=muDay();return questsToday().map(function(q,i){var n=Math.min(q[1],D.c[q[0]]||0);return{k:q[0],g:q[1],n:n,t:q[2],go:q[3],ok:n>=q[1],claimed:!!D.done[q[0]]}})}
+ACT.muClaim=function(k){var D=muDay(),q=questState().filter(function(x){return x.k===k})[0];if(!q||!q.ok||q.claimed)return;D.done[k]=1;S.mu.qdone=(S.mu.qdone||0)+1;
+ var got={},n=3;for(var i=0;i<n;i++){var mk=MATS[Math.floor(Math.random()*MATS.length)],a=1+Math.floor(Math.random()*2);got[mk]=(got[mk]||0)+a}
+ Object.keys(got).forEach(function(mk){S.mu.mat[mk]=(S.mu.mat[mk]||0)+got[mk];S.mu.life[mk]=(S.mu.life[mk]||0)+got[mk]});
+ var all=questState().every(function(x){return x.claimed});if(all&&!D.bonus){D.bonus=1;S.mu.free=(S.mu.free||0)+1}
+ muEvo();save();checkRewards&&checkRewards();
+ sheet('<div style="text-align:center;padding:6px 10px"><span class="lab">Kiste geöffnet</span><div style="display:flex;gap:12px;justify-content:center;margin:16px 0">'+Object.keys(got).map(function(mk){return '<div style="animation:pop .5s both;display:flex;flex-direction:column;align-items:center;gap:4px">'+matIcon(mk,48)+'<b>+'+got[mk]+'</b><span class="lab">'+MAT[mk].n+'</span></div>'}).join('')+'</div>'+(all?'<p style="font-weight:800;color:#2779A7;margin-bottom:12px">Alle drei Aufträge geschafft! Du bekommst ein Überraschungs-Ei.</p>':'')+'<button class="b p" data-act="closeSheetGo">Super!</button></div>');rerender()};
+
+/* ---- Seite ---- */
+ROUTES.freunde=function(){var m=S.mu,tab=m.tab||'dex',own=muOwned().length;
+ if(!m.sel||!SPEC_BY[m.sel])m.sel=(muOwned()[0]||SPEC[0]).id;
+ var strip=MATS.map(function(k){return '<div class="pn" style="display:flex;align-items:center;gap:8px;padding:6px 12px;flex:1;min-width:0">'+matIcon(k,26)+'<span style="line-height:1.1"><b style="font-size:20px">'+(m.mat[k]||0)+'</b><span class="lab" style="display:block">'+MAT[k].n+'</span></span></div>'}).join('');
+ var qs=questState(),open=qs.filter(function(q){return q.ok&&!q.claimed}).length;
+ var tabs='<div class="row" style="gap:8px"><button class="chip'+(tab==='dex'?' on':'')+'" data-act="muTab" data-a="dex">Meine Freunde · '+own+'/'+SPEC.length+'</button><button class="chip'+(tab==='quest'?' on':'')+'" data-act="muTab" data-a="quest">Tagesaufträge'+(open?' · '+open+' bereit':'')+'</button><div class="sp"></div>'+(m.free?'<button class="b y s" data-act="muSurprise">Überraschungs-Ei öffnen ('+m.free+')</button>':'')+'</div>';
+ var body=tab==='quest'?questHtml(qs):dexHtml();
+ return screen(head('MUYA-FREUNDE','Sammelmappe der Freunde','/','<span class="lab" style="text-align:right">'+own+' von '+SPEC.length+'<br>Freunden gefunden</span>'),'<div class="col" style="height:100%;gap:10px"><div class="row" style="gap:8px">'+strip+'</div>'+tabs+'<div style="flex:1;min-height:0">'+body+'</div></div>')};
+function dexHtml(){var m=S.mu,sel=SPEC_BY[m.sel],ps=m.pets[sel.id],st=ps?petStage(sel.id):0;
+ var cards=SPEC.map(function(sp){var p=m.pets[sp.id],s=p?petStage(sp.id):1,on=sp.id===m.sel;return '<button class="pn" data-act="muSel" data-a="'+sp.id+'" style="padding:6px;display:flex;flex-direction:column;align-items:center;gap:2px;'+(on?'box-shadow:0 0 0 3px #FF6A52;':'')+(p?'':'background:rgba(255,255,255,.5)')+'"><div style="width:100%;aspect-ratio:1;max-height:104px">'+cre(sp,s,!p)+'</div><b style="font-size:13px;white-space:nowrap">'+(p?esc(sp.n[s-1]):'? ? ?')+'</b><span style="display:flex;gap:3px;height:8px">'+[1,2,3].map(function(k){return '<i style="width:8px;height:8px;border-radius:50%;background:'+(p&&s>=k?'#ECD06F':'var(--line)')+'"></i>'}).join('')+'</span></button>'}).join('');
+ var g=ps?(m.life[sel.m]||0)-ps.base:0,next=st>=3?null:EVO[st-1],detail;
+ if(ps){detail='<div style="width:190px;height:190px;margin:0 auto">'+cre(sel,st)+'</div><h2 class="disp" style="font-size:34px;text-align:center">'+esc(sel.n[st-1])+'</h2><div class="lab" style="text-align:center">Stufe '+st+' von 3 · '+(m.buddy===sel.id?'dein Begleiter':'Freund')+'</div><p class="muted" style="font-size:13.5px;margin:8px 0">'+esc(sel.story)+'</p>'+
+  (next?'<div class="row" style="gap:8px">'+matIcon(sel.m,20)+'<div class="bar" style="flex:1"><i style="width:'+Math.min(100,g/next*100)+'%"></i></div><span class="lab">'+g+' / '+next+'</span></div><p class="muted" style="font-size:12px;margin-top:4px">Sammle '+MAT[sel.m].n+' ('+esc(MAT[sel.m].h)+'), dann entwickelt sich '+esc(sel.n[st-1])+'.</p>':'<p style="font-weight:800;color:#2779A7">Voll entwickelt!</p>')+
+  '<div class="row" style="gap:6px;margin:8px 0">'+[1,2,3].map(function(k){return '<div style="flex:1;text-align:center"><div style="height:56px">'+cre(sel,k,st<k)+'</div><span class="lab" style="font-size:9.5px">'+(st>=k?esc(sel.n[k-1]):'?')+'</span></div>'}).join('')+'</div>'+
+  (m.buddy===sel.id?'':'<button class="b s" data-act="muBuddy" data-a="'+sel.id+'" style="width:100%">Als Begleiter wählen</button>')}
+ else{var c=eggCost(sel);detail='<div style="width:170px;height:170px;margin:0 auto">'+cre(sel,1,1)+'</div><h2 class="disp" style="font-size:34px;text-align:center">Unbekannter Freund</h2><p class="muted" style="font-size:13.5px;text-align:center;margin:6px 0 10px">Ein Freund aus der Welt von „'+esc(MAT[sel.m].n)+'“. Bastle ein Ei und schau, wer schlüpft!</p><div style="text-align:center;margin-bottom:10px">'+costHtml(c)+'</div><button class="b '+(canAfford(c)?'p':'')+'" data-act="muCraft" data-a="'+sel.id+'" style="width:100%"'+(canAfford(c)?'':' disabled')+'>Ei basteln</button><p class="muted" style="font-size:12px;margin-top:8px;text-align:center">Material findest du: '+esc(MAT[sel.m].h)+'</p>'}
+ return '<div style="display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;height:100%"><div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:8px;min-height:0">'+cards+'</div><div class="pn" style="padding:12px 14px;overflow:auto;min-height:0" data-keep="mudet">'+detail+'</div></div>'}
+var QMAT={throw:'papier',fold:'papier',chal:'wolken',round:'kompass',bingo:'kompass',find:'mosaik',stop:'mosaik',mem:'sterne',rek:'sterne',pack:'sterne'};
+function questHtml(qs){var D=muDay(),all=qs.every(function(q){return q.claimed});
+ var cards=qs.map(function(q){var pct=q.n/q.g*100;return '<div class="pn" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;'+(q.claimed?'background:rgba(177,234,196,.35)':'')+'"><span class="lab">Auftrag</span><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center">'+matIcon(QMAT[q.k],72)+'<b style="font-size:19px;line-height:1.2">'+esc(q.t)+'</b><span class="muted" style="font-size:12.5px">Belohnung: eine Kiste mit 3 Materialien</span></div><div class="row" style="gap:8px"><div class="bar" style="flex:1"><i style="width:'+pct+'%"></i></div><b>'+q.n+'/'+q.g+'</b></div>'+(q.claimed?'<span class="tag" style="background:#B1EAC4;align-self:flex-start">Kiste geöffnet ✓</span>':q.ok?'<button class="b y" data-act="muClaim" data-a="'+q.k+'">Kiste öffnen</button>':'<a class="b s" href="#'+q.go+'">Los geht’s '+arrow()+'</a>')+'</div>'}).join('');
+ var how=MATS.map(function(k){return '<div class="row" style="gap:8px">'+matIcon(k,22)+'<span style="font-size:13.5px"><b>'+MAT[k].n+'</b> · '+esc(MAT[k].h)+'</span></div>'}).join('');
+ return '<div style="display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:12px;height:100%"><div class="col" style="gap:12px;min-height:0"><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;flex:1;min-height:0">'+cards+'</div><div class="pn" style="padding:10px 16px"><b>Alle drei geschafft?</b> <span class="muted">Dann gibt es heute ein Überraschungs-Ei.</span> '+(D.bonus?'<span class="tag" style="background:#B1EAC4">heute schon bekommen ✓</span>':'')+'</div></div><div class="pn" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px"><span class="lab">So sammelst du Material</span>'+how+'<p class="muted" style="font-size:12.5px;margin-top:auto">Jeder Auftrag dauert nur 5 bis 10 Minuten. Alle zählen mit, ganz ohne Druck. Neue Aufträge gibt es jeden Tag.</p></div></div>'}
+
+function muBuddyChip(){var id=S.mu.buddy,sp=id&&SPEC_BY[id];return '<span style="width:30px;height:30px;display:inline-block">'+(sp?cre(sp,petStage(id)):cre(SPEC[0],1,1))+'</span>'}
+
 /* --- rewards.js --- */
 /* ===== Reisepass-Stempel: every stamp is tied to a real action in one feature ===== */
 function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n:n};if(typeof of==='function')Object.defineProperty(st,'of',{get:of});else st.of=of;STAMPS.push(st)}
@@ -1645,6 +1774,12 @@ function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n
  mkStamp('pk-fam','vor','Familien-Packmeister','Die ganze Packliste fertig',IC.check,Y,function(){return packStats('alle').d},function(){return Math.max(1,packStats('alle').n)});
  mkStamp('brief','vor','Flughafen-Profi','Alle Briefing-Punkte abgehakt',IC.tower,T,function(){return Object.keys(S.brief.done).length},BRIEFING.reduce(function(a,b){return a+b[4].length},0));
  mkStamp('pred','vor','Hellseher','3 Vorhersagen genau getroffen',IC.eye,P,function(){return VORHER2.filter(function(v){var p=S.pred2[v.id];if(!p||p.p==null)return false;var ans=v.a!=null?v.a:p.r;return ans!=null&&ans===p.p&&daysBetween(S.trip.depart,today())>=0}).length},3);
+ /* Muya-Freunde */
+ mkStamp('mu-1','mu','Erstes Ei','Einen Muya-Freund schlüpfen lassen',IC.star,Y,function(){return muOwned().length},1);
+ mkStamp('mu-6','mu','Freunde-Sammler','6 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},6);
+ mkStamp('mu-12','mu','Muya-Dex komplett','Alle 12 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},12);
+ mkStamp('mu-evo','mu','Entwicklung!','Einen Freund voll entwickelt (Stufe 3)',IC.star,Y,function(){return muOwned().filter(function(s){return petStage(s.id)>=3}).length},1);
+ mkStamp('mu-q','mu','Tagesheld','5 Tagesaufträge geschafft',IC.star,Y,function(){return S.mu.qdone||0},5);
  /* Aufträge */
  mkStamp('a-pass1','auf','Erste Bordkarte','Eine echte Bordkarte komplett entdeckt',IC.ticket,Y,function(){return passCount()},1);
  mkStamp('a-pass2','auf','Hin und zurück','Beide Bordkarten komplett',IC.ticket,C,function(){return passCount()},2);

@@ -82,7 +82,7 @@ ACT.mapZoom=function(z){var box=$('#mapbox');var fx=box?(box.scrollLeft+box.clie
  S.stadt.zoom=Math.max(1,Math.min(4,S.stadt.zoom*(+z>0?1.35:1/1.35)));save();rerender();box=$('#mapbox');if(box){box.scrollLeft=fx*box.scrollWidth-box.clientWidth/2;box.scrollTop=fy*box.scrollHeight-box.clientHeight/2}};
 ACT.mapX=function(){S.stadt.showX=!S.stadt.showX;save();rerender()};
 ACT.mapOsm=function(v){S.stadt.osm=v==='1';save();rerender();ROUTES['post:stadt']()};
-ACT.stadtDone=function(id){S.stadt.done[id]=!S.stadt.done[id];if(!S.stadt.done[id])delete S.stadt.done[id];else toast(S.names.mascot+' hakt '+pname(id)+' ab.');save();rerender()};
+ACT.stadtDone=function(id){S.stadt.done[id]=!S.stadt.done[id];if(!S.stadt.done[id])delete S.stadt.done[id];else{ev('stop');toast(S.names.mascot+' hakt '+pname(id)+' ab.')}save();rerender()};
 ACT.spotTick=function(k){S.wes.spot[k]=!S.wes.spot[k];if(!S.wes.spot[k])delete S.wes.spot[k];save();rerender()};
 ACT.mapGps=function(){if(!navigator.geolocation){toast('GPS ist hier nicht verfügbar.');return}toast('Suche deinen Standort …');
  navigator.geolocation.getCurrentPosition(function(p){var g={lat:p.coords.latitude,lng:p.coords.longitude};if(kmd(g,{lat:41.3870,lng:2.1701})>25){toast('Du bist noch nicht in Barcelona.');return}ME=g;

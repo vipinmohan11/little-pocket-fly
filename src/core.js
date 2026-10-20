@@ -9,6 +9,7 @@ var DEFAULTS={
  pack:{done:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
  brief:{done:{},step:0},pred:{},pred2:{},sealed:false,
  hgr:{best:0,log:[],cfg:{span:3,nose:1,angle:4,elev:1,power:3},model:'pfeil',fold:{},tab:'fold',sel:'nose',lim:{n:0,last:0,rest:0}},
+ mu:{mat:{},life:{},pets:{},free:1,cnt:{},days:{},buddy:null,sel:null,tab:'dex',news:[],qdone:0,frac:0},
  auf:{stars:{},rounds:{},dest:{},board:{},bingo:{},sel:'pass'},
  wissen:{read:{},quiz:{},ok:{},seen:{}},
  wes:{found:{},known:{},spot:{},cat:'gaudi'},

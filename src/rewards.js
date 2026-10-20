@@ -8,6 +8,12 @@ function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n
  mkStamp('pk-fam','vor','Familien-Packmeister','Die ganze Packliste fertig',IC.check,Y,function(){return packStats('alle').d},function(){return Math.max(1,packStats('alle').n)});
  mkStamp('brief','vor','Flughafen-Profi','Alle Briefing-Punkte abgehakt',IC.tower,T,function(){return Object.keys(S.brief.done).length},BRIEFING.reduce(function(a,b){return a+b[4].length},0));
  mkStamp('pred','vor','Hellseher','3 Vorhersagen genau getroffen',IC.eye,P,function(){return VORHER2.filter(function(v){var p=S.pred2[v.id];if(!p||p.p==null)return false;var ans=v.a!=null?v.a:p.r;return ans!=null&&ans===p.p&&daysBetween(S.trip.depart,today())>=0}).length},3);
+ /* Muya-Freunde */
+ mkStamp('mu-1','mu','Erstes Ei','Einen Muya-Freund schlüpfen lassen',IC.star,Y,function(){return muOwned().length},1);
+ mkStamp('mu-6','mu','Freunde-Sammler','6 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},6);
+ mkStamp('mu-12','mu','Muya-Dex komplett','Alle 12 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},12);
+ mkStamp('mu-evo','mu','Entwicklung!','Einen Freund voll entwickelt (Stufe 3)',IC.star,Y,function(){return muOwned().filter(function(s){return petStage(s.id)>=3}).length},1);
+ mkStamp('mu-q','mu','Tagesheld','5 Tagesaufträge geschafft',IC.star,Y,function(){return S.mu.qdone||0},5);
  /* Aufträge */
  mkStamp('a-pass1','auf','Erste Bordkarte','Eine echte Bordkarte komplett entdeckt',IC.ticket,Y,function(){return passCount()},1);
  mkStamp('a-pass2','auf','Hin und zurück','Beide Bordkarten komplett',IC.ticket,C,function(){return passCount()},2);

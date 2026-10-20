@@ -21,9 +21,9 @@ function wesDetail(w){if(!w)return '';var on=S.wes.found[w.id],kn=S.wes.known[w.
 var WZW={};
 ACT.wCat=function(c){S.wes.cat=c;WSEL=null;save();rerender()};
 ACT.wSel=function(id){WSEL=id;rerender()};
-ACT.wFound=function(id){S.wes.found[id]=today();save();rerender();toast(S.names.mascot+' freut sich: entdeckt!')};
+ACT.wFound=function(id){if(!S.wes.found[id])ev('find');S.wes.found[id]=today();save();rerender();toast(S.names.mascot+' freut sich: entdeckt!')};
 ACT.wUnfind=function(id){delete S.wes.found[id];delete S.wes.known[id];save();rerender()};
-ACT.wQ=function(v){var x=v.split('|'),w=WESEN.filter(function(e){return e.id===x[0]})[0];if(WZW[w.id]!=null)return;WZW[w.id]=+x[1];if(+x[1]===w.a){S.wes.known[w.id]=today();save()}rerender()};
+ACT.wQ=function(v){var x=v.split('|'),w=WESEN.filter(function(e){return e.id===x[0]})[0];if(WZW[w.id]!=null)return;WZW[w.id]=+x[1];if(+x[1]===w.a){if(!S.wes.known[w.id])ev('explore');S.wes.known[w.id]=today();save()}rerender()};
 ACT.wRetry=function(id){delete WZW[id];rerender()};
 ACT.wMap=function(id,el,e){e.preventDefault();MSEL=id;S.stadt.day=PLACE[id].day;S.stadt.autoFor=today();MTAB=PLACE[id].x?'mehr':'route';save();location.hash='#/stadt'};
 
@@ -56,5 +56,5 @@ ACT.rRace=function(){var rs=$$('.runner'),mx=Math.max.apply(0,rs.map(function(r)
 function duellHtml(cat){var I=REK[cat].items;if(!RQ||RQ.cat!==cat){var r=Math.random;var i=Math.floor(r()*I.length),j;do{j=Math.floor(r()*I.length)}while(j===i||I[i][3]===I[j][3]);RQ={cat:cat,a:I[i],b:I[j],ans:null}}
  var q=RQ,win=q.a[3]>q.b[3]?'a':'b';function card(k){var x=q[k],res=q.ans!=null;var good=res&&k===win;return '<button class="tl" data-act="rGuess" data-a="'+k+'" style="flex:1;align-items:center;justify-content:center;text-align:center;gap:8px;'+(res?(good?'background:#B1EAC4;border-color:#7FD39E':'opacity:.7'):'')+'"><span style="font-size:76px;line-height:1">'+x[2]+'</span><b style="font-size:22px">'+esc(x[1])+'</b>'+(res?'<span class="disp" style="font-size:30px">'+esc(rekUnit(cat,x[3]))+'</span>':'<span class="lab">tippen</span>')+'</button>'}
  return '<div style="display:flex;flex-direction:column;height:100%;gap:12px"><h2 style="font-size:24px;text-align:center">Was ist '+REK[cat].cmp+'?</h2><div class="row" style="flex:1;min-height:0;gap:14px;align-items:stretch">'+card('a')+'<span class="disp" style="align-self:center;font-size:34px">oder</span>'+card('b')+'</div>'+(q.ans!=null?'<div class="row" style="justify-content:center;gap:14px"><b style="font-size:18px">'+(q.ans===win?'Richtig! Serie: '+S.rek.streak:'Knapp daneben!')+'</b><button class="b p" data-act="rNext">Nächstes Duell '+arrow('#fff')+'</button></div>':'<p class="muted" style="text-align:center">Erst schätzen, dann wird aufgedeckt.</p>')+'</div>'}
-ACT.rGuess=function(k){if(!RQ||RQ.ans!=null)return;RQ.ans=k;var win=RQ.a[3]>RQ.b[3]?'a':'b';S.rek.n++;if(k===win){S.rek.right++;S.rek.streak++;S.rek.best=Math.max(S.rek.best,S.rek.streak)}else S.rek.streak=0;save();rerender()};
+ACT.rGuess=function(k){if(!RQ||RQ.ans!=null)return;RQ.ans=k;var win=RQ.a[3]>RQ.b[3]?'a':'b';S.rek.n++;ev('rek');if(k===win){S.rek.right++;S.rek.streak++;S.rek.best=Math.max(S.rek.best,S.rek.streak)}else S.rek.streak=0;save();rerender()};
 ACT.rNext=function(){RQ=null;rerender()};

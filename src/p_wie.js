@@ -37,18 +37,18 @@ function drawChal(){var w=WISSEN[WZ.ch];if(!WZ.q){WZ.q=pickQ();WZ.ans=null;WZ.se
  if(q.t==='match'){h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+'<div class="col" style="gap:6px">'+q.p.map(function(p,k){var m=WZ.mt[k];return '<button class="qo'+(m?' ok':'')+'" style="margin:0;'+(WZ.ml===k?'border-color:#13324A;border-width:3px':'')+'" data-act="qML" data-a="'+k+'">'+esc(p[0])+'</button>'}).join('')+'</div><div class="col" style="gap:6px">'+WZ.shr.map(function(r){var used=q.p.some(function(p,k){return WZ.mt[k]&&p[1]===r});return '<button class="qo'+(used?' ok':'')+'" style="margin:0" data-act="qMR" data-a="'+esc(r)+'">'+esc(r)+'</button>'}).join('')+'</div></div>'}
  if(q.t==='tap')h+='<p class="muted">Tippe direkt im Bild links.</p>';
  if(q.t==='goal'&&!done)h+='<p class="muted">Benutze die Regler im Experiment. Sobald es klappt, merkt '+esc(S.names.mascot)+' es sofort.</p><button class="b s" data-act="qGive">Ich brauche einen Tipp</button>';
- if(done){var ok=WZ.res;h+='<div class="okmsg" style="margin-top:10px;padding:10px 12px;border-radius:14px;background:'+(ok?'#B1EAC4':'#FFE6DF')+'"><b>'+(ok?['Richtig!','Stark!','Genau!','Super gemacht!'][Math.floor(Math.random()*4)]:'Fast. ')+'</b> '+esc(q.w)+'</div><button class="b p" style="margin-top:12px;width:100%" data-act="qNext">Nächste Herausforderung '+arrow('#fff')+'</button>'}
+ if(done){var ok=WZ.res;h+='<div class="okmsg" style="margin-top:10px;padding:10px 12px;border-radius:14px;background:'+(ok?'#B1EAC4':'#FFF1CC')+'"><b>'+(ok?['Richtig!','Stark!','Genau!','Super gemacht!'][Math.floor(Math.random()*4)]:'Gut probiert! So ist es: ')+'</b> '+esc(q.w)+'</div><button class="b p" style="margin-top:12px;width:100%" data-act="qNext">Nächste Herausforderung '+arrow('#fff')+'</button>'}
  var m=chMastery(w);h+='<div style="margin-top:14px"><div class="row"><span class="lab">Kapitel-Meister</span><div class="sp"></div><span class="lab">'+m.n+' / '+m.of+'</span></div><div class="bar" style="margin-top:6px"><i style="width:'+(m.n/m.of*100)+'%"></i></div></div>';
  $('#chal').innerHTML=h;
  if(q.t==='goal'&&!done){clearInterval(WZ.gi);WZ.gi=setInterval(function(){if(!SIMV||WZ.ans!=null){clearInterval(WZ.gi);return}if(GOALS[q.chk]&&GOALS[q.chk](SIMV.get()))finishQ(true,'ok')},400);CLEAN.push(function(){clearInterval(WZ.gi)})}}
-function finishQ(ok,ans){var q=WZ.q;WZ.ans=ans;WZ.res=ok;S.wissen.seen[q.id]=(S.wissen.seen[q.id]||0)+1;if(ok)S.wissen.ok[q.id]=1;save();
+function finishQ(ok,ans){var q=WZ.q;WZ.ans=ans;WZ.res=ok;S.wissen.seen[q.id]=(S.wissen.seen[q.id]||0)+1;if(ok)S.wissen.ok[q.id]=1;ev(ok?'chalok':'chal');save();
  if(q.t==='pred'&&q.set&&SIMV)SIMV.set(q.set);drawChal();var w=WISSEN[WZ.ch],m=chMastery(w);var mm=$('#mast');if(mm)mm.innerHTML=ring(m.n/m.of,46,'#49C5B6',6)+'<b style="position:absolute;font-size:11px">'+m.n+'/'+m.of+'</b>'}
 ACT.qAns=function(v){if(WZ.ans!=null)return;var q=WZ.q;var a=q.t==='tf'?v==='true':+v;finishQ(a===q.a,a)};
 ACT.qNext=function(){WZ.last=WZ.q.id;WZ.q=null;drawChal()};
 ACT.qGive=function(){finishQ(false,'give')};
-ACT.qOrd=function(x){var q=WZ.q;if(WZ.ans!=null)return;if(q.o[WZ.seq.length]===x){WZ.seq.push(x);if(WZ.seq.length===q.o.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Noch nicht. Was kommt davor?')}drawChal()};
+ACT.qOrd=function(x){var q=WZ.q;if(WZ.ans!=null)return;if(q.o[WZ.seq.length]===x){WZ.seq.push(x);if(WZ.seq.length===q.o.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Fast! Probier eine andere Karte.')}drawChal()};
 ACT.qML=function(k){if(WZ.ans!=null)return;WZ.ml=+k;drawChal()};
-ACT.qMR=function(r){var q=WZ.q;if(WZ.ans!=null||WZ.ml==null)return;if(q.p[WZ.ml][1]===r){WZ.mt[WZ.ml]=1;WZ.ml=null;if(Object.keys(WZ.mt).length===q.p.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Passt nicht. Probier ein anderes.')}drawChal()};
+ACT.qMR=function(r){var q=WZ.q;if(WZ.ans!=null||WZ.ml==null)return;if(q.p[WZ.ml][1]===r){WZ.mt[WZ.ml]=1;WZ.ml=null;if(Object.keys(WZ.mt).length===q.p.length){finishQ(WZ.mis<=1,'ok');return}}else{WZ.mis++;toast('Fast! Probier ein anderes Paar.')}drawChal()};
 ACT.simHit=function(z){if(!SIMV)return;if(SIMV.hit)SIMV.hit(z);var q=WZ.q;if(q&&q.t==='tap'&&WZ.ans==null)finishQ(z===q.hit,z)};
 var GOALS={
  liftHover:function(s){return s.v>=400&&s.v<=500&&s.L>=92&&s.L<=108},liftSlow:function(s){return s.v<=320&&s.L>=95&&s.L<=120&&s.a<=15},
