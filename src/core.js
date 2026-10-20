@@ -102,7 +102,7 @@ function stampProg(st){var v=0;try{v=st.n()}catch(e){}return Math.min(st.of,v)}
 function checkRewards(silent){var neu=[];STAMPS.forEach(function(st){if(S.earned[st.id])return;if(stampProg(st)>=st.of){S.earned[st.id]=today();neu.push(st)}});
  if(neu.length){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(!silent)neu.forEach(function(st,i){setTimeout(function(){stampToast(st)},i*3600)})}}
 function stampSvg(st,on){var c=on?st.c:'#B8BEC2';return '<svg class="stamp" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="'+(on?c+'33':'none')+'" stroke="'+c+'" stroke-width="3"/><circle cx="50" cy="50" r="38" fill="none" stroke="'+c+'" stroke-width="1.6" stroke-dasharray="3 3"/><g transform="translate(32 30) scale(1.5)" fill="none" stroke="'+(on?'#13324A':'#9AA3A8')+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="'+st.ic+'"/></g></svg>'}
-function stampToast(st){$$('.stampt').forEach(function(x){x.remove()});var e=document.createElement('a');e.className='stampt';e.href='#/samm';e.innerHTML='<span class="sm">'+stampSvg(st,true)+'</span><span><span class="lab">Neuer Stempel im Reisepass</span><br><b>'+esc(st.t)+'</b><br><span class="muted" style="font-size:13px">'+esc(st.d)+'</span></span>';document.body.appendChild(e);setTimeout(function(){e.remove()},3500)}
+function stampToast(st){$$('.stampt').forEach(function(x){x.remove()});var e=document.createElement('a');e.className='stampt';e.href='#/samm';e.innerHTML='<span class="sm">'+stampSvg(st,true)+'</span><span><span class="lab">Neuer Stempel im Reisepass</span><br><b>'+esc(st.t)+'</b><br><span class="muted" style="font-size:15px">'+esc(st.d)+'</span></span>';document.body.appendChild(e);setTimeout(function(){e.remove()},3500)}
 /* closest unfinished stamps (for "Nächstes Ziel") */
 function nextGoals(n,cat){return STAMPS.filter(function(s){return !S.earned[s.id]&&(!cat||s.cat===cat)}).map(function(s){return{s:s,p:stampProg(s)/s.of}}).sort(function(a,b){return b.p-a.p}).slice(0,n)}
 
@@ -137,7 +137,7 @@ function initSW(){if(!('serviceWorker' in navigator))return;
  var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.reload()});
  if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){})}}
 function updHtml(st,info){
- if(st==='ready')return '<p style="font-weight:800">Neue Version bereit'+(info&&info.version?' ('+esc(info.version)+')':'')+'.</p>'+notes(info)+'<p class="muted" style="font-size:13px;margin-bottom:8px">Alle Daten bleiben erhalten: Gepacktes, Tagebuch, Stempel, Schätze.</p><button class="b p" data-act="applyUpdate">Jetzt aktualisieren</button>';
+ if(st==='ready')return '<p style="font-weight:800">Neue Version bereit'+(info&&info.version?' ('+esc(info.version)+')':'')+'.</p>'+notes(info)+'<p class="muted" style="font-size:15px;margin-bottom:8px">Alle Daten bleiben erhalten: Gepacktes, Tagebuch, Stempel, Schätze.</p><button class="b p" data-act="applyUpdate">Jetzt aktualisieren</button>';
  if(st==='latest')return '<p style="font-weight:800">Du hast die neueste Version ('+APP_VERSION+').</p>';
  if(st==='offline')return '<p style="font-weight:800">Keine Verbindung. Mit WLAN erneut versuchen.</p>';
  if(st==='checking')return '<p class="muted">Suche nach Updates …</p>';
