@@ -139,3 +139,28 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{.hd .b,.seg,.back{display:none!important}body{background:#fff}.scr{height:auto;overflow:visible}}
 .scr.free{height:auto;min-height:100vh;min-height:100dvh;overflow:visible}
+
+/* ===== Cockpit (Wie fliegt das?) ===== */
+.ckpt{display:grid;grid-template-rows:minmax(0,1fr) auto;gap:10px;height:100%}
+.ck-top{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;min-height:0}
+.ck-wind{position:relative;min-height:0;background:linear-gradient(180deg,#1B3247,#0F2233);border-radius:48px 48px 18px 18px;padding:12px;box-shadow:inset 0 0 0 3px #2A4A66,0 8px 22px rgba(15,34,51,.28)}
+.ck-wind #stage{box-shadow:inset 0 0 0 2px #0B1C2B}
+.ck-scr{position:absolute;width:8px;height:8px;border-radius:50%;background:#5E7A92;box-shadow:inset -1px -1px 0 #2A445C;z-index:2}
+.ck-check{position:relative;display:flex;flex-direction:column;gap:8px;min-height:0;background:linear-gradient(180deg,#C9A574,#B58B57);border-radius:18px;padding:22px 10px 10px;box-shadow:0 8px 22px rgba(15,34,51,.2)}
+.ck-clip{position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:linear-gradient(#E3E7EA,#9AA3A8);border-radius:9px;border:2px solid #13324A;z-index:2}
+.ck-radio{background:#13263A;color:#E8F1F6;border-radius:12px;padding:8px 10px;font-family:inherit}
+.ck-panel{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;background:linear-gradient(180deg,#1E3347,#12253A);border-radius:22px;padding:10px 16px;box-shadow:inset 0 2px 0 #2E4C68,0 8px 22px rgba(15,34,51,.25)}
+.ck-cap{display:flex;gap:10px;align-items:center;min-width:0}
+.ck-bubble{position:relative;flex:1;min-width:0;background:#FFFDF8;color:#13324A;border-radius:16px;padding:8px 12px;display:flex;flex-direction:column;gap:6px}
+.ck-bubble:before{content:"";position:absolute;left:-9px;top:24px;border:9px solid transparent;border-right-color:#FFFDF8;border-left:0}
+.ck-switches{display:flex;gap:6px;flex-wrap:wrap}
+.ck-switches .chip{height:28px;padding:0 10px;font-size:12px;background:#E8EEF2;border-color:#C9D4DC;gap:6px}
+.ck-switches .chip.on{background:#13324A;color:#fff;border-color:#13324A}
+.ck-switches .chip.ck-next{background:#ECD06F;border-color:#ECD06F;color:#13324A;font-weight:800}
+.ck-led{width:8px;height:8px;border-radius:50%;background:#9AA3A8;display:inline-block}
+.ck-switches .chip.on .ck-led{background:#7FD39E;box-shadow:0 0 6px #7FD39E}
+.ck-gauges{display:grid;grid-template-columns:repeat(8,60px);gap:8px}
+.ck-g{display:flex;flex-direction:column;align-items:center;gap:2px;font-family:'DM Mono',monospace;font-size:8.5px;letter-spacing:.06em;color:#9FB6C8}
+.ck-g.on{color:#ECD06F}
+.ck-g.on svg{filter:drop-shadow(0 0 6px rgba(236,208,111,.55))}
+@media (max-width:1180px){.ck-gauges{grid-template-columns:repeat(4,52px);gap:4px 8px}.ck-g svg{width:46px;height:46px}.ck-top{grid-template-columns:minmax(0,1fr) 310px}}

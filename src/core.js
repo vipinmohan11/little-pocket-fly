@@ -11,7 +11,7 @@ var DEFAULTS={
  hgr:{best:0,log:[],cfg:{span:3,nose:1,angle:4,elev:1,power:3},model:'pfeil',fold:{},tab:'fold',sel:'nose',lim:{n:0,last:0,rest:0}},
  mu:{mat:{},life:{},pets:{},free:1,cnt:{},days:{},buddy:null,sel:null,tab:'dex',news:[],qdone:0,frac:0,bb:0,bbk:{},base:{}},
  auf:{stars:{},rounds:{},dest:{},board:{},bingo:{},sel:'pass'},
- wissen:{read:{},quiz:{},ok:{},seen:{}},
+ wissen:{read:{},quiz:{},ok:{},seen:{},last:0},
  wes:{found:{},known:{},spot:{},cat:'gaudi',slot:null,loc:null},
  rek:{cat:'Höhe',a:null,b:null,n:0,right:0,streak:0,best:0},
  diary:{},mem:[],
