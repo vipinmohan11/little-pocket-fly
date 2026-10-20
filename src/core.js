@@ -2,7 +2,7 @@
 var APP_VERSION='1.1.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
- v:2,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
+ v:3,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
  names:{mascot:'Muya',wesen:'Wunderwesen',kind:''},ts:1,
  trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
  archive:[],
@@ -18,6 +18,7 @@ var DEFAULTS={
  earned:{},seen:{}
 };
 var S;
+var SHARED_PACK={6:1,15:1,16:1,17:1,22:1,33:1,45:1,96:1,114:1,118:1};
 function deepMerge(d,s){if(Array.isArray(d))return Array.isArray(s)?s:d.slice();var o={};
  for(var k in d){if(s&&s[k]!==undefined&&s[k]!==null){o[k]=(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k]))?deepMerge(d[k],s[k]):s[k]}else o[k]=JSON.parse(JSON.stringify(d[k]))}
  if(s)for(var k2 in s)if(!(k2 in d))o[k2]=s[k2];return o}
@@ -28,9 +29,16 @@ function migrate(){
    (e.best||[]).forEach(function(b,i){S.mem.push({id:'m'+d.replace(/-/g,'')+i,date:d,what:b,cat:'erlebnis',r:r,note:'',t:Date.now()})});
    if(e.text)S.mem.push({id:'m'+d.replace(/-/g,'')+'n',date:d,what:'Mein Satz',cat:'notiz',r:r,note:e.text,t:Date.now()})});
   if(S.pack.person==='alle')S.pack.person='kind';
-  S.v=2}}
+  S.v=2}
+ if(S.v<3){ // packing ticks were shared by item id; split per person (only where it is clearly the owner)
+  var old=S.pack.done||{},nd={};
+  Object.keys(old).forEach(function(k){if(k.charAt(0)==='c'||k.indexOf('@')>0||SHARED_PACK[k]){nd[k]=1;return}
+   var it=null;PACK.forEach(function(c){c.items.forEach(function(i){if(String(i.id)===k)it=i})});
+   if(!it||it.w==='haus'){nd[k]=1;return}
+   if(it.w==='eltern'){nd[k+'@mama']=1;nd[k+'@papa']=1}else if(it.w==='mama'||it.w==='papa')nd[k+'@'+it.w]=1;else nd[k+'@kind']=1});
+  S.pack.done=nd;S.v=3}}
 function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
- S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=2;migrate()}
+ S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=3;migrate()}
 var saveT=null;
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
 load();
