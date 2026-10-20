@@ -22,9 +22,9 @@ var WZW={};
 function shufSeed(arr,seed){var h=2166136261;for(var i=0;i<seed.length;i++)h=Math.imul(h^seed.charCodeAt(i),16777619)>>>0;var o=arr.slice();for(var j=o.length-1;j>0;j--){h=Math.imul(h^(h>>>15),2246822519)>>>0;var r=h%(j+1),t=o[j];o[j]=o[r];o[r]=t}return o}
 ACT.wCat=function(c){S.wes.cat=c;WSEL=null;save();rerender()};
 ACT.wSel=function(id){WSEL=id;rerender()};
-ACT.wFound=function(id){if(!S.wes.found[id])ev('find');S.wes.found[id]=today();save();rerender();toast(S.names.mascot+' freut sich: entdeckt!')};
+ACT.wFound=function(id){if(!S.wes.found[id])ev('find',1,id);S.wes.found[id]=today();save();rerender();toast(S.names.mascot+' freut sich: entdeckt!')};
 ACT.wUnfind=function(id){delete S.wes.found[id];delete S.wes.known[id];save();rerender()};
-ACT.wQ=function(v){var x=v.split('|'),w=WESEN.filter(function(e){return e.id===x[0]})[0];if(WZW[w.id]!=null)return;WZW[w.id]=+x[1];if(+x[1]===w.a){if(!S.wes.known[w.id])ev('explore');S.wes.known[w.id]=today();save()}rerender()};
+ACT.wQ=function(v){var x=v.split('|'),w=WESEN.filter(function(e){return e.id===x[0]})[0];if(WZW[w.id]!=null)return;WZW[w.id]=+x[1];if(+x[1]===w.a){if(!S.wes.known[w.id])ev('explore',1,w.id);S.wes.known[w.id]=today();save()}rerender()};
 ACT.wRetry=function(id){delete WZW[id];rerender()};
 ACT.wMap=function(id,el,e){e.preventDefault();MSEL=id;S.stadt.day=PLACE[id].day;S.stadt.autoFor=today();MTAB=PLACE[id].x?'mehr':'route';save();location.hash='#/stadt'};
 

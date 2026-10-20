@@ -14,6 +14,8 @@ function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n
  mkStamp('mu-12','mu','Muya-Dex komplett','Alle 12 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},12);
  mkStamp('mu-evo','mu','Entwicklung!','Einen Freund voll entwickelt (Stufe 3)',IC.star,Y,function(){return muOwned().filter(function(s){return petStage(s.id)>=3}).length},1);
  mkStamp('mu-q','mu','Tagesheld','5 Tagesaufträge geschafft',IC.star,Y,function(){return S.mu.qdone||0},5);
+ mkStamp('mu-b3','mu','Baumeister','3 Gebäude in Muyas Forscherbasis',IC.suitcase,Y,function(){return Object.keys(S.mu.base).length},3);
+ mkStamp('mu-b5','mu','Forscherbasis fertig','Alle 5 Gebäude gebaut',IC.suitcase,Y,function(){return Object.keys(S.mu.base).length},5);
  /* Aufträge */
  mkStamp('a-pass1','auf','Erste Bordkarte','Eine echte Bordkarte komplett entdeckt',IC.ticket,Y,function(){return passCount()},1);
  mkStamp('a-pass2','auf','Hin und zurück','Beide Bordkarten komplett',IC.ticket,C,function(){return passCount()},2);

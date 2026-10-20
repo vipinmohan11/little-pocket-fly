@@ -41,7 +41,7 @@ function drawChal(){var w=WISSEN[WZ.ch];if(!WZ.q){WZ.q=pickQ();WZ.ans=null;WZ.se
  var m=chMastery(w);h+='<div style="margin-top:14px"><div class="row"><span class="lab">Kapitel-Meister</span><div class="sp"></div><span class="lab">'+m.n+' / '+m.of+'</span></div><div class="bar" style="margin-top:6px"><i style="width:'+(m.n/m.of*100)+'%"></i></div></div>';
  $('#chal').innerHTML=h;
  if(q.t==='goal'&&!done){clearInterval(WZ.gi);WZ.gi=setInterval(function(){if(!SIMV||WZ.ans!=null){clearInterval(WZ.gi);return}var cur=SIMV.get(),sg={};Object.keys(cur).forEach(function(k){if(k!=='off'&&k!=='rot'&&k!=='t'&&k!=='hl')sg[k]=cur[k]});var j=JSON.stringify(sg);if(WZ.g0==null)WZ.g0=j;else if(j!==WZ.g0)WZ.touched=1;if(WZ.touched&&GOALS[q.chk]&&GOALS[q.chk](cur))WZ.gc=(WZ.gc||0)+1;else WZ.gc=0;if(WZ.gc>=3)finishQ(true,'ok')},400);CLEAN.push(function(){clearInterval(WZ.gi)})}}
-function finishQ(ok,ans){var q=WZ.q;WZ.ans=ans;WZ.res=ok;S.wissen.seen[q.id]=(S.wissen.seen[q.id]||0)+1;if(ok)S.wissen.ok[q.id]=1;ev(ok?'chalok':'chal');save();
+function finishQ(ok,ans){var q=WZ.q;WZ.ans=ans;WZ.res=ok;S.wissen.seen[q.id]=(S.wissen.seen[q.id]||0)+1;if(ok)S.wissen.ok[q.id]=1;ev(ok?'chalok':'chal',1,q.id);save();
  if(q.t==='pred'&&q.set&&SIMV)SIMV.set(q.set);drawChal();var w=WISSEN[WZ.ch],m=chMastery(w);var mm=$('#mast');if(mm)mm.innerHTML=ring(m.n/m.of,46,'#49C5B6',6)+'<b style="position:absolute;font-size:11px">'+m.n+'/'+m.of+'</b>'}
 ACT.qAns=function(v){if(WZ.ans!=null)return;var q=WZ.q;var a=q.t==='tf'?v==='true':+v;finishQ(a===q.a,a)};
 ACT.qNext=function(){WZ.last=WZ.q.id;WZ.q=null;drawChal()};

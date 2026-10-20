@@ -62,9 +62,9 @@ function stageSvg(){var ticks='';for(var m=0;m<=30;m+=5)ticks+='<line x1="'+hx(m
 function resCard(l){var n=flightNote(l,l.c),L=hLim(),pause=L.rest>Date.now()?'<p style="font-size:13px;font-weight:800;margin-top:6px;color:#2779A7">Das waren '+HLIM.max+' Flieger! Muya macht jetzt '+Math.round(HLIM.rest/60000)+' Minuten Flugpause. Schau dir solange die Falt-Anleitung an oder entdecke etwas Neues.</p>':'';return '<div class="pn" style="padding:10px 14px;background:rgba(255,253,248,.95)"><div class="row"><b style="font-size:26px" class="disp">'+fmt(l.d)+' m</b><div class="sp"></div>'+(l.t?'<span class="tag">'+fmt(l.t)+' s in der Luft</span>':'')+'</div><b style="font-size:15px">'+n[0]+'</b><p class="muted" style="font-size:13px">'+n[1]+'</p>'+pause+'</div>'}
 ACT.hModel=function(k){S.hgr.model=k;save();rerender()};
 ACT.hFold=function(j){S.hgr.fold[S.hgr.model+'i']=+j;save();rerender()};
-ACT.hBuilt=function(){if(!S.hgr.fold[S.hgr.model])ev('fold');S.hgr.fold[S.hgr.model]=1;save();toast(MODELS[S.hgr.model].n+' ist gebaut! Jetzt testen.');rerender()};
+ACT.hBuilt=function(){if(!S.hgr.fold[S.hgr.model])ev('fold',1,S.hgr.model);S.hgr.fold[S.hgr.model]=1;save();toast(MODELS[S.hgr.model].n+' ist gebaut! Jetzt testen.');rerender()};
 ACT.hSet=function(v){var x=v.split('|');S.hgr.sel=x[0];S.hgr.tab='set';var h=HP.filter(function(h){return h[0]===x[0]})[0];var step=x[0]==='angle'?5:1;S.hgr.cfg[x[0]]=Math.max(h[3],Math.min(h[4],S.hgr.cfg[x[0]]+(+x[1])*step));save();rerender()};
-ACT.hThrow=function(){if(HG.busy)return;var L=hLim();if(L.rest>Date.now())return;HG.busy=true;ev('throw');L.n++;L.last=Date.now();
+ACT.hThrow=function(){if(HG.busy)return;var L=hLim();if(L.rest>Date.now())return;HG.busy=true;ev('throw');{var pv=S.hgr.log[S.hgr.log.length-1],cc=JSON.stringify(S.hgr.cfg);if(pv&&pv.m===S.hgr.model&&JSON.stringify(pv.c)!==cc)ev('cmp')}L.n++;L.last=Date.now();
  if(L.n>=HLIM.max){L.rest=Date.now()+HLIM.rest}else if(HLIM.warn[L.n])toast(HLIM.warn[L.n]);
 var c=JSON.parse(JSON.stringify(S.hgr.cfg)),m=S.hgr.model,r=fly(m,c);var p=pathD(r.pts);
  var entry={d:r.d,t:r.t,c:c,m:m,p:p,loops:r.loops,stall:r.stall,dive:r.dive,maxy:r.maxy};var rec=r.d>S.hgr.best;S.hgr.log.push(entry);if(S.hgr.log.length>60)S.hgr.log.shift();
