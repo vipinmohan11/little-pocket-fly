@@ -2,7 +2,7 @@
 function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n:n};if(typeof of==='function')Object.defineProperty(st,'of',{get:of});else st.of=of;STAMPS.push(st)}
 (function(){
  var Y='#ECD06F',T='#49C5B6',C='#FF6A52',B='#2779A7',M='#7FD39E',P='#FFB288',K='#9ACDEB';
- function kidItems(){return packItems('kind')}
+ function kidItems(){return packItems('kind').filter(function(i){return !S.pack.na[i.key]})}
  /* Vor dem Abflug */
  mkStamp('pk-kind','vor','Koffer zu!','Alles für das Kind gepackt',IC.suitcase,Y,function(){return kidItems().filter(function(i){return S.pack.done[i.key]}).length},function(){return Math.max(1,kidItems().length)});
  mkStamp('pk-fam','vor','Familien-Packmeister','Die ganze Packliste fertig',IC.check,Y,function(){return packStats('alle').d},function(){return Math.max(1,packStats('alle').n)});

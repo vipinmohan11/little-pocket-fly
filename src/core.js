@@ -2,11 +2,11 @@
 var APP_VERSION='1.1.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
- v:4,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
+ v:5,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
  names:{mascot:'Muya',wesen:'Wunderwesen',kind:''},ts:1,
  trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
  archive:[],
- pack:{done:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
+ pack:{done:{},na:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
  brief:{done:{},step:0},pred:{},pred2:{},sealed:false,
  hgr:{best:0,log:[],cfg:{span:3,nose:1,angle:4,elev:1,power:3},model:'pfeil',fold:{},tab:'fold',sel:'nose',lim:{n:0,last:0,rest:0}},
  mu:{mat:{},life:{},pets:{},free:1,cnt:{},days:{},buddy:null,sel:null,tab:'dex',news:[],qdone:0,frac:0},
@@ -19,7 +19,7 @@ var DEFAULTS={
  earned:{},seen:{}
 };
 var S;
-var SHARED_PACK={6:1,15:1,16:1,17:1,22:1,33:1,45:1,96:1,114:1,118:1};
+var SHARED_PACK={6:1,9:1,16:1,17:1,22:1,33:1,36:1,45:1,72:1,95:1,96:1,114:1,118:1};
 function deepMerge(d,s){if(Array.isArray(d))return Array.isArray(s)?s:d.slice();var o={};
  for(var k in d){if(s&&s[k]!==undefined&&s[k]!==null){o[k]=(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k]))?deepMerge(d[k],s[k]):s[k]}else o[k]=JSON.parse(JSON.stringify(d[k]))}
  if(s)for(var k2 in s)if(!(k2 in d))o[k2]=s[k2];return o}
@@ -40,9 +40,11 @@ function migrate(){
   S.pack.done=nd;S.v=3}
  if(S.v<4){ // stable question ids (hash of the question text instead of array position)
   if(typeof WISSEN!=='undefined')WISSEN.forEach(function(w){w.qs.forEach(function(q){if(S.wissen.ok[q.lid])S.wissen.ok[q.id]=1;if(S.wissen.seen[q.lid]&&!S.wissen.seen[q.id])S.wissen.seen[q.id]=S.wissen.seen[q.lid]})});
-  S.v=4}}
+  S.v=4}
+ if(S.v<5){ // shared items per ChatGPT policy: some ids became shared, one became personal
+  var d5=S.pack.done||{},n5={};Object.keys(d5).forEach(function(k){var id=k.split('@')[0];if(k.indexOf('@')>0&&SHARED_PACK[id]){n5[id]=1}else if(k==='15'){n5['15@kind']=1}else n5[k]=1});S.pack.done=n5;S.v=5}}
 function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
- S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=4;migrate()}
+ S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=5;migrate()}
 var saveT=null;
 window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{S=deepMerge(DEFAULTS,JSON.parse(e.newValue));migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}

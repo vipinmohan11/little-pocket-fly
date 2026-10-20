@@ -629,11 +629,11 @@ var WESEN=[
 var APP_VERSION='1.2.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
- v:4,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
+ v:5,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
  names:{mascot:'Muya',wesen:'Wunderwesen',kind:''},ts:1,
  trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
  archive:[],
- pack:{done:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
+ pack:{done:{},na:{},custom:[],region:'EU',allRegions:false,person:'kind',cat:0},
  brief:{done:{},step:0},pred:{},pred2:{},sealed:false,
  hgr:{best:0,log:[],cfg:{span:3,nose:1,angle:4,elev:1,power:3},model:'pfeil',fold:{},tab:'fold',sel:'nose',lim:{n:0,last:0,rest:0}},
  mu:{mat:{},life:{},pets:{},free:1,cnt:{},days:{},buddy:null,sel:null,tab:'dex',news:[],qdone:0,frac:0},
@@ -646,7 +646,7 @@ var DEFAULTS={
  earned:{},seen:{}
 };
 var S;
-var SHARED_PACK={6:1,15:1,16:1,17:1,22:1,33:1,45:1,96:1,114:1,118:1};
+var SHARED_PACK={6:1,9:1,16:1,17:1,22:1,33:1,36:1,45:1,72:1,95:1,96:1,114:1,118:1};
 function deepMerge(d,s){if(Array.isArray(d))return Array.isArray(s)?s:d.slice();var o={};
  for(var k in d){if(s&&s[k]!==undefined&&s[k]!==null){o[k]=(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k]))?deepMerge(d[k],s[k]):s[k]}else o[k]=JSON.parse(JSON.stringify(d[k]))}
  if(s)for(var k2 in s)if(!(k2 in d))o[k2]=s[k2];return o}
@@ -667,9 +667,11 @@ function migrate(){
   S.pack.done=nd;S.v=3}
  if(S.v<4){ // stable question ids (hash of the question text instead of array position)
   if(typeof WISSEN!=='undefined')WISSEN.forEach(function(w){w.qs.forEach(function(q){if(S.wissen.ok[q.lid])S.wissen.ok[q.id]=1;if(S.wissen.seen[q.lid]&&!S.wissen.seen[q.id])S.wissen.seen[q.id]=S.wissen.seen[q.lid]})});
-  S.v=4}}
+  S.v=4}
+ if(S.v<5){ // shared items per ChatGPT policy: some ids became shared, one became personal
+  var d5=S.pack.done||{},n5={};Object.keys(d5).forEach(function(k){var id=k.split('@')[0];if(k.indexOf('@')>0&&SHARED_PACK[id]){n5[id]=1}else if(k==='15'){n5['15@kind']=1}else n5[k]=1});S.pack.done=n5;S.v=5}}
 function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
- S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=4;migrate()}
+ S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=5;migrate()}
 var saveT=null;
 window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{S=deepMerge(DEFAULTS,JSON.parse(e.newValue));migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
@@ -801,7 +803,7 @@ function packFor(person,r){var res=[];
 function packItems(person){var p=S.pack,r=p.allRegions?null:p.region;person=person||p.person;
  if(person!=='alle')return packFor(person,r);
  var seen={},res=[];['kind','mama','papa','haus'].forEach(function(x){packFor(x,r).forEach(function(i){if(seen[i.key])return;seen[i.key]=1;res.push(i)})});return res}
-function packStats(person){var it=packItems(person||'alle'),d=it.filter(function(i){return S.pack.done[i.key]}).length;return{n:it.length,d:d}}
+function packStats(person){var it=packItems(person||'alle').filter(function(i){return !S.pack.na[i.key]}),d=it.filter(function(i){return S.pack.done[i.key]}).length;return{n:it.length,d:d}}
 function dayProgress(i){var dates=tripDates(),d=dates[i];var m=S.mem.filter(function(x){return x.date===d}).length;var c=CITY[i];var v=c?c.stops.filter(function(s){return S.stadt.done[s.id]}).length:0;return Math.min(1,(m*1.5+v)/8)}
 
 ROUTES.home=function(){var ps=packStats('alle'),ti=tripInfo(),n=earnedCount(),rk=rankOf(n);
@@ -838,12 +840,13 @@ ROUTES.vor=function(a){var sub=a[0]||'liste';var ps=packStats('alle');
 ACT.vorTab=function(t){location.hash='#/vor/'+t};
 function listHtml(){var p=S.pack;var it=packItems();
  var people=PERSON.map(function(x){var st=packStats(x[0]);var on=p.person===x[0];return '<button class="tl'+(on?' on':'')+'" data-act="packWho" data-a="'+x[0]+'" style="flex-direction:row;align-items:center;gap:10px;padding:8px 14px 8px 8px;min-width:132px"><span style="position:relative;display:grid;place-items:center">'+ring(st.n?st.d/st.n:0,42,on?'#ECD06F':x[3],5)+'<b style="position:absolute;font-size:15px">'+x[2]+'</b></span><span><b style="font-size:16px">'+x[1]+'</b><span class="lab" style="display:block">'+st.d+' / '+st.n+'</span></span></button>'}).join('');
- var groups=PACK.map(function(c,ci){var g=it.filter(function(i){return i.cat===ci});if(!g.length)return '';var d=g.filter(function(i){return p.done[i.key]}).length;var full=d===g.length;var open=!full||S.pack['o'+ci];
-  return '<section style="break-inside:avoid;margin:0 0 14px;padding:12px 12px 8px;border-radius:18px;background:'+(full?'rgba(177,234,196,.35)':'var(--paper)')+';border:1.5px solid '+(full?'#9FDDB5':'var(--line)')+'"><button class="row" data-act="packFold" data-a="'+ci+'" style="width:100%;padding:0 4px 6px"><span style="width:12px;height:12px;border-radius:4px;background:'+CATCOL[ci]+'"></span><b style="font-size:16px">'+c.name+'</b><div class="sp"></div>'+(full?'<span class="tag" style="background:#49C5B6">fertig ✓</span>':'<span class="lab">'+d+'/'+g.length+'</span>')+'</button>'+
-  (open?'<div class="bar" style="height:5px;margin:0 4px 6px"><i style="width:'+(d/g.length*100)+'%;background:'+CATCOL[ci]+'"></i></div>'+g.map(function(i){var on=p.done[i.key];return '<button class="ck'+(on?' on':'')+'" data-act="packTick" data-a="'+i.key+'"><span class="bx">'+(on?CHECK:'')+'</span><span class="tx">'+esc(i.t)+(i.n?'<small>'+esc(i.n)+'</small>':'')+'</span>'+(p.person==='alle'?'<span class="tag">'+(i.sh?'gemeinsam':(PNAME[i.p]||''))+'</span>':(i.sh&&p.person!=='haus'?'<span class="tag">gemeinsam</span>':''))+'</button>'}).join(''):'')+'</section>'}).join('');
+ var groups=PACK.map(function(c,ci){var g=it.filter(function(i){return i.cat===ci});if(!g.length)return '';var ga=g.filter(function(i){return !p.na[i.key]}),d=ga.filter(function(i){return p.done[i.key]}).length;var full=ga.length>0&&d===ga.length;var open=!full||S.pack['o'+ci];
+  return '<section style="break-inside:avoid;margin:0 0 14px;padding:12px 12px 8px;border-radius:18px;background:'+(full?'rgba(177,234,196,.35)':'var(--paper)')+';border:1.5px solid '+(full?'#9FDDB5':'var(--line)')+'"><button class="row" data-act="packFold" data-a="'+ci+'" style="width:100%;padding:0 4px 6px"><span style="width:12px;height:12px;border-radius:4px;background:'+CATCOL[ci]+'"></span><b style="font-size:16px">'+c.name+'</b><div class="sp"></div>'+(full?'<span class="tag" style="background:#49C5B6">fertig ✓</span>':'<span class="lab">'+d+'/'+ga.length+'</span>')+'</button>'+
+  (open?'<div class="bar" style="height:5px;margin:0 4px 6px"><i style="width:'+(ga.length?d/ga.length*100:100)+'%;background:'+CATCOL[ci]+'"></i></div>'+g.map(function(i){var on=p.done[i.key],na=p.na[i.key];return '<div style="display:flex;gap:4px;align-items:stretch'+(na?';opacity:.45':'')+'"><button class="ck'+(on?' on':'')+'" style="flex:1;min-width:0'+(na?';text-decoration:line-through':'')+'" data-act="'+(na?'packNa':'packTick')+'" data-a="'+i.key+'"><span class="bx">'+(on?CHECK:'')+'</span><span class="tx">'+esc(i.t)+(i.n?'<small>'+esc(i.n)+'</small>':'')+'</span>'+(p.person==='alle'?'<span class="tag">'+(i.sh?'gemeinsam':(PNAME[i.p]||''))+'</span>':(i.sh&&p.person!=='haus'?'<span class="tag">gemeinsam</span>':''))+'</button><button data-act="packNa" data-a="'+i.key+'" title="'+(na?'Wieder nötig':'Nicht nötig')+'" aria-label="'+(na?'Wieder nötig':'Nicht nötig')+'" style="width:44px;flex:none;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-size:11px;font-weight:800;color:var(--ink2)">'+(na?'↺':'∅')+'</button></div>'}).join(''):'')+'</section>'}).join('');
  var rn={DE:'Deutschland',EU:'EU',NonEU:'Nicht-EU',IN:'Indien',US:'USA',AF:'Afrika'};
  return '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:14px">'+people+'<div class="sp"></div><button class="chip'+(p.allRegions?' on':'')+'" data-act="packAll" title="Packliste nach Reiseziel">Ziel: '+(p.allRegions?'alle Regionen':rn[p.region])+'</button><button class="b s y" data-act="packAdd">+ Eigene Sache</button><button class="b s" data-act="packReset">Leeren</button></div>'+
  '<div style="columns:4 250px;column-gap:14px">'+(groups||'<p class="muted">Für diese Person gibt es hier nichts zu packen.</p>')+'</div>'}
+ACT.packNa=function(k){if(S.pack.na[k])delete S.pack.na[k];else{S.pack.na[k]=1;delete S.pack.done[k]}save();rerender()};
 ACT.packWho=function(w){S.pack.person=w;save();rerender()};
 ACT.packFold=function(ci){S.pack['o'+ci]=!S.pack['o'+ci];save();rerender()};
 ACT.packTick=function(k,el){var on=!S.pack.done[k];if(on){S.pack.done[k]=1;ev('pack')}else delete S.pack.done[k];save();
@@ -1790,7 +1793,7 @@ function muBuddyChip(){var id=S.mu.buddy,sp=id&&SPEC_BY[id];return '<span style=
 function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n:n};if(typeof of==='function')Object.defineProperty(st,'of',{get:of});else st.of=of;STAMPS.push(st)}
 (function(){
  var Y='#ECD06F',T='#49C5B6',C='#FF6A52',B='#2779A7',M='#7FD39E',P='#FFB288',K='#9ACDEB';
- function kidItems(){return packItems('kind')}
+ function kidItems(){return packItems('kind').filter(function(i){return !S.pack.na[i.key]})}
  /* Vor dem Abflug */
  mkStamp('pk-kind','vor','Koffer zu!','Alles für das Kind gepackt',IC.suitcase,Y,function(){return kidItems().filter(function(i){return S.pack.done[i.key]}).length},function(){return Math.max(1,kidItems().length)});
  mkStamp('pk-fam','vor','Familien-Packmeister','Die ganze Packliste fertig',IC.check,Y,function(){return packStats('alle').d},function(){return Math.max(1,packStats('alle').n)});
