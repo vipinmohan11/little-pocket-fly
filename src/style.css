@@ -322,3 +322,4 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .stampt{opacity:1;transform:none}
 .ck.on .bx svg{animation:none!important;stroke-dashoffset:0}
 .bezel,.shade{transition:none!important}
+.ck{min-height:40px}.ck .tx{font-size:16px}.ck .tx small{font-size:12.5px;line-height:1.1}
