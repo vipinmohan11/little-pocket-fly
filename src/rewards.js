@@ -9,9 +9,16 @@ function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n
  mkStamp('brief','vor','Flughafen-Profi','Alle Briefing-Punkte abgehakt',IC.tower,T,function(){return Object.keys(S.brief.done).length},BRIEFING.reduce(function(a,b){return a+b[4].length},0));
  mkStamp('pred','vor','Hellseher','3 Vorhersagen genau getroffen',IC.eye,P,function(){return VORHER2.filter(function(v){var p=S.pred2[v.id];if(!p||p.p==null)return false;var ans=v.a!=null?v.a:p.r;return ans!=null&&ans===p.p&&daysBetween(S.trip.depart,today())>=0}).length},3);
  /* Muya-Freunde */
- mkStamp('mu-1','mu','Erstes Ei','Einen Muya-Freund schlüpfen lassen',IC.star,Y,function(){return muOwned().length},1);
- mkStamp('mu-6','mu','Freunde-Sammler','6 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},6);
- mkStamp('mu-12','mu','Muya-Dex komplett','Alle 12 Muya-Freunde gefunden',IC.star,Y,function(){return muOwned().length},12);
+ mkStamp('mu-1','mu','Erster Freund','Deinen ersten Muya-Freund finden',IC.star,Y,function(){return muOwned().length},1);
+ mkStamp('mu-6','mu','Freunde-Sammler','6 Muya-Freunde gefunden',IC.star,Y,function(){return muOwnedEgg().length},6);
+ mkStamp('mu-12','mu','Muya-Dex komplett','Alle 12 Ei-Freunde gefunden',IC.star,Y,function(){return muOwnedEgg().length},12);
+ mkStamp('mu-w1','mu','Erster Fang','Einen wilden Freund in Barcelona getroffen',IC.paw,Y,function(){return SPEC.filter(function(s){return s.src==='wild'&&S.mu.pets[s.id]}).length},1);
+ mkStamp('mu-w6','mu','Wilde Freunde','6 wilde Freunde getroffen',IC.paw,Y,function(){return SPEC.filter(function(s){return s.src==='wild'&&S.mu.pets[s.id]}).length},6);
+ mkStamp('mu-rare','mu','Seltener Fund','Einen sehr seltenen Freund getroffen',IC.star,Y,function(){return SPEC.filter(function(s){return s.rar===3&&S.mu.pets[s.id]}).length},1);
+ mkStamp('mu-shiny','mu','Funkel-Freund','Eine Funkel-Version gefunden',IC.star,Y,function(){return SPEC.filter(function(s){return S.mu.pets[s.id]&&S.mu.pets[s.id].shiny}).length},1);
+ mkStamp('mu-sky','mu','Himmels-Freund','Einen Himmels-Freund gefunden',IC.wing,Y,function(){return SPEC.filter(function(s){return s.src==='sky'&&S.mu.pets[s.id]}).length},1);
+ mkStamp('mu-sky6','mu','Himmels-Staffel','Alle 6 Himmels-Freunde gefunden',IC.wing,Y,function(){return SPEC.filter(function(s){return s.src==='sky'&&S.mu.pets[s.id]}).length},6);
+ mkStamp('mu-all','mu','Muya-Dex komplett','Alle Freunde im Muya-Dex gefunden',IC.star,Y,function(){return muOwned().length},SPEC.length);
  mkStamp('mu-evo','mu','Entwicklung!','Einen Freund voll entwickelt (Stufe 3)',IC.star,Y,function(){return muOwned().filter(function(s){return petStage(s.id)>=3}).length},1);
  mkStamp('mu-q','mu','Tagesheld','5 Tagesaufträge geschafft',IC.star,Y,function(){return S.mu.qdone||0},5);
  mkStamp('mu-b3','mu','Baumeister','3 Gebäude in Muyas Forscherbasis',IC.suitcase,Y,function(){return Object.keys(S.mu.base).length},3);

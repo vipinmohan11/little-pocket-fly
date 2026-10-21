@@ -4,7 +4,7 @@ import json,re,pathlib
 R=pathlib.Path(__file__).parent;S=R/'src'
 ver=json.load(open(R/'version.json'))['version']
 pack=(S/'pack.json').read_text()
-FILES=['content.js','city.js','city_de.js','wissen.js','wesen.js','core.js','p_home.js','p_stadt.js','p_wie.js','p_hgr.js','p_auf.js','p_wes.js','p_rek.js','p_misc.js','muya.js','rewards.js']
+FILES=['content.js','city.js','city_de.js','wissen.js','wesen.js','core.js','p_home.js','p_stadt.js','p_wie.js','p_hgr.js','p_auf.js','p_wes.js','p_rek.js','p_misc.js','muya.js','rewards.js','p_hub.js']
 js='var PACK='+pack+';\n'+''.join('/* --- '+f+' --- */\n'+(S/f).read_text()+'\n' for f in FILES)
 js=re.sub(r"var APP_VERSION='[^']*'","var APP_VERSION='%s'"%ver,js)
 css=(S/'style.css').read_text()
