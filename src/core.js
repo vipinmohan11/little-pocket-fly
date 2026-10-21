@@ -141,6 +141,7 @@ var SWREG=null,UPD={waiting:null};
 function initSW(){if(!('serviceWorker' in navigator))return;
  navigator.serviceWorker.register('sw.js').then(function(reg){SWREG=reg;
   if(reg.waiting)UPD.waiting=reg.waiting;
+  reg.update().catch(function(){});document.addEventListener('visibilitychange',function(){if(!document.hidden)reg.update().catch(function(){})});setInterval(function(){reg.update().catch(function(){})},600000);
   reg.addEventListener('updatefound',function(){var w=reg.installing;if(!w)return;w.addEventListener('statechange',function(){if(w.state==='installed'&&navigator.serviceWorker.controller){UPD.waiting=w;var b=$('#updstate');if(b)b.innerHTML=updHtml('ready')}})})}).catch(function(){});
  var reloading=false;navigator.serviceWorker.addEventListener('controllerchange',function(){if(reloading)return;reloading=true;location.reload()});
  if(navigator.storage&&navigator.storage.persist){navigator.storage.persist().catch(function(){})}}
