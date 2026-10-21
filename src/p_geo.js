@@ -1,4 +1,4 @@
-/* ===== v1.6.0: Freunde-Radar (GPS beim Öffnen), Kalt/Warm/Heiß, Fangen mit Frage, XP & Level bis Muya-Meister, Abzeichen, Klänge ===== */
+/* ===== v1.6.0: „Wo ist mein Freund?“ (GPS beim Öffnen), Kalt/Warm/Heiß, Fangen mit Frage, XP & Level bis Muya-Meister, Abzeichen, Klänge ===== */
 
 /* ---------- Klänge: weich, kurz, wie Marimba/Glocke (keine Dateien, alles offline) ---------- */
 var AC=null;
@@ -93,14 +93,14 @@ function catchAt(stopId,firstTry){var m=S.mu,stp=STOPID[stopId];if(!stp||m.met[s
  setTimeout(function(){addXP(xp,firstTry?'gleich richtig':'')},900);badgeCheck(false);rerender()}
 
 /* ---------- GPS: beim Öffnen prüfen, Kalt/Warm/Heiß ---------- */
-var GEO={st:'off',lat:0,lng:0,acc:0,watch:null,near:null,lvl:-1,found:null,shown:{},t0:0,weakSince:0};
+var GEO={last:0,st:'off',lat:0,lng:0,acc:0,watch:null,near:null,lvl:-1,found:null,shown:{},t0:0,weakSince:0};
 var RAD=100,HEAT=[[100,'Hier!','#E8590C'],[200,'Heiß','#F07A2E'],[400,'Warm','#F3A43B'],[800,'Lauwarm','#E3C35A'],[1500,'Kühl','#7FB8D9'],[1e12,'Kalt','#5B8FC8']];
 function hav(a,b,c,d){var R=6371000,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(h))}
 function planStops(){var o=[],seen={};tripDates().forEach(function(d,i){dayStops(i).forEach(function(s){var x=STOPID[s.id]||s;if(!seen[s.id]&&x&&x.lat&&x.lng){seen[s.id]=1;o.push(x)}})});return o}
 function geoStops(){return planStops().filter(function(s){return !S.mu.met[s.id]})}
 function geoStart(){if(GEO.watch!=null)return;if(!('geolocation' in navigator)){GEO.st='err';geoPaint();return}GEO.st='wait';GEO.t0=Date.now();geoPaint();
  try{GEO.watch=navigator.geolocation.watchPosition(geoFix,function(e){GEO.st=e&&e.code===1?'deny':'err';GEO.watch=null;geoPaint()},{enableHighAccuracy:true,maximumAge:5000,timeout:30000})}catch(e){GEO.st='err';geoPaint()}}
-function geoFix(p){GEO.lat=p.coords.latitude;GEO.lng=p.coords.longitude;GEO.acc=p.coords.accuracy||999;GEO.st='ok';geoCalc()}
+function geoFix(p){GEO.last=Date.now();GEO.lat=p.coords.latitude;GEO.lng=p.coords.longitude;GEO.acc=p.coords.accuracy||999;GEO.st='ok';geoCalc()}
 function geoCalc(){if(GEO.st!=='ok')return;
  if(GEO.acc>150){if(!GEO.weakSince)GEO.weakSince=Date.now()}else GEO.weakSince=0;
  var best=null;geoStops().forEach(function(s){var d=hav(GEO.lat,GEO.lng,s.lat,s.lng);if(!best||d<best.d)best={id:s.id,d:d}});GEO.near=best;
@@ -111,7 +111,11 @@ function geoCalc(){if(GEO.st!=='ok')return;
 function geoWeak(){return GEO.st==='err'||GEO.st==='deny'||(GEO.st==='wait'&&Date.now()-GEO.t0>25000)||(GEO.weakSince&&Date.now()-GEO.weakSince>20000)}
 function geoInit(){if(!('geolocation' in navigator)){GEO.st='err';return}
  try{navigator.permissions.query({name:'geolocation'}).then(function(r){if(r.state==='granted')geoStart();else if(r.state==='denied'){GEO.st='deny';geoPaint()}else{GEO.st='ask';geoPaint()}}).catch(function(){GEO.st='ask';geoPaint()})}catch(e){GEO.st='ask'}}
-ACT.geoGo=function(){geoStart()};
+ACT.geoGo=function(){geoRefresh()};
+function geoStale(){return GEO.st!=='ok'||Date.now()-GEO.last>30000}
+function geoRefresh(){if(GEO.watch!=null){try{navigator.geolocation.clearWatch(GEO.watch)}catch(e){}GEO.watch=null}GEO.spin=Date.now();geoStart();
+ try{navigator.geolocation.getCurrentPosition(geoFix,function(){},{enableHighAccuracy:true,maximumAge:0,timeout:20000})}catch(e){}geoPaint()}
+function rbtn(){var sp=GEO.spin&&Date.now()-GEO.spin<6000;return '<button class="grf'+(sp?' spin':'')+'" data-act="geoGo" aria-label="Standort neu suchen">'+ICON('M20 11a8 8 0 10-2.3 5.7M20 4v7h-7','currentColor',2.4)+'</button>'}
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&GEO.st==='ok'){GEO.shown={}}});
 function geoPaint(){var b=document.getElementById('geobox');if(b)b.innerHTML=geoInner(b.getAttribute('data-big')==='1');var f=document.getElementById('geofab');var show=GEO.found&&!document.getElementById('geobox')&&!document.querySelector('.sheet')&&!document.getElementById('catch');
  if(show&&!f){f=document.createElement('button');f.id='geofab';f.setAttribute('data-act','geoCatch');document.body.appendChild(f)}if(f){if(show)f.innerHTML='<span class="gfs">'+silh()+'</span><b>Ein Freund ist hier!</b><span>Antippen</span>';else f.remove()}}
@@ -119,30 +123,32 @@ function silh(){var sp=SPEC_BY[TPOOL[themeOf(GEO.found||'x')][0]]||SPEC[0];retur
 function heat(){if(!GEO.near)return HEAT[5];return HEAT[Math.max(0,GEO.lvl)]}
 function geoInner(big){var h=heat(),bud=S.mu.buddy&&S.mu.pets[S.mu.buddy]?creP(S.mu.buddy,petStage(S.mu.buddy)):cre(SPEC_BY.nordi||SPEC[0],1,0);
  if(GEO.found){var place=pname(GEO.found);return '<div class="gfound'+(big?' big':'')+'"><div class="gshake">'+silh()+'</div><div><b>Ein Freund ist hier!</b><span>'+esc(place)+'</span></div><button class="b p" data-act="geoCatch">Fangen!</button></div>'}
- if(GEO.st==='off'||GEO.st==='ask')return '<div class="gmeter'+(big?' big':'')+'"><div class="gbud">'+bud+'</div><div class="gtx"><b>Freunde-Radar</b><span>Zeigt dir, ob ein Freund in der Nähe ist.</span></div><button class="b p" data-act="geoGo">Radar starten</button></div>';
+ if(GEO.st==='off'||GEO.st==='ask')return '<div class="gmeter'+(big?' big':'')+'"><div class="gbud">'+bud+'</div><div class="gtx"><b>Wo ist mein Freund?</b><span>Tippe auf ↻. Muya sagt dir: kalt, warm oder heiß.</span></div>'+rbtn()+'</div>';
  var steps=HEAT.slice().reverse().map(function(x,i){var on=(5-Math.max(0,GEO.lvl))>=i;return '<i style="background:'+(on&&GEO.st==='ok'?x[2]:'var(--fill)')+'"></i>'}).join('');
- var msg=GEO.st==='ok'?(GEO.near?(h[1]==='Kalt'?'Hier ist es noch kalt. Weiter laufen!':h[1]==='Kühl'?'Ein bisschen wärmer…':h[1]==='Lauwarm'?'Es wird wärmer!':h[1]==='Warm'?'Warm! Ein Freund ist nicht weit.':'Heiß! Ganz nah!'):'Alle Freunde hier gefunden!'):GEO.st==='wait'?'Suche Signal …':'Kein GPS-Signal';
+ var msg=GEO.st==='ok'&&geoStale()?'Standort ist nicht neu. Tippe auf ↻.':GEO.st==='ok'?(GEO.near?(h[1]==='Kalt'?'Hier ist es noch kalt. Weiter laufen!':h[1]==='Kühl'?'Ein bisschen wärmer…':h[1]==='Lauwarm'?'Es wird wärmer!':h[1]==='Warm'?'Warm! Ein Freund ist nicht weit.':'Heiß! Ganz nah!'):'Alle Freunde hier gefunden!'):GEO.st==='wait'?'Suche Signal …':'Kein GPS-Signal';
  var word=GEO.st==='ok'?(GEO.near?h[1]:'Fertig'):'…';
- return '<div class="gmeter'+(big?' big':'')+'"><div class="gbud">'+bud+'</div><div class="gtx"><b style="color:'+(GEO.st==='ok'?h[2]:'var(--ink2)')+'">'+word+'</b><span>'+msg+'</span><div class="gsteps">'+steps+'</div>'+(GEO.st==='ok'&&GEO.near?'<small>ca. '+(GEO.near.d<1000?Math.round(GEO.near.d/10)*10+' m':(GEO.near.d/1000).toFixed(1)+' km')+(GEO.acc>60?' · Genauigkeit '+Math.round(GEO.acc)+' m':'')+'</small>':'')+'</div>'+
+ return '<div class="gmeter'+(big?' big':'')+'"><div class="gbud">'+bud+'</div><div class="gtx"><b style="color:'+(GEO.st==='ok'?h[2]:'var(--ink2)')+'">'+word+'</b><span>'+msg+'</span><div class="gsteps">'+steps+'</div>'+(GEO.st==='ok'&&GEO.near?'<small>ca. '+(GEO.near.d<1000?Math.round(GEO.near.d/10)*10+' m':(GEO.near.d/1000).toFixed(1)+' km')+(GEO.acc>60?' · Genauigkeit '+Math.round(GEO.acc)+' m':'')+'</small>':'')+'</div>'+(geoStale()?rbtn():'')+
   (geoWeak()?'<button class="b s" data-act="geoParent">Kein GPS? Eltern: Wir sind da</button>':'')+'</div>'}
 ACT.geoCatch=function(){var id=GEO.found;if(!id||S.mu.met[id])return;var f=document.getElementById('geofab');if(f)f.remove();ACT.here(id)};
 ACT.geoParent=function(){var st=dayStops(curSlot()).filter(function(s){return !S.mu.met[s.id]});sheet('<h2 class="disp" style="font-size:26px">Wo seid ihr?</h2><p class="muted" style="margin:6px 0 10px">Nur für Eltern, wenn GPS nicht geht.</p><div class="col" style="gap:6px;max-height:50vh;overflow:auto">'+(st.length?st.map(function(s){return '<button class="qo" data-act="geoParentGo" data-a="'+s.id+'">'+esc(pname(s.id))+'</button>'}).join(''):'<p class="muted">Heute sind alle Orte geschafft.</p>')+'</div><button class="b" style="margin-top:10px" data-act="closeSheet">Abbrechen</button>')};
 ACT.geoParentGo=function(id){closeSheet();setTimeout(function(){ACT.here(id)},100)};
-setInterval(function(){if(document.getElementById('geobox')&&GEO.st!=='ok')geoPaint()},5000);
+setInterval(function(){if(document.getElementById('geobox'))geoPaint()},5000);
 
 /* ---------- Fangen startet immer mit der Frage (p_quiz), danach catchAt ---------- */
-HERE_REAL=function(id){var stp=id?STOPID[id]:null;if(!stp)return toast('Öffne „Suchen“ an einem Ort.');if(S.mu.met[stp.id])return toast('Hier warst du schon. Dein Freund wartet im Dex.');catchAt(stp.id,!!PQ_FIRST)};
+HERE_REAL=function(id){var stp=id?STOPID[id]:null;if(!stp)return toast('Öffne die App an einem Ort.');if(S.mu.met[stp.id])return toast('Hier warst du schon. Dein Freund wartet im Dex.');catchAt(stp.id,!!PQ_FIRST)};
 var PQ_FIRST=true;
-ACT.hereAt=function(id){if(S.mu.met[id])return toast('Hier warst du schon. Dein Freund wartet im Dex.');toast('Geh mit Mama oder Papa hin. Dort zeigt dir „Suchen“ den Freund.')};
+ACT.hereAt=function(id){if(S.mu.met[id])return toast('Hier warst du schon. Dein Freund wartet im Dex.');toast('Geh mit Mama oder Papa hin und öffne dort die App.')};
 
 /* ---------- Seite „Suchen“ ---------- */
-ROUTES.suchen=function(){xpInit();var L=lvlBar(),m=S.mu,ps=planStops(),met=ps.filter(function(x){return m.met[x.id]}).length,all=ps.length;
- return '<div class="scr"><div class="hd"><div class="t"><span class="lab">Freunde-Radar</span><h1 class="disp">Suchen</h1></div><div class="sp"></div><button class="icb" data-act="sndTgl" aria-label="Ton">'+ICON(sndOn()?'M4 9v6h4l5 4V5L8 9H4zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11':'M4 9v6h4l5 4V5L8 9H4zM16 9l5 6M21 9l-5 6','currentColor',2)+'</button></div>'+
+ROUTES.suchen=function(){return ROUTES.home()};
+function _oldSuchen(){xpInit();var L=lvlBar(),m=S.mu,ps=planStops(),met=ps.filter(function(x){return m.met[x.id]}).length,all=ps.length;
+ return '<div class="scr"><div class="hd"><div class="t"><span class="lab">Wo ist mein Freund?</span><h1 class="disp">Suchen</h1></div><div class="sp"></div><button class="icb" data-act="sndTgl" aria-label="Ton">'+ICON(sndOn()?'M4 9v6h4l5 4V5L8 9H4zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11':'M4 9v6h4l5 4V5L8 9H4zM16 9l5 6M21 9l-5 6','currentColor',2)+'</button></div>'+
  '<div class="bd" style="display:flex;flex-direction:column;gap:14px;min-height:0"><div id="geobox" data-big="1" class="hcard sbig">'+geoInner(true)+'</div>'+
  '<div class="sgrid2"><div class="hcard">'+meisterHtml()+'</div><div class="hcard"><div class="row"><span class="h2t">Orte</span><div class="sp"></div><span class="lab">'+met+' von '+all+'</span></div><p class="muted" style="font-size:15px;margin-top:8px">Laufe mit Mama und Papa zu den Orten der Reise. Wenn es heiß wird, ist ein Freund ganz nah. Öffne dann die App.</p></div></div></div></div>'};
 function meisterHtml(){xpInit();var L=lvlBar(),m=S.mu,got=Object.keys(m.bd||{}).length,nx=BADGES.filter(function(b){return !(m.bd||{})[b[0]]}).slice(0,2);
  return '<div class="row" style="gap:12px"><span class="lvlc">'+(L.i+1)+'</span><div style="flex:1;min-width:0"><span class="lab">Dein Rang</span><div class="h2t">'+esc(L.name)+'</div></div><span class="lab">'+(m.xp||0)+' XP</span></div><div class="bar" style="margin:10px 0 6px"><i style="width:'+L.p+'%"></i></div><span class="muted" style="font-size:14px">'+(L.next?'Noch '+L.need+' XP bis '+esc(L.next):'Höchster Rang erreicht!')+'</span>'+
- '<div style="margin-top:12px"><a href="#/freunde" class="row" style="gap:8px;font-weight:700;font-size:15px" data-act="muTab" data-a="badges">'+ICON(IC.star,'#E3A600',2.2).replace('<svg','<svg style="width:20px;height:20px"')+'Abzeichen: '+got+' von '+BADGES.length+'</a>'+nx.map(function(b){return '<div class="muted" style="font-size:14px;margin-top:4px">Als Nächstes: <b>'+esc(b[1])+'</b> · '+esc(b[2])+'</div>'}).join('')+'</div>'}
+ '<div class="row" style="margin-top:12px;gap:8px;font-size:15px"><span>Orte besucht: <b>'+planStops().filter(function(x){return m.met[x.id]}).length+' von '+planStops().length+'</b></span><div class="sp"></div><button class="icb" style="width:34px;height:34px" data-act="sndTgl" aria-label="Ton">'+ICON(sndOn()?'M4 9v6h4l5 4V5L8 9H4zM16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11':'M4 9v6h4l5 4V5L8 9H4zM16 9l5 6M21 9l-5 6','currentColor',2)+'</button></div>'+
+ '<div style="margin-top:8px"><a href="#/freunde" class="row" style="gap:8px;font-weight:700;font-size:15px" data-act="muTab" data-a="badges">'+ICON(IC.star,'#E3A600',2.2).replace('<svg','<svg style="width:20px;height:20px"')+'Abzeichen: '+got+' von '+BADGES.length+'</a>'+nx.map(function(b){return '<div class="muted" style="font-size:14px;margin-top:4px">Als Nächstes: <b>'+esc(b[1])+'</b> · '+esc(b[2])+'</div>'}).join('')+'</div>'}
 function badgesHtml(){var m=S.mu;m.bd=m.bd||{};return '<div class="bdgrid">'+BADGES.map(function(b){var on=!!m.bd[b[0]];return '<div class="pn bdg'+(on?' on':'')+'"><span class="bdgi">'+ICON(IC.star,on?'#fff':'var(--ink3)',2.4)+'</span><b>'+esc(b[1])+'</b><small>'+esc(b[2])+'</small>'+(on?'<span class="lab" style="font-size:12px">'+esc(m.bd[b[0]].split('-').reverse().join('.'))+'</span>':'')+'</div>'}).join('')+'</div>'}
 
 /* ---------- Start ---------- */
