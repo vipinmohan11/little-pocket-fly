@@ -70,7 +70,7 @@ var MUNDO=null;function toastUndo(){$$('.toast').forEach(function(x){x.remove()}
 var MDRAG={};
 document.addEventListener('pointerdown',function(e){var c=e.target.closest&&e.target.closest('[data-drag]');if(!c)return;MDRAG={el:c,x:e.clientX,y:e.clientY,v:c.getAttribute('data-drag'),g:null,justDragged:false}});
 document.addEventListener('pointermove',function(e){if(!MDRAG.el)return;var dx=e.clientX-MDRAG.x,dy=e.clientY-MDRAG.y;if(!MDRAG.g&&Math.abs(dx)+Math.abs(dy)>12){var g=MDRAG.el.cloneNode(true);g.style.cssText+=';position:fixed;z-index:80;pointer-events:none;opacity:.9;box-shadow:0 8px 20px rgba(19,50,74,.3)';document.body.appendChild(g);MDRAG.g=g;var dz=$('#mdrop');if(dz)dz.style.background='#DDF5EF'}
- if(MDRAG.g){MDRAG.g.style.left=(e.clientX-30)+'px';MDRAG.g.style.top=(e.clientY-20)+'px'}});
+ if(MDRAG.g){MDRAG.g.style.left=(e.clientX/UIZ-30)+'px';MDRAG.g.style.top=(e.clientY/UIZ-20)+'px'}});
 document.addEventListener('pointerup',function(e){if(!MDRAG.el)return;var g=MDRAG.g,v=MDRAG.v;MDRAG.el=null;if(!g)return;g.remove();MDRAG.justDragged=true;setTimeout(function(){MDRAG.justDragged=false},350);var dz=$('#mdrop');if(!dz)return;dz.style.background='#F4FBF9';var r=dz.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){var k=v.split('|')[0],val=v.split('|')[1],on=k==='r'?NM.r===val:(NM[k]||[]).indexOf(val)>-1;if(!on)mPick(v)}});
 
 /* ---------- Reisepass ---------- */

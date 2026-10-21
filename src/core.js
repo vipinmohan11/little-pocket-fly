@@ -120,6 +120,9 @@ function route(){var r=parseHash();closeSheet();cleanup();
 function rerender(){var y=window.scrollY,r=parseHash();var keep={};$$('[data-keep]').forEach(function(e){keep[e.getAttribute('data-keep')]=e.scrollTop});cleanup();
  var f=ROUTES[r.name]||ROUTES.home;var out=f(r.args);if(RAILED[ROUTES[r.name]?r.name:'home'])out=shell(ROUTES[r.name]?r.name:'home',out);$('#app').innerHTML='<div>'+out+'</div>';var post=ROUTES['post:'+r.name];if(post)post(r.args);window.scrollTo(0,y);
  $$('[data-keep]').forEach(function(e){var k=e.getAttribute('data-keep');if(keep[k]!=null)e.scrollTop=keep[k]})}
+var UIZ=1;function fitZoom(){var w=window.innerWidth,h=window.innerHeight,z=Math.max(.8,Math.min(2.2,Math.min(w/1100,h/690)));z=Math.round(z*100)/100;UIZ=z;document.documentElement.style.zoom=z;document.documentElement.style.setProperty('--vh',(h/z)+'px')}
+var lastW=window.innerWidth;fitZoom();window.addEventListener('resize',function(){if(window.innerWidth===lastW)return;lastW=window.innerWidth;fitZoom();rerender()});
+function VW(){return innerWidth/UIZ}function VH(){return innerHeight/UIZ}
 window.addEventListener('hashchange',route);
 
 /* ---------- actions (event delegation) ---------- */

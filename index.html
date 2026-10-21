@@ -2,7 +2,8 @@
 <html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Kofferforscher</title><meta name="theme-color" content="#13324A"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
-<style>@font-face{font-family:'Big Shoulders Display';font-weight:800;src:url(fonts/big-shoulders-display-latin-800-normal.woff2) format('woff2');font-display:swap}
+<style>:root{--vh:100dvh}
+@font-face{font-family:'Big Shoulders Display';font-weight:800;src:url(fonts/big-shoulders-display-latin-800-normal.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'Big Shoulders Display';font-weight:900;src:url(fonts/big-shoulders-display-latin-900-normal.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'Figtree';font-weight:500;src:url(fonts/figtree-latin-500-normal.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'Figtree';font-weight:700;src:url(fonts/figtree-latin-700-normal.woff2) format('woff2');font-display:swap}
@@ -36,7 +37,7 @@ svg{display:block}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 /* screen frame */
-.scr{height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+.scr{height:var(--vh);display:flex;flex-direction:column;overflow:hidden}
 .scr>.bd{flex:1;min-height:0;padding-bottom:14px}
 .hd{display:flex;align-items:center;gap:12px;height:68px;flex:none}
 .hd h1{font-size:34px}
@@ -89,7 +90,7 @@ svg{display:block}
 .stampt .sm{width:52px;height:52px;flex:none;animation:pop .5s .15s both}
 @keyframes stin{0%{transform:translateY(120%);opacity:0}10%{transform:none;opacity:1}88%{transform:none;opacity:1}100%{transform:translateY(120%);opacity:0}}
 .sheet{position:fixed;inset:0;background:rgba(19,50,74,.5);z-index:60;display:grid;place-items:center;padding:20px;animation:vin .2s}
-.sheet>div{background:var(--paper);border-radius:24px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:22px}
+.sheet>div{background:var(--paper);border-radius:24px;max-width:560px;width:100%;max-height:calc(88*var(--vh)/100);overflow:auto;padding:22px}
 /* home windows */
 .windows{display:grid;grid-template-columns:repeat(7,1fr);gap:clamp(8px,1.4vw,18px);padding:4px 0}
 @media (max-width:820px){.windows{grid-template-columns:repeat(4,1fr)}}
@@ -142,7 +143,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .okmsg{font-size:16px;margin-top:6px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media print{.hd .b,.seg,.back{display:none!important}body{background:#fff}.scr{height:auto;overflow:visible}}
-.scr.free{height:auto;min-height:100vh;min-height:100dvh;overflow:visible}
+.scr.free{height:auto;min-height:var(--vh);overflow:visible}
 
 /* ===== Cockpit (Wie fliegt das?) ===== */
 .ckpt{display:flex;flex-direction:column;gap:10px;height:100%}
@@ -197,7 +198,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .scr{overflow-y:auto}
 /* ===== Hochformat (Tablet gedreht): alles untereinander, Seite scrollt ===== */
 @media (orientation:portrait){
- .scr{height:auto;min-height:100vh;min-height:100dvh;overflow:visible}
+ .scr{height:auto;min-height:var(--vh);overflow:visible}
  .scr>.bd{flex:none}
  .hd{height:auto;min-height:68px;flex-wrap:wrap;padding:8px 0}
  .bd [style*="grid-template-columns"]{grid-template-columns:1fr!important}
@@ -216,7 +217,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
  .hg-bot>div:last-child{grid-template-columns:1fr 1fr!important}
 }
 /* v1.3.2: Startseite passt auch auf niedrige Tablet-Bildschirme */
-.win .bezel{width:min(100%,max(64px,calc((100vh - 540px)*.74)));margin:0 auto}
+.win .bezel{width:min(100%,max(64px,calc((var(--vh) - 540px)*.74)));margin:0 auto}
 @media (max-height:720px){
  .home-hd h1{font-size:34px!important}
  .win{gap:4px}.win .lb{font-size:15px}.win .st{font-size:13px;line-height:1.2}
@@ -237,10 +238,10 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 /* v1.4.0: Fang-Bildschirm */
 .catch{position:fixed;inset:0;z-index:95;background:radial-gradient(circle at 50% 38%,#2d6a93,#13324A 70%);color:#fff;display:grid;place-items:center;overflow:auto}
 .catch .cx{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:16px;max-width:640px}
-.catch .cpic{position:relative;width:min(46vh,340px);height:min(46vh,340px)}
+.catch .cpic{position:relative;width:min(calc(46*var(--vh)/100),340px);height:min(calc(46*var(--vh)/100),340px)}
 .catch .cfig{position:absolute;inset:0}.catch .cfig svg{width:100%;height:100%;filter:drop-shadow(0 10px 18px rgba(0,0,0,.35))}
 .catch .burst{position:absolute;inset:-14%;border-radius:50%;background:radial-gradient(circle,#ffffff3d,transparent 65%)}
-.catch .cname{font-size:clamp(40px,8vh,64px);line-height:1}
+.catch .cname{font-size:clamp(40px,calc(8*var(--vh)/100),64px);line-height:1}
 .catch .csub{font-size:16px;opacity:.85;font-weight:700}.catch .cst{font-size:16px;opacity:.85;max-width:460px;line-height:1.35}
 .catch .crar{display:flex;gap:8px}.catch .rb{background:#ECD06F;color:#13324A;font-weight:800;padding:3px 14px;border-radius:14px;font-size:15px}
 .catch .rb.r1{background:#DCE5EC}.catch .rb.r3{background:#FFB94D}.catch .rb.shi{background:#E4D9FF}
@@ -250,7 +251,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 @keyframes cpop{0%{transform:scale(.3);opacity:0}100%{transform:none;opacity:1}}@keyframes cglow{0%{transform:scale(.4);opacity:0}60%{opacity:1}100%{transform:scale(1.1);opacity:.7}}
 /* v1.4.0: Seitenleiste + Heute / Flug / Barcelona */
 .hubshell{display:flex;gap:16px;align-items:flex-start}.hubmain{flex:1;min-width:0}
-.rail{position:sticky;top:12px;height:calc(100vh - 24px);height:calc(100dvh - 24px);margin:12px 0;width:92px;flex:none;background:#13324A;border-radius:26px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px}
+.rail{position:sticky;top:12px;height:calc(var(--vh) - 24px);margin:12px 0;width:92px;flex:none;background:#13324A;border-radius:26px;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px}
 .rl{width:78px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0;border-radius:18px;color:#fff;opacity:.78}
 .rl.on{background:#fff;color:#13324A;opacity:1}.rli{width:30px;height:30px;display:block}.rli svg{width:100%;height:100%}
 .rlt{font-size:12.5px;font-weight:800;text-align:center;line-height:1.1;max-width:74px;overflow:hidden;text-overflow:ellipsis}
@@ -258,7 +259,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .hchip{display:flex;align-items:center;gap:8px;background:#fff;border-radius:18px;padding:8px 14px;font-weight:800;font-size:15px;box-shadow:0 1px 0 rgba(19,50,74,.08),0 6px 14px -10px rgba(19,50,74,.4)}
 .hgrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;min-height:0}
 .hhero{position:relative;flex:1;min-height:0;border-radius:24px;overflow:hidden;padding:20px 24px;background:linear-gradient(180deg,#B9D9EA,#F6E7C9 75%);box-shadow:0 1px 0 rgba(19,50,74,.08),0 12px 24px -16px rgba(19,50,74,.45)}
-.hhero .hname{font-size:clamp(36px,6.2vh,58px);margin-top:4px;line-height:1;position:relative}.hsub{font-weight:700;font-size:16px;margin-top:6px;position:relative}
+.hhero .hname{font-size:clamp(36px,calc(6.2*var(--vh)/100),58px);margin-top:4px;line-height:1;position:relative}.hsub{font-weight:700;font-size:16px;margin-top:6px;position:relative}
 .hhero .sky{position:absolute;bottom:0}
 .hcta{display:flex;align-items:center;gap:14px;background:#13324A;color:#fff;border-radius:22px;padding:14px 20px;width:100%;text-align:left;box-shadow:0 5px 0 #0a2133;flex:none}
 .hcta b{font-size:21px;display:block}.hcta small{font-size:14px;font-weight:600;opacity:.8}
@@ -294,8 +295,8 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .hcard,.fcard,.btile{background:#fff;border:1px solid rgba(19,50,74,.09);box-shadow:0 1px 2px rgba(19,50,74,.05);border-radius:16px}
 .hcard{padding:12px 16px}
 .hgrid{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);align-content:start;align-items:start;gap:14px}
-.hhero{flex:none;height:clamp(230px,40vh,330px);border-radius:18px;padding:16px 20px;box-shadow:none;border:1px solid rgba(19,50,74,.09)}
-.hhero .hname{font-size:clamp(30px,5vh,44px)}.hsub{font-size:14.5px}
+.hhero{flex:none;height:clamp(230px,calc(40*var(--vh)/100),330px);border-radius:18px;padding:16px 20px;box-shadow:none;border:1px solid rgba(19,50,74,.09)}
+.hhero .hname{font-size:clamp(30px,calc(5*var(--vh)/100),44px)}.hsub{font-size:14.5px}
 .hbud{height:52%;left:6%}
 .hcta{padding:10px 16px;border-radius:14px;box-shadow:none}.hcta b{font-size:18px}.hcta small{font-size:13px}.hcic{width:38px;height:38px}.hcic svg{width:22px;height:22px}
 .tmon{width:48px;height:48px}.tmon.big{width:64px;height:64px;border-width:2px}
@@ -318,7 +319,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .bgrid{align-content:start;align-items:start}.bmap{padding:4px;aspect-ratio:700/520;max-height:100%}
 .dtab{padding:6px 14px;font-size:14px;border-radius:12px;box-shadow:none;border:1px solid rgba(19,50,74,.1)}
 .fcard .bar{background:rgba(19,50,74,.1)}
-@media (max-height:700px){.hnext{display:none}.hhero{height:clamp(190px,36vh,260px)}}
+@media (max-height:700px){.hnext{display:none}.hhero{height:clamp(190px,calc(36*var(--vh)/100),260px)}}
 .hchip{white-space:nowrap}.hscr .hd h1,.scr .hd h1{font-size:clamp(26px,3.2vw,34px)}
 /* v1.4.0: keine Übergänge und Einblend-Animationen (Lenovo Tab); nur Belohnungen feiern */
 *,*::before,*::after{transition:none!important}
@@ -327,6 +328,36 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .ck.on .bx svg{animation:none!important;stroke-dashoffset:0}
 .bezel,.shade{transition:none!important}
 .ck{min-height:40px}.ck .tx{font-size:16px}.ck .tx small{font-size:12.5px;line-height:1.1}
+/* v1.4.1 – Tablet: füllt den Bildschirm, ruhige helle Seitenleiste */
+.hubshell{align-items:stretch}
+.rail{background:rgba(255,255,255,.72);border:1px solid rgba(19,50,74,.08);box-shadow:0 1px 2px rgba(19,50,74,.05);width:84px;border-radius:20px;padding:10px 0;gap:4px}
+.rl{color:#13324A;opacity:.72;width:70px;padding:8px 0;border-radius:14px}
+.rl.on{background:#13324A;color:#fff;opacity:1}
+.rli{width:24px;height:24px}.rlt{font-size:12px}
+.hgrid{align-items:stretch;align-content:stretch;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.hgrid>.col{min-height:0}
+.hhero{flex:1;height:auto;min-height:0;background:linear-gradient(180deg,#DCEAF1 0%,#F5EEDF 78%);border:1px solid rgba(19,50,74,.07)}
+.hhero .hname{font-size:clamp(34px,calc(7*var(--vh)/100),56px)}.hsub{font-size:15.5px;max-width:62%}
+.hhero .sky{max-height:78%}.hbud{height:42%;bottom:6%}
+.hgrid .hcard:last-child{flex:1}
+.fbd{align-items:stretch;align-content:stretch}.fleft{min-height:0}.fgrid{flex:1;min-height:0}.fgrid .fcard{flex:1;min-height:0}
+.fbd>.hcard{display:flex;flex-direction:column}.fbd .sgrid{flex:1;grid-auto-rows:1fr}
+.fbd .sgrid .sslot{justify-content:center}.fbd .sgrid .mupic{width:64px!important;height:64px!important}
+.bgrid{align-items:stretch;align-content:stretch}.bgrid>.col{min-height:0}.bgrid .btile{flex:1;min-height:0}
+.bmap{aspect-ratio:auto;height:100%}
+.fgrid{flex:none}.fgrid .fcard{flex:none;padding:14px 16px}
+.bpass{flex:1;min-height:0;display:flex;background:#fff;border:1px solid rgba(19,50,74,.09);border-radius:16px;box-shadow:0 1px 2px rgba(19,50,74,.05);overflow:hidden}
+.bpl{flex:1;padding:16px 22px;display:flex;flex-direction:column;justify-content:space-between;gap:10px;min-width:0}
+.bpr{display:flex;align-items:center;gap:18px}.bpr b{font-size:clamp(40px,calc(8*var(--vh)/100),60px);line-height:1;display:block}.bpr small{font-size:14px;color:#55677A;font-weight:700}
+.bpp{flex:1;height:2px;background:repeating-linear-gradient(90deg,#B8C3CC 0 8px,transparent 8px 14px);position:relative;display:grid;place-items:center}.bpp svg{width:30px;height:30px;background:#fff;padding:3px}
+.bpi{display:flex;gap:28px}.bpi b{font-size:18px;display:block;margin-top:2px}
+.bps{width:30%;border-left:2px dashed rgba(19,50,74,.15);background:#F6F1E6;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;gap:4px}.bps b{font-size:clamp(30px,calc(6*var(--vh)/100),46px);line-height:1}.bps small{font-size:14px;color:#55677A;font-weight:700}
+.bmap{background:#E7EEDC}
+.bpp{display:block}.bpp svg{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scaleX(-1);width:34px;height:34px;padding:4px}
+.bpl{justify-content:space-around}
+.hhero .sky{height:74%;max-height:none;width:100%}
+[data-keep="mugrid"]{grid-template-rows:repeat(3,minmax(0,1fr))!important;grid-auto-columns:minmax(104px,1fr)!important}
+.hhero .sky{height:62%}.hsub{max-width:none}
 </style></head><body><div id="app"></div><script>var PACK=[{"id":0,"name":"Dokumente","items":[{"id":1,"t":"Personalausweis","n":"","w":"alle","r":["DE","EU"]},{"id":2,"t":"Reisepass","n":"Gültigkeit prüfen","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":3,"t":"Kinderreisepass","n":"","w":"kind","r":["EU","NonEU","IN","US","AF"]},{"id":4,"t":"Visum","n":"ESTA (USA), E-Visum","w":"alle","r":["NonEU","IN","US","AF"]},{"id":5,"t":"Flugtickets / Bordkarte","n":"Handy + Ausdruck","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":6,"t":"Hotel-Buchung","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":7,"t":"Zug- / Bustickets","n":"","w":"alle","r":["DE","EU"]},{"id":8,"t":"Führerschein + intern. Führerschein","n":"außerhalb der EU","w":"eltern","r":["EU","NonEU","IN","US","AF"]},{"id":9,"t":"Mietwagen-Gutschein","n":"","w":"eltern","r":["EU","NonEU","IN","US","AF"]},{"id":10,"t":"Reiseversicherung","n":"Krankheit im Ausland","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":11,"t":"EHIC / Krankenkarte","n":"gilt in der EU","w":"alle","r":["DE","EU"]},{"id":12,"t":"Impfpass","n":"Gelbfieber usw.","w":"alle","r":["IN","AF"]},{"id":13,"t":"Bargeld, Landeswährung","n":"etwas vorher","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":14,"t":"Kreditkarte + EC-Karte","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":15,"t":"Kopien aller Dokumente","n":"extra + Cloud","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":16,"t":"Notfall-Kontakte","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":17,"t":"Botschaft: Adresse / Hotline","n":"","w":"alle","r":["NonEU","IN","US","AF"]},{"id":18,"t":"Geldbeutel","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":1,"name":"Elektronik","items":[{"id":19,"t":"Handy","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":20,"t":"Ladegeräte","n":"alle Kabel","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":21,"t":"Powerbank","n":"nur Handgepäck","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":22,"t":"Reiseadapter","n":"UK / US / Indien","w":"alle","r":["NonEU","IN","US","AF"]},{"id":23,"t":"AirTags","n":"im Gepäck","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":24,"t":"Kopfhörer","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":25,"t":"Kamera + SD-Karten","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":26,"t":"Gimbal / Stativ","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":27,"t":"Tablet / Kindle","n":"für das Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":28,"t":"eSIM / lokale SIM","n":"Roaming prüfen","w":"eltern","r":["EU","NonEU","IN","US","AF"]},{"id":29,"t":"Kabel-Organizer","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":30,"t":"Laptop (falls nötig)","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":31,"t":"Speicherkarten-Leser","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":32,"t":"Mehrfachsteckdose","n":"1 Adapter, viele Stecker","w":"eltern","r":["NonEU","IN","US","AF"]}]},{"id":2,"name":"Gesundheit","items":[{"id":33,"t":"Reiseapotheke","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":34,"t":"Eigene Medikamente","n":"+ Rezept-Kopie","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":35,"t":"Schmerz- / Fiebermittel","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":36,"t":"Pflaster","n":"fürs Kind!","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":37,"t":"Sonnencreme","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":38,"t":"Mückenspray","n":"","w":"alle","r":["NonEU","IN","AF"]},{"id":39,"t":"Desinfektion","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":40,"t":"Mittel gegen Reiseübelkeit","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":41,"t":"Malaria-Vorsorge","n":"Arzt fragen","w":"alle","r":["IN","AF"]},{"id":42,"t":"Mittel gegen Durchfall","n":"","w":"alle","r":["NonEU","IN","AF"]},{"id":43,"t":"Elektrolyt-Salze (ORS)","n":"","w":"alle","r":["IN","AF"]},{"id":44,"t":"Brille / Kontaktlinsen","n":"Ersatz","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":45,"t":"Thermometer","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":46,"t":"Allergie-Mittel","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":3,"name":"Kleidung","items":[{"id":47,"t":"Unterwäsche","n":"pro Tag","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":48,"t":"Socken","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":49,"t":"T-Shirts / Tops","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":50,"t":"Hosen","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":51,"t":"Pullover / Jacke","n":"Wetter prüfen","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":52,"t":"Regenjacke","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":53,"t":"Bequeme Laufschuhe","n":"viel zu Fuß!","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":54,"t":"Sandalen / Flip-Flops","n":"","w":"alle","r":["NonEU","IN","AF"]},{"id":55,"t":"Schlafanzug","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":56,"t":"Badekleidung","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":57,"t":"Sonnenhut / Kappe","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":58,"t":"Sonnenbrille","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":59,"t":"Schal / Tuch (Tempel, Moschee)","n":"","w":"mama","r":["NonEU","IN","AF"]},{"id":60,"t":"Warme Schichten","n":"kaltes Reiseziel","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":61,"t":"Gürtel","n":"","w":"eltern","r":["DE","EU","NonEU","IN","US","AF"]},{"id":62,"t":"Leichte Jacke für Flugzeug","n":"Klimaanlage","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":4,"name":"Hygiene","items":[{"id":63,"t":"Zahnbürste + Zahnpasta","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":64,"t":"Shampoo / Duschgel","n":"Reisegröße < 100 ml","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":65,"t":"Deo","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":66,"t":"Bürste / Kamm","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":67,"t":"Rasierer","n":"","w":"papa","r":["DE","EU","NonEU","IN","US","AF"]},{"id":68,"t":"Damenhygiene","n":"","w":"mama","r":["DE","EU","NonEU","IN","US","AF"]},{"id":69,"t":"Feuchttücher","n":"Kind","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":70,"t":"Lippenbalsam","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":71,"t":"Reisehandtuch","n":"","w":"alle","r":["NonEU","IN","US","AF"]},{"id":72,"t":"Nagelschere","n":"nur Koffer","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":73,"t":"Taschentücher","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":74,"t":"Wattestäbchen","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":5,"name":"Kind","items":[{"id":75,"t":"Lieblingsspielzeug","n":"1–2 Sachen","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":76,"t":"Buch / Malsachen","n":"Flug, Zug","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":77,"t":"Snacks","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":78,"t":"Trinkflasche","n":"leer durch die Kontrolle","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":79,"t":"Kuscheltier","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":80,"t":"Wechselkleidung im Handgepäck","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":81,"t":"Kinder-Kopfhörer","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":82,"t":"Tablet mit Downloads","n":"Filme offline","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":83,"t":"Nackenkissen","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]},{"id":84,"t":"Kleine Spiele / Karten","n":"","w":"kind","r":["DE","EU","NonEU","IN","US","AF"]}]},{"id":6,"name":"Taschen","items":[{"id":85,"t":"Tagesrucksack","n":"Stadttour","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":86,"t":"Trinkflasche zum Auffüllen","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":87,"t":"Reise-Snacks","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":88,"t":"Faltbare Einkaufstasche","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":89,"t":"Wäschebeutel","n":"schmutzige Kleidung","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":90,"t":"Schloss","n":"","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":91,"t":"Stift","n":"Einreisekarte","w":"alle","r":["EU","NonEU","IN","US","AF"]},{"id":92,"t":"Regenschirm","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":93,"t":"Besteck / Dose","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":94,"t":"Zip-Beutel","n":"Flüssigkeiten, Snacks","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":95,"t":"Nähset / Sicherheitsnadeln","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":96,"t":"Reiseführer / Offline-Karten","n":"vorher laden","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":97,"t":"Brillenetui","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":98,"t":"Brustbeutel / Geldgurt","n":"","w":"alle","r":["NonEU","IN","US","AF"]}]},{"id":7,"name":"Wohnung","items":[{"id":99,"t":"Licht aus","n":"alle Zimmer","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":100,"t":"Mülleimer leeren","n":"auch Bio!","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":101,"t":"Müll rausbringen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":102,"t":"Kühlschrank prüfen","n":"Verderbliches","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":103,"t":"Fenster zu","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":104,"t":"Türen abschließen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":105,"t":"Heizung runter","n":"Winter","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":106,"t":"Geräte ausstecken","n":"Herd, Bügeleisen","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":107,"t":"Haupt-Wasserhahn zu","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":108,"t":"Spülmaschine leer / an","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":109,"t":"WLAN-Router an lassen","n":"für Kameras","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":110,"t":"Pflanzen gießen / Nachbarn fragen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":111,"t":"Briefkasten","n":"Nachbarn fragen","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":112,"t":"Haustier versorgt","n":"falls nötig","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":113,"t":"Schlüssel / an Nachbarn","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":114,"t":"Handy vorher laden","n":"","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]},{"id":115,"t":"Taxi / Zug zum Flughafen bestätigen","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":116,"t":"Alarmanlage einschalten","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":117,"t":"Thermostat auf Abwesend","n":"","w":"haus","r":["DE","EU","NonEU","IN","US","AF"]},{"id":118,"t":"Letzter Rundgang","n":"Geldbeutel, Schlüssel, Pass","w":"alle","r":["DE","EU","NonEU","IN","US","AF"]}]}];
 /* --- content.js --- */
 /* ===== Kofferforscher content (German). Saved progress is keyed by id, so lists can grow in updates. ===== */
@@ -845,7 +876,7 @@ var WESEN=[
 
 /* --- core.js --- */
 /* ===== Kofferforscher core: state, migration, router, helpers, rewards, update ===== */
-var APP_VERSION='1.4.0';
+var APP_VERSION='1.4.1';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  v:7,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
@@ -966,6 +997,9 @@ function route(){var r=parseHash();closeSheet();cleanup();
 function rerender(){var y=window.scrollY,r=parseHash();var keep={};$$('[data-keep]').forEach(function(e){keep[e.getAttribute('data-keep')]=e.scrollTop});cleanup();
  var f=ROUTES[r.name]||ROUTES.home;var out=f(r.args);if(RAILED[ROUTES[r.name]?r.name:'home'])out=shell(ROUTES[r.name]?r.name:'home',out);$('#app').innerHTML='<div>'+out+'</div>';var post=ROUTES['post:'+r.name];if(post)post(r.args);window.scrollTo(0,y);
  $$('[data-keep]').forEach(function(e){var k=e.getAttribute('data-keep');if(keep[k]!=null)e.scrollTop=keep[k]})}
+var UIZ=1;function fitZoom(){var w=window.innerWidth,h=window.innerHeight,z=Math.max(.8,Math.min(2.2,Math.min(w/1100,h/690)));z=Math.round(z*100)/100;UIZ=z;document.documentElement.style.zoom=z;document.documentElement.style.setProperty('--vh',(h/z)+'px')}
+var lastW=window.innerWidth;fitZoom();window.addEventListener('resize',function(){if(window.innerWidth===lastW)return;lastW=window.innerWidth;fitZoom();rerender()});
+function VW(){return innerWidth/UIZ}function VH(){return innerHeight/UIZ}
 window.addEventListener('hashchange',route);
 
 /* ---------- actions (event delegation) ---------- */
@@ -1043,7 +1077,7 @@ function listHtml(){var p=S.pack;var it=packItems();
  if(!cats.length)return '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:10px">'+people+'</div><p class="muted">Für diese Person gibt es hier nichts zu packen.</p>';
  var cur=cats.filter(function(c){return c.ci===p.cat})[0]||cats[0];
  var chips='<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:10px">'+cats.map(function(c){var full=c.n>0&&c.d===c.n;return '<button class="chip s'+(c.ci===cur.ci?' on':'')+'" data-act="packCat" data-a="'+c.ci+'"><i style="width:9px;height:9px;border-radius:3px;background:'+CATCOL[c.ci]+';display:inline-block;margin-right:6px"></i>'+c.name+' · '+(full?'✓':c.d+'/'+c.n)+'</button>'}).join('')+'</div>';
- var avW=Math.max(300,innerWidth-130-36),cols=Math.max(1,Math.min(4,Math.floor(avW/290))),rows=Math.max(2,Math.floor((innerHeight-(innerHeight<600?340:300))/46)),per=cols*rows,pages=Math.max(1,Math.ceil(cur.g.length/per)),pg=Math.min(S.pack.pg||0,pages-1);
+ var avW=Math.max(300,VW()-130-36),cols=Math.max(1,Math.min(4,Math.floor(avW/290))),rows=Math.max(2,Math.floor((VH()-(VH()<600?340:300))/46)),per=cols*rows,pages=Math.max(1,Math.ceil(cur.g.length/per)),pg=Math.min(S.pack.pg||0,pages-1);
  var items=cur.g.slice(pg*per,(pg+1)*per).map(function(i){var on=p.done[i.key],na=p.na[i.key];return '<div style="display:flex;gap:4px;align-items:stretch'+(na?';opacity:.45':'')+'"><button class="ck'+(on?' on':'')+'" style="flex:1;min-width:0;background:#fff;border:1px solid var(--line)'+(na?';text-decoration:line-through':'')+'" data-act="'+(na?'packNa':'packTick')+'" data-a="'+i.key+'"><span class="bx">'+(on?CHECK:'')+'</span><span class="tx">'+esc(i.t)+(i.n?'<small>'+esc(i.n)+'</small>':'')+'</span>'+(p.person==='alle'?'<span class="tag">'+(i.sh?'gemeinsam':(PNAME[i.p]||''))+'</span>':(i.sh&&p.person!=='haus'?'<span class="tag">gemeinsam</span>':''))+'</button><button data-act="packNa" data-a="'+i.key+'" title="'+(na?'Wieder nötig':'Nicht nötig')+'" aria-label="'+(na?'Wieder nötig':'Nicht nötig')+'" style="width:40px;flex:none;border-radius:12px;border:1px solid var(--line);background:#fff;font-size:13px;font-weight:800;color:var(--ink2)">'+(na?'↺':'∅')+'</button></div>'}).join('');
  var pager=pages>1?'<div class="row" style="justify-content:center;gap:10px;margin-top:8px"><button class="b s" data-act="packPg" data-a="'+(pg-1)+'"'+(pg?'':' disabled')+'>‹ Zurück</button><span class="lab">Seite '+(pg+1)+' von '+pages+'</span><button class="b s" data-act="packPg" data-a="'+(pg+1)+'"'+(pg<pages-1?'':' disabled')+'>Weiter ›</button></div>':'';
  return '<div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:10px">'+people+'<div class="sp"></div><button class="chip s'+(p.allRegions?' on':'')+'" data-act="packAll" title="Packliste nach Reiseziel">Ziel: '+(p.allRegions?'alle Regionen':rn[p.region])+'</button><button class="b s y" data-act="packAdd">+ Eigene Sache</button><button class="b s" data-act="packReset">Leeren</button></div>'+chips+
@@ -1352,7 +1386,7 @@ SIMS.steer=function(st){var s={r:0,p:0,y:0,sp:0,hit:''};
   '<g font-family="Figtree" font-size="14" font-weight="700" fill="#13324A" transform="translate(10 330)"><rect width="16" height="16" rx="4" fill="#49C5B6"/><text x="24" y="13">Ruder in Ruhe</text><rect x="150" width="16" height="16" rx="4" fill="#ECD06F"/><text x="174" y="13">Ruder hoch / ausgeschlagen</text><rect x="400" width="16" height="16" rx="4" fill="#FF6A52"/><text x="424" y="13">Ruder runter</text><text x="600" y="13" fill="#55677A">Tippe auf ein Ruder, um es zu benennen</text></g>'+
   (s.hit?'<g transform="translate(450 362)"><rect x="-160" y="-16" width="320" height="30" rx="15" fill="#13324A"/><text text-anchor="middle" y="5" fill="#fff" font-family="Figtree" font-weight="800" font-size="15">'+({aileron:'Querruder: rollen',elevator:'Höhenruder: nicken',rudder:'Seitenruder: gieren'}[s.hit])+'</text></g>':''))}
  draw();
- var joy=$('#joy'),kn=$('#knob'),drag=false;function jm(e){var r=joy.getBoundingClientRect(),x=e.clientX-r.left-59,y=e.clientY-r.top-59,d=Math.sqrt(x*x+y*y),R=40;if(d>R){x=x/d*R;y=y/d*R}kn.style.left=(37+x)+'px';kn.style.top=(37+y)+'px';s.r=Math.round(x/R*30);s.p=Math.round(y/R*20);draw()}
+ var joy=$('#joy'),kn=$('#knob'),drag=false;function jm(e){var r=joy.getBoundingClientRect(),x=(e.clientX-r.left)/UIZ-59,y=(e.clientY-r.top)/UIZ-59,d=Math.sqrt(x*x+y*y),R=40;if(d>R){x=x/d*R;y=y/d*R}kn.style.left=(37+x)+'px';kn.style.top=(37+y)+'px';s.r=Math.round(x/R*30);s.p=Math.round(y/R*20);draw()}
  joy.addEventListener('pointerdown',function(e){drag=true;joy.setPointerCapture(e.pointerId);jm(e)});joy.addEventListener('pointermove',function(e){if(drag)jm(e)});joy.addEventListener('pointerup',function(){drag=false});
  bindRange('sy','°',function(v){s.y=v;draw()});
  $('#ssp').addEventListener('click',function(){s.sp=s.sp?0:1;$('#ssp').className='b s'+(s.sp?' c':'');draw()});
@@ -1982,7 +2016,7 @@ var MUNDO=null;function toastUndo(){$$('.toast').forEach(function(x){x.remove()}
 var MDRAG={};
 document.addEventListener('pointerdown',function(e){var c=e.target.closest&&e.target.closest('[data-drag]');if(!c)return;MDRAG={el:c,x:e.clientX,y:e.clientY,v:c.getAttribute('data-drag'),g:null,justDragged:false}});
 document.addEventListener('pointermove',function(e){if(!MDRAG.el)return;var dx=e.clientX-MDRAG.x,dy=e.clientY-MDRAG.y;if(!MDRAG.g&&Math.abs(dx)+Math.abs(dy)>12){var g=MDRAG.el.cloneNode(true);g.style.cssText+=';position:fixed;z-index:80;pointer-events:none;opacity:.9;box-shadow:0 8px 20px rgba(19,50,74,.3)';document.body.appendChild(g);MDRAG.g=g;var dz=$('#mdrop');if(dz)dz.style.background='#DDF5EF'}
- if(MDRAG.g){MDRAG.g.style.left=(e.clientX-30)+'px';MDRAG.g.style.top=(e.clientY-20)+'px'}});
+ if(MDRAG.g){MDRAG.g.style.left=(e.clientX/UIZ-30)+'px';MDRAG.g.style.top=(e.clientY/UIZ-20)+'px'}});
 document.addEventListener('pointerup',function(e){if(!MDRAG.el)return;var g=MDRAG.g,v=MDRAG.v;MDRAG.el=null;if(!g)return;g.remove();MDRAG.justDragged=true;setTimeout(function(){MDRAG.justDragged=false},350);var dz=$('#mdrop');if(!dz)return;dz.style.background='#F4FBF9';var r=dz.getBoundingClientRect();if(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom){var k=v.split('|')[0],val=v.split('|')[1],on=k==='r'?NM.r===val:(NM[k]||[]).indexOf(val)>-1;if(!on)mPick(v)}});
 
 /* ---------- Reisepass ---------- */
@@ -2408,7 +2442,7 @@ function mkStamp(id,cat,t,d,ic,c,n,of){var st={id:id,cat:cat,t:t,d:d,ic:ic,c:c,n
 var RAILED={home:1,flug:1,bcn:1,freunde:1,samm:1};
 var BACKMAP={vor:'/flug',hgr:'/flug',auf:'/flug',wie:'/flug',stadt:'/bcn',wes:'/bcn',rek:'/bcn',tag:'/bcn',eltern:'/',pin:'/'};
 function railHtml(cur){var it=[['home','/','Heute',IC.sun],['flug','/flug','Flug',IC.plane],['bcn','/bcn',S.trip.name,IC.tower],['freunde','/freunde','Muya-Dex',IC.paw],['samm','/samm','Pass',IC.flag]];
- return '<nav class="rail" aria-label="Hauptmenü">'+it.map(function(x){return '<a class="rl'+(x[0]===cur?' on':'')+'" href="#'+x[1]+'"><span class="rli">'+ICON(x[3],x[0]===cur?'#13324A':'#fff',2.2)+'</span><span class="rlt">'+esc(x[2])+'</span></a>'}).join('')+'<div class="sp"></div><a class="rl rg" href="#/eltern" aria-label="Für Eltern"><span class="rli">'+ICON(IC.gear,'#fff',2)+'</span><span class="rlt">Eltern</span></a></nav>'}
+ return '<nav class="rail" aria-label="Hauptmenü">'+it.map(function(x){return '<a class="rl'+(x[0]===cur?' on':'')+'" href="#'+x[1]+'"><span class="rli">'+ICON(x[3],x[0]===cur?'#fff':'#13324A',2.2)+'</span><span class="rlt">'+esc(x[2])+'</span></a>'}).join('')+'<div class="sp"></div><a class="rl rg" href="#/eltern" aria-label="Für Eltern"><span class="rli">'+ICON(IC.gear,'#13324A',2)+'</span><span class="rlt">Eltern</span></a></nav>'}
 function shell(cur,html){return '<div class="hubshell">'+railHtml(cur)+'<div class="hubmain">'+html+'</div></div>'}
 ACT.go=function(id){var s=winState(id);if(s!=='open'){toast(s==='limit'?'Pause: Das Rollo ist heute zu.':'Dieses Fenster ruht gerade. Frag Mama oder Papa.');return}location.hash='#/'+id};
 ACT.openWin=ACT.go;
@@ -2417,7 +2451,18 @@ function topChips(){var rk=rankOf(earnedCount()),n=earnedCount(),base=RANKS.filt
  return '<a class="hchip" href="#/samm" title="Reisepass"><span style="width:20px;display:inline-block">'+ICON(IC.star,'#C9A227')+'</span><b>'+esc(rk.name)+'</b><span class="bar" style="width:70px;margin:0"><i style="width:'+pct+'%"></i></span><span class="muted" style="font-size:13px">'+n+' Stempel</span></a>'+
  '<a class="hchip" href="#/freunde" title="Material">'+MATS.map(function(k){return '<span style="display:inline-flex;align-items:center;gap:3px">'+matIcon(k,18)+'<b>'+(S.mu.mat[k]||0)+'</b></span>'}).join('')+'</a>'}
 function greet(){var h=new Date().getHours(),g=h<11?'Guten Morgen':h<18?'Hallo':'Guten Abend',k=kidName();return g+(k?', '+esc(k):', Forscher')+'!'}
-function skyline(){return '<svg class="sky" viewBox="0 0 420 200" preserveAspectRatio="xMaxYMax slice"><defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C98F66"/><stop offset="1" stop-color="#A9704C"/></linearGradient></defs><path d="M0 170C70 150 140 178 230 160S360 150 420 158V200H0z" fill="#ffffff55"/><g fill="url(#hg)"><path d="M250 190V90l9-40 9 40v100zM282 190V70l12-62 12 62v120zM318 190V96l8-30 8 30v94zM346 190V112l7-24 7 24v78z"/></g><circle cx="205" cy="52" r="16" fill="#FFF3D6" opacity=".9"/><path d="M0 188C100 170 200 196 420 176V200H0z" fill="#49C5B6" opacity=".55"/></svg>'}
+function skyline(){
+ function spire(x,w,top,base){var c=x+w/2;return '<path d="M'+x+' '+base+'V'+(top+w*1.6)+'Q'+x+' '+(top+w*.7)+' '+c+' '+top+'Q'+(x+w)+' '+(top+w*.7)+' '+(x+w)+' '+(top+w*1.6)+'V'+base+'z"/><circle cx="'+c+'" cy="'+(top-5)+'" r="'+(w*.22)+'"/>'}
+ var win='';[[287,92],[287,116],[311,72],[311,98],[311,124],[335,92],[335,116]].forEach(function(p){win+='<rect x="'+p[0]+'" y="'+p[1]+'" width="4" height="10" rx="2"/>'});
+ return '<svg class="sky" viewBox="0 0 520 220" preserveAspectRatio="xMaxYMax slice" aria-hidden="true">'+
+ '<circle cx="455" cy="58" r="22" fill="#FFF4DA"/><circle cx="455" cy="58" r="34" fill="#FFF4DA" opacity=".35"/>'+
+ '<path d="M0 168C60 140 110 128 170 136S250 150 300 148V220H0z" fill="#CFE0D6"/>'+
+ '<g fill="#D9B79A">'+spire(270,22,64,186)+spire(296,26,36,186)+spire(326,22,58,186)+spire(352,16,88,186)+spire(248,16,96,186)+'<path d="M240 186V150h134v36z"/></g>'+
+ '<g fill="#C49A7B">'+win+'</g>'+
+ '<path d="M410 186V110c0-26 12-40 22-40s22 14 22 40v76z" fill="#B9CBD8"/><path d="M416 122h32M414 140h36M413 158h38" stroke="#fff" stroke-opacity=".55" stroke-width="2"/>'+
+ '<g fill="#BFD6C2"><path d="M190 186v-36" stroke="#A8BFA9" stroke-width="3"/><path d="M190 150c-14-2-22 4-26 10 8-6 18-6 26-4 6-8 16-12 26-8-8-2-18-2-26 2z"/><path d="M212 186v-28" stroke="#A8BFA9" stroke-width="3"/><path d="M212 158c-12-2-18 3-22 8 7-5 15-5 22-3 5-7 13-10 21-6-7-2-15-2-21 1z"/></g>'+
+ '<path d="M0 186H520V220H0z" fill="#F3E6CF"/><path d="M0 200C120 192 240 206 360 198S480 192 520 196V220H0z" fill="#A9D8CF"/>'+
+ '<path d="M96 196l10-22v22zM90 197h22l-3 4H93z" fill="#fff" opacity=".9"/></svg>'}
 function stopTitle(s){return s?pname(s.id):''}
 /* ---------- Heute ---------- */
 ROUTES.home=function(){var slot=curSlot(),c=CT(slot),st=dayStops(slot),met=st.filter(function(x){return S.mu.met[x.id]}).length,ns=nextStop(),buddy=S.mu.buddy&&SPEC_BY[S.mu.buddy]&&S.mu.pets[S.mu.buddy]?S.mu.buddy:(muOwned()[0]||{}).id,td=tripDayOf(today());
@@ -2435,8 +2480,10 @@ ROUTES.flug=function(){var ps=packStats('alle'),cards=['vor','hgr','auf','wie'].
   var pa=winState(id)!=='open';
   return '<button class="fcard'+(pa?' paused':'')+'" data-act="go" data-a="'+id+'" style="--ac:'+w.c+'"><span class="fic">'+ICON(w.ic,'#13324A',2.2)+'</span><span class="ft"><b>'+esc(w.t)+'</b><small>'+(pa?'Gerade Pause':esc(w.s))+'</small></span><span class="fp"><span class="bar"><i style="width:'+pct+'%;background:'+w.c+'"></i></span><small>'+esc(sub)+'</small></span><span class="chev">'+ICON('M9 6l6 6-6 6','#8796A3',2.4)+'</span></button>'}).join('');
  var sky=SPEC.filter(function(x){return x.src==='sky'}),slots=sky.map(function(x){var p=S.mu.pets[x.id];return '<div class="sslot'+(p?' on':'')+'"><div class="mupic" style="width:54px;height:54px">'+cre(x,p?petStage(x.id):1,!p,p&&p.shiny)+'</div><div><b>'+(p?esc(x.n[petStage(x.id)-1]):'? ? ?')+'</b><small>'+(p?rarStars(x.rar)+' '+RARN[x.rar]:esc(x.hint))+'</small></div></div>'}).join('');
- var legs=S.trip.legs.map(function(l){return esc(l.code||l.city)}).join(' → ');
- return '<div class="scr"><div class="hd"><div class="t"><span class="lab">'+esc(legs)+'</span><h1 class="disp">Flug &amp; Flughafen</h1></div><div class="sp"></div>'+topChips()+'</div><div class="bd fbd"><div class="fleft"><div class="fgrid">'+cards+'</div><div class="froute"><span class="lab">Dein Flug</span><b class="disp">'+esc(legs)+'</b><span class="muted" style="font-size:14px">'+esc(S.trip.depart.split('-').reverse().join('.').slice(0,5))+'. – '+esc(S.trip.back.split('-').reverse().join('.').slice(0,5))+'.</span></div></div><div class="hcard" style="min-height:0;overflow:auto"><div class="row"><span class="lab">Himmels-Freunde</span><div class="sp"></div><span class="tag">'+sky.filter(function(x){return S.mu.pets[x.id]}).length+'/'+sky.length+'</span></div><div class="sgrid">'+slots+'</div></div></div></div>'};
+ var legs=S.trip.legs.map(function(l){return esc(l.code||l.city)}).join(' → '),L0=S.trip.legs[0],L1=S.trip.legs[1]||L0,nDays=daysBetween(S.trip.depart,S.trip.back)+1,td=tripDayOf(today()),toGo=daysBetween(today(),S.trip.depart),stat,statS;
+ function dd(d){return d.split('-').reverse().join('.').slice(0,6)}
+ if(td>-1){stat='Tag '+(td+1);statS='von '+nDays+' · unterwegs'}else if(toGo>0){stat=toGo+(toGo===1?' Tag':' Tage');statS='bis zum Abflug'}else{stat='Zuhause';statS='Reise geschafft'}
+ return '<div class="scr"><div class="hd"><div class="t"><span class="lab">'+esc(legs)+'</span><h1 class="disp">Flug &amp; Flughafen</h1></div><div class="sp"></div>'+topChips()+'</div><div class="bd fbd"><div class="fleft"><div class="fgrid">'+cards+'</div><div class="bpass"><div class="bpl"><span class="lab">Bordkarte · '+esc(kidName()||'Forscher')+'</span><div class="bpr"><div><b class="disp">'+esc(L0.code||L0.city)+'</b><small>'+esc(L0.city)+'</small></div><span class="bpp">'+ICON(IC.plane,'#13324A',2)+'</span><div><b class="disp">'+esc(L1.code||L1.city)+'</b><small>'+esc(L1.city)+'</small></div></div><div class="bpi"><div><span class="lab">Hinflug</span><b>'+dd(S.trip.depart)+'</b></div><div><span class="lab">Rückflug</span><b>'+dd(S.trip.back)+'</b></div><div><span class="lab">Reise</span><b>'+(nDays)+' Tage</b></div></div></div><div class="bps"><span class="lab">Status</span><b class="disp">'+stat+'</b><small>'+statS+'</small></div></div></div><div class="hcard" style="min-height:0;overflow:hidden"><div class="row"><span class="lab">Himmels-Freunde</span><div class="sp"></div><span class="tag">'+sky.filter(function(x){return S.mu.pets[x.id]}).length+'/'+sky.length+'</span></div><div class="sgrid">'+slots+'</div></div></div></div>'};
 /* ---------- Barcelona ---------- */
 var BDAY=null;
 ACT.bday=function(i){BDAY=+i;rerender()};
