@@ -1001,7 +1001,7 @@ var WESEN=[
 
 /* --- core.js --- */
 /* ===== Kofferforscher core: state, migration, router, helpers, rewards, update ===== */
-var APP_VERSION='1.4.6';
+var APP_VERSION='1.4.7';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  theme:{c:'ozean',m:'hell'},
@@ -2183,7 +2183,7 @@ ROUTES.eltern=function(){
  '</div>'+
  '<div class="pn pad"><span class="lab">Fenster · Rollo zu = Pause · Minuten pro Tag</span><div style="margin-top:6px">'+wins+'</div></div>'+
  '<div class="col"><div class="pn pad"><span class="lab">Namen & Anzeige</span><div class="col" style="margin-top:8px;gap:8px"><label class="muted" style="font-size:15px">Kuscheltier<input class="inp" data-in="setName" data-a="mascot" value="'+esc(S.names.mascot)+'" maxlength="20"></label><label class="muted" style="font-size:15px">Name für die Schatzsuche<input class="inp" data-in="setName" data-a="wesen" value="'+esc(S.names.wesen)+'" maxlength="24"></label><label class="muted" style="font-size:15px">Name des Kindes (Reisepass)<input class="inp" data-in="setName" data-a="kind" value="'+esc(S.names.kind)+'" maxlength="20"></label><div class="row"><span class="muted" style="font-size:15px">Schrift</span>'+seg([['1','Normal'],['1.12','Groß'],['1.25','Sehr groß']],String(S.ts),'setTs')+'</div></div></div>'+
- '<div class="pn pad"><span class="lab">Daten</span><div class="wrap" style="margin-top:8px"><button class="b s" data-act="exportData">Sichern (Datei)</button><label class="b s">Laden<input type="file" accept="application/json" data-ch="importData" style="display:none"></label><button class="b s" data-act="pinChange">PIN ändern</button><button class="b s" data-act="restorePrev">Früheren Stand zurück</button><button class="b s c" data-act="wipe">Alles löschen</button></div></div></div></div>','free')};
+ '<div class="pn pad"><span class="lab">Daten</span><div class="wrap" style="margin-top:8px"><button class="b s" data-act="exportData">Sichern (Datei)</button><label class="b s" style="position:relative">Laden<input type="file" data-ch="importData" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></label><button class="b s" data-act="copyData">Kopieren</button><button class="b s" data-act="pasteData">Einfügen</button><button class="b s" data-act="pinChange">PIN ändern</button><button class="b s" data-act="restorePrev">Früheren Stand zurück</button><button class="b s c" data-act="wipe">Alles löschen</button></div></div></div></div>','free')};
 ACT.limDec=function(){S.lim=Math.max(0,S.lim-15);save();rerender()};ACT.limInc=function(){S.lim=Math.min(240,S.lim+15);save();rerender()};
 ACT.minDec=function(id){S.mins[id]=Math.max(5,S.mins[id]-5);save();rerender()};ACT.minInc=function(id){S.mins[id]=Math.min(120,S.mins[id]+5);save();rerender()};
 ACT.winTgl=function(id){S.wpaused[id]=!S.wpaused[id];save();rerender()};
@@ -2201,9 +2201,15 @@ function mergeData(a,b){
  if(typeof a==='number'&&typeof b==='number')return Math.max(a,b);
  return(a==null||a===''||a===0||a===false)?b:a}
 function snapshot(){try{localStorage.setItem(KEY+'.prev',JSON.stringify({t:Date.now(),d:S}))}catch(e){}}
-ACT.importData=function(v,el){var f=el.files&&el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var j=JSON.parse(r.result);if(!j||j.app!=='kofferforscher'||!j.data)throw 0;
+function importText(txt){try{var j=JSON.parse(txt);if(!j||j.app!=='kofferforscher'||!j.data)throw 0;
  var keep=S;S=deepMerge(DEFAULTS,j.data);migrate();PENDI=S;S=keep;
- sheet('<h2 class="disp" style="font-size:30px">Sicherung laden</h2><p class="muted" style="margin:8px 0 12px">Dieses Gerät hat jetzt:<br><b>'+dataStats(S)+'</b><br><br>Die Sicherung enthält:<br><b>'+dataStats(PENDI)+'</b></p><div class="col" style="gap:8px"><button class="b p" data-act="impMerge">Zusammenführen (nichts geht verloren)</button><button class="b" data-act="impReplace">Ersetzen (aktueller Stand wird vorher gesichert)</button><button class="b" data-act="closeSheetGo">Abbrechen</button></div>')}catch(e){toast('Das ist keine Sicherung der App')}el.value='';};r.readAsText(f)};
+ sheet('<h2 class="disp" style="font-size:30px">Sicherung laden</h2><p class="muted" style="margin:8px 0 12px">Dieses Gerät hat jetzt:<br><b>'+dataStats(S)+'</b><br><br>Die Sicherung enthält:<br><b>'+dataStats(PENDI)+'</b></p><div class="col" style="gap:8px"><button class="b p" data-act="impMerge">Zusammenführen (nichts geht verloren)</button><button class="b" data-act="impReplace">Ersetzen (aktueller Stand wird vorher gesichert)</button><button class="b" data-act="closeSheetGo">Abbrechen</button></div>')}catch(e){toast('Das ist keine Sicherung der App')}}
+ACT.importData=function(v,el){var f=el.files&&el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){importText(r.result);el.value=''};r.readAsText(f)};
+function backupText(){return JSON.stringify({app:'kofferforscher',version:APP_VERSION,date:new Date().toISOString(),data:S})}
+ACT.copyData=function(){var t=backupText();function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Kopiert. Auf dem anderen Gerät „Einfügen“ tippen.')}catch(e){toast('Kopieren ging nicht. Nimm „Sichern (Datei)“.')}ta.remove()}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kopiert. Auf dem anderen Gerät „Einfügen“ tippen.')},fb);else fb()};
+ACT.pasteData=function(){sheet('<h2 class="disp" style="font-size:28px">Sicherung einfügen</h2><p class="muted" style="margin:8px 0">Lange in das Feld tippen, „Einfügen“ wählen, dann „Laden“.</p><textarea id="pastebox" style="width:100%;height:140px;border-radius:14px;border:1.5px solid var(--line);padding:10px;font-size:14px"></textarea><div class="row" style="margin-top:10px"><button class="b p" data-act="pasteGo">Laden</button><button class="b" data-act="closeSheet">Abbrechen</button></div>')};
+ACT.pasteGo=function(){var b=$('#pastebox');var t=b?b.value.trim():'';closeSheet();if(!t)return toast('Nichts eingefügt');importText(t)};
 ACT.impMerge=function(){if(!PENDI)return;snapshot();var inc=PENDI,out={};Object.keys(S).concat(Object.keys(inc)).forEach(function(k){if(k in out)return;out[k]=SKIPK[k]?((k in S)?S[k]:inc[k]):((k in S)?((k in inc)?mergeData(S[k],inc[k]):S[k]):inc[k])});S=out;PENDI=null;save();applyTs();closeSheet();toast('Zusammengeführt. Es ging nichts verloren.');rerender()};
 ACT.impReplace=function(){if(!PENDI)return;snapshot();S=PENDI;PENDI=null;save();applyTs();closeSheet();toast('Sicherung geladen. Der alte Stand ist gesichert.');rerender()};
 ACT.restorePrev=function(){var p=null;try{p=JSON.parse(localStorage.getItem(KEY+'.prev')||'null')}catch(e){}if(!p||!p.d)return toast('Kein früherer Stand vorhanden');var cur=S;S=deepMerge(DEFAULTS,p.d);migrate();try{localStorage.setItem(KEY+'.prev',JSON.stringify({t:Date.now(),d:cur}))}catch(e){}save();applyTs();toast('Früherer Stand wiederhergestellt');rerender()};
