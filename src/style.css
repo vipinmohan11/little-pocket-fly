@@ -464,3 +464,16 @@ html[data-dark="1"] [style*="background:#E"],html[data-dark="1"] [style*="backgr
  .sheet>div{max-width:94vw}
 }
 @media (orientation:portrait),(max-width:820px){.hubmain .row:has(>.pn){flex-wrap:wrap}.hubmain .row>.pn{flex:1 1 30%}}
+/* v1.4.4 Glas-Stil (optional, leichter Weichzeichner, keine Animation) */
+html[data-glass="1"]{--gl:rgba(255,255,255,.55);--gle:rgba(255,255,255,.75);--gls:0 1px 0 rgba(255,255,255,.7) inset,0 10px 30px -12px rgba(30,60,120,.22)}
+html[data-glass="1"][data-dark="1"]{--gl:rgba(44,44,48,.55);--gle:rgba(255,255,255,.16);--gls:0 1px 0 rgba(255,255,255,.1) inset,0 10px 30px -12px rgba(0,0,0,.6)}
+html[data-glass="1"] body{background:radial-gradient(55% 45% at 12% 8%,color-mix(in srgb,var(--ac) 38%,transparent),transparent 70%),radial-gradient(50% 45% at 92% 18%,rgba(255,170,120,.35),transparent 70%),radial-gradient(60% 50% at 70% 100%,rgba(150,120,255,.3),transparent 70%),var(--bg) fixed}
+html[data-glass="1"][data-dark="1"] body{background:radial-gradient(55% 45% at 12% 8%,color-mix(in srgb,var(--ac) 45%,transparent),transparent 70%),radial-gradient(50% 45% at 92% 18%,rgba(255,140,90,.22),transparent 70%),radial-gradient(60% 50% at 70% 100%,rgba(120,90,255,.28),transparent 70%),#050508 fixed}
+html[data-glass="1"] .pn,html[data-glass="1"] .hcard,html[data-glass="1"] .fcard,html[data-glass="1"] .btile,html[data-glass="1"] .bpass,html[data-glass="1"] .sheet>div,html[data-glass="1"] .hchip,html[data-glass="1"] .chip,html[data-glass="1"] .dtab,html[data-glass="1"] .icb,html[data-glass="1"] .back{background:var(--gl)!important;box-shadow:var(--gls),0 0 0 1px var(--gle)!important;-webkit-backdrop-filter:blur(8px) saturate(150%);backdrop-filter:blur(8px) saturate(150%)}
+html[data-glass="1"] .topnav .tabs{background:var(--gl);box-shadow:var(--gls),0 0 0 1px var(--gle);-webkit-backdrop-filter:blur(10px) saturate(160%);backdrop-filter:blur(10px) saturate(160%)}
+html[data-glass="1"] .hhero{box-shadow:var(--gls),0 0 0 1px var(--gle)}
+html[data-glass="1"] .sgrid .sslot,html[data-glass="1"] .tmon,html[data-glass="1"] .ck,html[data-glass="1"] .ck .bx{background:rgba(255,255,255,.35)!important}
+html[data-glass="1"][data-dark="1"] .sgrid .sslot,html[data-glass="1"][data-dark="1"] .tmon,html[data-glass="1"][data-dark="1"] .ck,html[data-glass="1"][data-dark="1"] .ck .bx{background:rgba(255,255,255,.07)!important}
+html[data-glass="1"] .chip.on,html[data-glass="1"] .dtab.on,html[data-glass="1"] .tl.on{background:var(--ac)!important;color:#fff}
+html[data-glass="1"] .pn.sel{background:var(--gl)!important;box-shadow:0 0 0 3px var(--ac),var(--gls)!important}
+html[data-glass="1"] .ck .bx{box-shadow:none!important}
