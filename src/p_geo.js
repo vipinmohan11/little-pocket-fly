@@ -47,10 +47,10 @@ var LEVELS=[[0,'Anfänger'],[40,'Spurenleser'],[100,'Entdecker'],[180,'Abenteure
 function lvlOf(x){var i=0;for(var k=0;k<LEVELS.length;k++)if(x>=LEVELS[k][0])i=k;return i}
 function xpInit(){var m=S.mu;if(m.xp==null){m.xp=muOwned().length*20;m.lv=lvlOf(m.xp);m.bd=m.bd||{};badgeCheck(true)}}
 function lvlBar(){var m=S.mu,i=lvlOf(m.xp||0),a=LEVELS[i][0],b=LEVELS[i+1]?LEVELS[i+1][0]:a,p=b>a?((m.xp-a)/(b-a))*100:100;return{i:i,name:LEVELS[i][1],next:LEVELS[i+1]?LEVELS[i+1][1]:null,need:b-m.xp,p:p}}
-function addXP(n,why){var m=S.mu,before=lvlOf(m.xp||0);m.xp=(m.xp||0)+n;save();xpChip(n,why);setTimeout(function(){snd('coin')},120);
+function addXP(n,why,quiet){var m=S.mu,before=lvlOf(m.xp||0);m.xp=(m.xp||0)+n;save();if(!quiet){xpChip(n,why);setTimeout(function(){snd('coin')},120)}
  var after=lvlOf(m.xp);if(after>before){m.lv=after;save();setTimeout(function(){levelUp(after)},1600)}}
 function xpChip(n,why){var h=document.getElementById('xpbox');if(!h){h=document.createElement('div');h.id='xpbox';document.body.appendChild(h)}var e=document.createElement('div');e.className='xpc';e.innerHTML='<b>+'+n+' XP</b>'+(why?'<span>'+esc(why)+'</span>':'');h.appendChild(e);setTimeout(function(){e.remove()},2200)}
-function levelUp(i){snd('level');buzz([60,40,60]);sheet('<div style="text-align:center;padding:8px"><span class="lab">Neuer Rang</span><div class="lvlbig">'+(i+1)+'</div><h2 class="disp" style="font-size:38px">'+esc(LEVELS[i][1])+'</h2><p class="muted" style="margin:8px 0 16px">'+(LEVELS[i+1]?'Nächster Rang: '+esc(LEVELS[i+1][1])+'. Finde weiter Freunde!':'Du bist Muya-Meister! Super gemacht!')+'</p><button class="b p" data-act="closeSheetGo">Juhu!</button></div>')}
+function levelUp(i){if(document.getElementById('catch')){setTimeout(function(){levelUp(i)},1200);return}snd('level');buzz([60,40,60]);sheet('<div style="text-align:center;padding:8px"><span class="lab">Neuer Rang</span><div class="lvlbig">'+(i+1)+'</div><h2 class="disp" style="font-size:38px">'+esc(LEVELS[i][1])+'</h2><p class="muted" style="margin:8px 0 16px">'+(LEVELS[i+1]?'Nächster Rang: '+esc(LEVELS[i+1][1])+'. Finde weiter Freunde!':'Du bist Muya-Meister! Super gemacht!')+'</p><button class="b p" data-act="closeSheetGo">Juhu!</button></div>')}
 var BADGES=[
  ['first','Erster Fang','Deinen ersten Freund gefangen',function(c){return c.own>=1}],
  ['f5','Fünfer-Team','5 verschiedene Freunde',function(c){return c.own>=5}],
@@ -76,8 +76,8 @@ function badgeCtx(){var m=S.mu,own=muOwned(),c={own:own.length,st2:0,st3:0,shiny
  Object.keys(m.met).forEach(function(id){var x=m.met[id];c.places++;c.th[themeOf(id)]++;var d=new Date(x.t||0).toDateString();days[d]=(days[d]||0)+1});
  Object.keys(days).forEach(function(d){c.bestDay=Math.max(c.bestDay,days[d])});return c}
 function badgeCheck(silent){var m=S.mu;m.bd=m.bd||{};var c=badgeCtx(),nw=[];BADGES.forEach(function(b){if(!m.bd[b[0]]&&b[3](c)){m.bd[b[0]]=today();nw.push(b)}});if(!nw.length)return;save();if(silent)return;
- nw.forEach(function(b,i){setTimeout(function(){snd('badge');badgeToast(b)},2600+i*1600)})}
-function badgeToast(b){var e=document.createElement('div');e.className='bdgt';e.innerHTML='<span class="bdgi">'+ICON(IC.star,'#fff',2.4)+'</span><span><span class="lab">Neues Abzeichen</span><b>'+esc(b[1])+'</b><small>'+esc(b[2])+'</small></span>';document.body.appendChild(e);setTimeout(function(){e.remove()},3200)}
+ nw.forEach(function(b,i){setTimeout(function(){badgeToast(b)},2600+i*1600)})}
+function badgeToast(b){if(document.getElementById('catch')){setTimeout(function(){badgeToast(b)},1500);return}snd('badge');var e=document.createElement('div');e.className='bdgt';e.innerHTML='<span class="bdgi">'+ICON(IC.star,'#fff',2.4)+'</span><span><span class="lab">Neues Abzeichen</span><b>'+esc(b[1])+'</b><small>'+esc(b[2])+'</small></span>';document.body.appendChild(e);setTimeout(function(){e.remove()},3200)}
 
 /* ---------- Fangen an einem Ort ---------- */
 function pickFor(stopId){var pool=TPOOL[themeOf(stopId)].map(function(id){return SPEC_BY[id]}).filter(Boolean),un=pool.filter(function(s){return !S.mu.pets[s.id]});
@@ -86,11 +86,10 @@ function catchAt(stopId,firstTry){var m=S.mu,stp=STOPID[stopId];if(!stp||m.met[s
  m.met[stopId]={t:Date.now(),sp:sp.id};if(GEO.found===stopId)GEO.found=null;setTimeout(geoCalc,100);if(!S.stadt.done[stopId]){S.stadt.done[stopId]=1;ev('stop',1,stopId)}if(firstTry)m.qok=(m.qok||0)+1;
  var p=m.pets[sp.id],xp=0;
  if(!p){m.pets[sp.id]={t:Date.now(),base:m.life[sp.m]||0,st:1,shiny:shiny?1:0,how:'wild',n:1,where:place};if(!m.buddy)m.buddy=sp.id;m.sel=sp.id;xp=20+(shiny?15:0)+(firstTry?5:0);
-  save();checkRewards&&checkRewards();snd('fanfare');buzz([40,30,40]);CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[]});setTimeout(catchNext,150)}
- else{var before=petStage(sp.id);p.n=(p.n||1)+1;if(shiny&&!p.shiny)p.shiny=1;var after=petStage(sp.id);if(after>before)p.st=after;m.sel=sp.id;xp=10+(shiny?15:0)+(firstTry?5:0);save();snd('fanfare');buzz([40,30,40]);
-  var ng=nextGrow(sp.id);
-  sheet('<div style="text-align:center;padding:6px 10px"><span class="lab">'+esc(place)+'</span><div style="width:180px;height:180px;margin:8px auto">'+cre(sp,after,0,p.shiny)+'</div><h2 class="disp" style="font-size:34px">'+(after>before?esc(sp.n[before-1])+' wird zu '+esc(sp.n[after-1])+'!':'Wieder '+esc(sp.n[after-1])+'!')+'</h2><p class="muted" style="margin:8px auto 16px;max-width:360px">'+(after>before?'Weil du ihn wieder gefunden hast, ist er gewachsen. Jetzt Stufe '+after+' von 3.':ng?'Noch '+ng+'× finden, dann wächst er auf Stufe '+(after+1)+'.':'Er ist schon ganz groß.')+'</p><button class="b p" data-act="closeSheetGo">Super!</button></div>')}
- setTimeout(function(){addXP(xp,firstTry?'gleich richtig':'')},900);badgeCheck(false);rerender()}
+  save();checkRewards&&checkRewards();CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry});setTimeout(catchNext,150)}
+ else{var before=petStage(sp.id);p.n=(p.n||1)+1;if(shiny&&!p.shiny)p.shiny=1;var after=petStage(sp.id);if(after>before)p.st=after;m.sel=sp.id;xp=10+(shiny?15:0)+(firstTry?5:0);save();
+  CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry,dupe:1,before:before,after:after});setTimeout(catchNext,150)}
+ badgeCheck(false);rerender()}
 
 /* ---------- GPS: beim Öffnen prüfen, Kalt/Warm/Heiß ---------- */
 var GEO={last:0,st:'off',lat:0,lng:0,acc:0,watch:null,near:null,lvl:-1,found:null,shown:{},t0:0,weakSince:0};
