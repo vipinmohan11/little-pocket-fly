@@ -13,17 +13,17 @@ rambla:['Wessen buntes Mosaik ist im Boden der Rambla?','Joan Miró','Pablo Pica
 boq:['Was wird auf dem Markt La Boqueria verkauft?','Obst, Fisch und Fleisch','Autos','Schuhe'],
 reial:['Wer hat die Laternen auf der Plaça Reial entworfen?','Gaudí','Miró','Picasso'],
 pallaresa:['Was trinkt man in einer Granja besonders gern?','Heiße Schokolade','Cola','Tee'],
-cath:['Welche Tiere leben im Garten der Kathedrale?','Gänse','Pfauen','Schildkröten'],
+cath:['Die Kathedrale ist sehr alt. Wie alt ungefähr?','Über 500 Jahre','50 Jahre','10 Jahre'],
 felip:['Was steht in der Mitte des kleinen Platzes?','Ein Brunnen','Ein Karussell','Ein Schwimmbecken'],
 bisbe:['Was ist der Pont del Bisbe?','Eine kleine Brücke zwischen zwei Häusern','Eine Autobahnbrücke','Eine Zugbrücke'],
 conesa:['Wofür ist Conesa berühmt?','Für warme Sandwiches','Für Eis','Für Pizza'],
-august:['Wie viele Säulen vom römischen Tempel stehen noch?','Vier','Vierzig','Vierhundert'],
+august:['Wer baute hier vor 2000 Jahren einen Tempel?','Die Römer','Die Wikinger','Die Ägypter'],
 rei:['Wer lebte früher am Plaça del Rei?','Könige','Piraten','Zirkusleute'],
 smm:['Was bedeutet „Santa Maria del Mar“?','Heilige Maria am Meer','Heiliger Berg','Großer Hafen'],
-bornccm:['Was liegt unter diesem Gebäude?','Ruinen einer alten Stadt','Eine Schatzhöhle','Eine Eisbahn'],
+bornccm:['Was war das große Gebäude El Born früher?','Eine Markthalle','Ein Bahnhof','Ein Flughafen'],
 pizza:['Woraus besteht Pizzateig?','Aus Mehl und Wasser','Aus Schokolade','Aus Reis'],
 tres:['Was siehst du von oben?','Die ganze Stadt Barcelona','Die Alpen','Einen Vulkan'],
-guell:['Welches bunte Tier sitzt an der Treppe im Park Güell?','Ein Salamander','Ein Elefant','Ein Hase'],
+guell:['Worauf liegt der Park Güell?','Auf einem Hügel','Auf einer Insel','Am Strand'],
 picnic3:['Wer hat den Park Güell entworfen?','Gaudí','Miró','Kolumbus'],
 bunkers:['Was ist der Bunker-Hügel?','Ein Aussichtspunkt über der Stadt','Ein Schwimmbad','Ein Museum'],
 vicens:['Wer baute die Casa Vicens?','Gaudí','Picasso','Dalí'],
@@ -31,7 +31,7 @@ vila:['Was ist auf dem Platz in Gràcia besonders hoch?','Ein Uhrturm','Ein Ries
 sol:['Was heißt „Sol“ auf Deutsch?','Sonne','Mond','Stern'],
 virreina:['Was heißt „Plaça“ auf Deutsch?','Platz','Strand','Berg'],
 tapeo:['Was sind Tapas?','Kleine Gerichte zum Teilen','Große Torten','Getränke'],
-cosmo:['Was gibt es im CosmoCaixa?','Ein Stück Regenwald im Haus','Eine Burg','Ein Schiff'],
+cosmo:['Was ist das CosmoCaixa?','Ein Wissenschaftsmuseum','Ein Zoo','Ein Bahnhof'],
 arc:['Aus welchem Material ist der Triumphbogen?','Aus roten Backsteinen','Aus Gold','Aus Holz'],
 cascada:['Was ist die Cascada?','Ein riesiger Brunnen mit Wasserfall','Ein Spielplatz','Ein Bahnhof'],
 lake:['Was kann man am See mieten?','Ruderboote','Pferde','Fahrräder'],
@@ -65,5 +65,5 @@ ACT.here=function(id){var stp=id?STOPID[id]:nextStop();
 function pqDraw(stp,q){var b=document.getElementById('pqbox');if(!b)return;
  b.innerHTML='<span class="lab">'+esc(pname(stp.id))+'</span><h2 class="disp" style="font-size:26px;margin:4px 0 12px">'+esc(q[0])+'</h2>'+PQ.o.map(function(x,i){return '<button class="qo'+(PQ.bad[i]?' dim':'')+'" data-act="pqPick" data-a="'+i+'"'+(PQ.bad[i]?' disabled':'')+'>'+esc(x.t)+'</button>'}).join('')+
  (stp.kid&&Object.keys(PQ.bad).length?'<p class="muted" style="margin:10px 0 0;font-size:15px"><b>Tipp:</b> '+esc(stp.kid)+'</p>':'')+(Object.keys(PQ.bad).length?'<p style="margin-top:8px;font-weight:700;color:var(--ac)">Fast! Schau noch einmal hin und probier eine andere Antwort.</p>':'')+'<button class="b" style="margin-top:12px" data-act="pqSkip">Später</button>'}
-ACT.pqPick=function(i){if(!PQ)return;var x=PQ.o[+i],id=PQ.id;if(x.ok){PQ=null;closeSheet();toast('Richtig!');setTimeout(function(){HERE_REAL(id)},250)}else{PQ.bad[i]=1;pqDraw(STOPID[id],PLACEQ[id])}};
+ACT.pqPick=function(i){if(!PQ)return;var x=PQ.o[+i],id=PQ.id;if(x.ok){PQ_FIRST=!Object.keys(PQ.bad).length;PQ=null;closeSheet();snd('ding');toast('Richtig!');setTimeout(function(){HERE_REAL(id)},250)}else{PQ.bad[i]=1;snd('soft');pqDraw(STOPID[id],PLACEQ[id])}};
 ACT.pqSkip=function(){PQ=null;closeSheet()};
