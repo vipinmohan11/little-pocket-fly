@@ -595,3 +595,22 @@ html[data-glass="1"] .ck .bx{box-shadow:none!important}
  .tchips{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;overflow:visible!important}
  .tchip{justify-content:center;padding:7px 4px;font-size:13px;min-width:0;white-space:nowrap}
 }
+/* v1.7.2 GPS-Hinweis als eigene Meldung; Texte brechen am Handy um */
+.gwrap{display:flex;flex-direction:column;gap:10px;width:100%}
+.gwarn{display:flex;flex-direction:column;gap:4px;background:#FFF4DE;color:#6B4A00;border-radius:16px;padding:10px 14px;border-left:4px solid #E3A600;text-align:left}
+.gwarn b{display:flex;align-items:center;gap:6px;font-size:15px}.gwarn .gwi{width:18px;height:18px;flex:none}
+.gwarn span{font-size:14px;line-height:1.35;font-weight:600}
+.gwbtn{align-self:flex-start;margin-top:4px;background:#fff;color:#6B4A00;border:1.5px solid #E3B54A;border-radius:999px;padding:6px 14px;font-weight:800;font-size:14px;white-space:normal;text-align:left}
+html[data-dark="1"] .gwarn{background:rgba(227,166,0,.14);color:#F3D27A}html[data-dark="1"] .gwbtn{background:transparent;color:#F3D27A;border-color:rgba(243,210,122,.5)}
+.gmeter.big+.gwarn{max-width:520px;align-self:center}
+@media (orientation:portrait),(max-width:820px){
+ .b,.chip,.tchip,.hcta,.qo{white-space:normal;overflow-wrap:anywhere}
+ .b{height:auto;min-height:42px;padding:8px 16px;text-align:center;line-height:1.2}
+ .gtx b,.gtx span,.hcard,.fcard,.btile,.pn{overflow-wrap:anywhere}
+}
+@media (orientation:portrait),(max-width:820px){
+ .hd>*{max-width:100%;min-width:0}.hd .row,.hd .seg,.hd .wrap,.hd>div{flex-wrap:wrap}
+ .seg{flex-wrap:wrap;max-width:100%;height:auto}.seg button{white-space:normal}
+ button.lab{white-space:normal;overflow:visible;text-overflow:clip}
+}
+@media (orientation:portrait),(max-width:820px){button.lab[data-act=hSel]{white-space:normal!important;overflow:visible!important;font-size:12px;line-height:1.15}}
