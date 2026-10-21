@@ -210,7 +210,7 @@ ROUTES.freunde=function(){var m=S.mu,tab=m.tab||'dex',own=muOwned().length;
  var qs=questState(),open=qs.filter(function(q){return q.ok&&!q.claimed}).length;
  var tabs='<div class="row" style="gap:8px"><button class="chip'+(tab==='dex'?' on':'')+'" data-act="muTab" data-a="dex">Meine Freunde · '+own+'/'+SPEC.length+'</button><button class="chip'+(tab==='base'?' on':'')+'" data-act="muTab" data-a="base">Forscherbasis · '+Object.keys(m.base).length+'/'+BLD.length+'</button><button class="chip'+(tab==='quest'?' on':'')+'" data-act="muTab" data-a="quest">Tagesaufträge'+(open?' · '+open+' bereit':'')+'</button><div class="sp"></div>'+(m.free?'<button class="b y s" data-act="muSurprise">Überraschungs-Ei öffnen ('+m.free+')</button>':'')+'</div>';
  var body=tab==='quest'?questHtml(qs):tab==='base'?baseHtml():dexHtml();
- return screen(head('MUYA-FREUNDE','Sammelmappe der Freunde','/','<span class="lab" style="text-align:right">'+own+' von '+SPEC.length+'<br>Freunden gefunden</span>'),'<div class="col" style="height:100%;gap:10px"><div class="row" style="gap:8px">'+strip+'</div>'+tabs+'<div style="flex:1;min-height:0">'+body+'</div></div>')};
+ return screen(head('MUYA-FREUNDE','Sammelmappe der Freunde','/','<span class="lab" style="text-align:right">'+own+' von '+SPEC.length+'<br>Freunden gefunden</span>'),'<div class="col" style="height:100%;gap:10px"><div class="row mstrip" style="gap:8px">'+strip+'</div>'+tabs+'<div style="flex:1;min-height:0">'+body+'</div></div>')};
 function rarStars(n){var o='';for(var i=0;i<n;i++)o+='★';return o}
 ACT.muFilter=function(f){S.mu.f=f;save();rerender()};
 function dexHtml(){var m=S.mu,f=m.f||'all',list=SPEC.filter(function(x){return f==='all'||x.src===f});
