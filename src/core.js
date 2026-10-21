@@ -2,6 +2,7 @@
 var APP_VERSION='1.1.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
+ theme:{c:'ozean',m:'hell'},
  v:7,pin:null,lim:90,used:{},wused:{},pauseUntil:0,mins:{vor:30,hgr:30,auf:30,wie:40,wes:30,rek:20,tag:20},wpaused:{},
  names:{mascot:'Muya',wesen:'Schatzsuche',kind:'',people:[]},ts:1,
  trip:{id:'t1',name:'Barcelona',depart:'2026-10-20',back:'2026-10-25',region:'EU',legs:[{city:'Hannover',code:'HAJ',region:'DE'},{city:'Barcelona',code:'BCN',region:'EU'},{city:'Hannover',code:'HAJ',region:'DE'}]},
@@ -120,7 +121,10 @@ function route(){var r=parseHash();closeSheet();cleanup();
 function rerender(){var y=window.scrollY,r=parseHash();var keep={};$$('[data-keep]').forEach(function(e){keep[e.getAttribute('data-keep')]=e.scrollTop});cleanup();
  var f=ROUTES[r.name]||ROUTES.home;var out=f(r.args);if(RAILED[ROUTES[r.name]?r.name:'home'])out=shell(ROUTES[r.name]?r.name:'home',out);$('#app').innerHTML='<div>'+out+'</div>';var post=ROUTES['post:'+r.name];if(post)post(r.args);window.scrollTo(0,y);
  $$('[data-keep]').forEach(function(e){var k=e.getAttribute('data-keep');if(keep[k]!=null)e.scrollTop=keep[k]})}
+var THEMES=[['ozean','Ozean','#2D6CDF'],['tuerkis','Türkisblau','#0E97A8'],['wald','Wald','#2E9466'],['mandarine','Mandarine','#E07A2F'],['lavendel','Lavendel','#7457DB']];
+function applyTheme(){var t=S.theme||{c:'ozean',m:'hell'},d=t.m==='dunkel'||(t.m==='auto'&&window.matchMedia&&matchMedia('(prefers-color-scheme:dark)').matches);var h=document.documentElement;h.setAttribute('data-th',t.c);h.setAttribute('data-dark',d?'1':'0');var m=document.querySelector('meta[name=theme-color]');if(m)m.content=d?'#000000':'#F5F5F7'}
 var UIZ=1;function fitZoom(){var w=window.innerWidth,h=window.innerHeight,z=Math.max(.8,Math.min(2.2,Math.min(w/1100,h/690)));z=Math.round(z*100)/100;UIZ=z;document.documentElement.style.zoom=z;document.documentElement.style.setProperty('--vh',(h/z)+'px')}
+applyTheme();try{matchMedia('(prefers-color-scheme:dark)').addEventListener('change',applyTheme)}catch(e){}
 var lastW=window.innerWidth;fitZoom();window.addEventListener('resize',function(){if(window.innerWidth===lastW)return;lastW=window.innerWidth;fitZoom();rerender()});
 function VW(){return innerWidth/UIZ}function VH(){return innerHeight/UIZ}
 window.addEventListener('hashchange',route);

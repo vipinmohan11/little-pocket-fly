@@ -11,7 +11,7 @@ var WINDOWS=[
 function mascotName(){return (typeof S!=='undefined'&&S&&S.names&&S.names.mascot)||'Muya'}
 Object.defineProperty(WINDOWS[2],'t',{get:function(){return 'Kapitän '+mascotName()}});
 Object.defineProperty(WINDOWS[4],'t',{get:function(){return (typeof S!=='undefined'&&S&&S.names&&S.names.wesen)||'Schatzsuche'}});
-var ICON=function(p,col,w){return '<svg viewBox="0 0 24 24" fill="none" stroke="'+(col||'#13324A')+'" stroke-width="'+(w||2.4)+'" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>'};
+var ICON=function(p,col,w){return '<svg viewBox="0 0 24 24" fill="none" stroke="'+(col||'currentColor')+'" stroke-width="'+(w||2.4)+'" stroke-linecap="round" stroke-linejoin="round"><path d="'+p+'"/></svg>'};
 var IC={check:'M5 13l4 4L19 7',suitcase:'M8 7V5h8v2M4 7h16v12H4zM9 11v4M15 11v4',plane:'M2 13l20-6-4 6 4 6-20-6zM8 13l-2 5',ticket:'M3 7h18v4a2 2 0 000 4v4H3v-4a2 2 0 000-4zM14 7v12',star:'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z',
  book:'M4 5h7a2 2 0 012 2v12a2 2 0 00-2-2H4zM20 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z',eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 15a3 3 0 100-6 3 3 0 000 6z',map:'M9 4L3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14',heart:'M12 20s-8-5-8-11a4 4 0 018-1 4 4 0 018 1c0 6-8 11-8 11z',
  trophy:'M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4zM7 6H4a3 3 0 003 4M17 6h3a3 3 0 01-3 4',compass:'M12 3a9 9 0 100 18 9 9 0 000-18zM15.5 8.5l-2 5-5 2 2-5z',wing:'M3 15c5-1 9-4 12-9 1 4 3 7 6 9M3 19h18',bulb:'M9 18h6M10 21h4M12 3a6 6 0 00-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 00-4-10z',
