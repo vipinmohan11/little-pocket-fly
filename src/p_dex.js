@@ -1,8 +1,11 @@
 /* ===== v1.7.0: Muya-Dex wie ein Sammelalbum: Nummern, Typen, Entwicklung, Steckbrief ===== */
-var DTYPES={wasser:['Wasser','#3B8FE0'],pflanze:['Pflanze','#3FA35B'],feuer:['Feuer','#E8673A'],stein:['Stein','#9A7B5E'],blitz:['Blitz','#D9A514'],traum:['Traum','#8E6CD6'],drache:['Drache','#2FA58E'],glanz:['Glanz','#D97FAE'],himmel:['Himmel','#4F9FD3'],luft:['Luft','#6FA8D2'],kunst:['Kunst','#D9668F']};
-var DSPT={knick:'kunst',gleit:'luft',woelk:'luft',nebbi:'luft',kompi:'stein',nordi:'drache',mosi:'kunst',scherb:'kunst',funki:'glanz',mondi:'traum',bunt:'glanz',rakki:'feuer',
- flamm:'feuer',blatti:'pflanze',plansch:'wasser',felsi:'stein',pilzi:'pflanze',schlumm:'traum',blitzi:'blitz',drachi:'drache',muschi:'wasser',eisi:'wasser',goldi:'glanz',kristo:'stein',regenb:'glanz',schatti:'traum',
- fluegi:'himmel',jetti:'himmel',ballo:'himmel',segel:'himmel',kapi:'himmel',sternli:'himmel'};
+var DTYPES={wasser:['Wasser','#3B8FE0'],natur:['Natur','#3FA35B'],feuer:['Feuer','#E8673A'],himmel:['Himmel','#4F9FD3'],traum:['Traum','#8E6CD6'],kunst:['Kunst','#D9668F']};
+var DSPT={plansch:'wasser',muschi:'wasser',eisi:'wasser',
+ blatti:'natur',pilzi:'natur',felsi:'natur',kristo:'natur',kompi:'natur',
+ flamm:'feuer',rakki:'feuer',blitzi:'feuer',drachi:'feuer',nordi:'feuer',
+ gleit:'himmel',woelk:'himmel',nebbi:'himmel',fluegi:'himmel',jetti:'himmel',ballo:'himmel',segel:'himmel',kapi:'himmel',sternli:'himmel',
+ schlumm:'traum',schatti:'traum',mondi:'traum',funki:'traum',
+ knick:'kunst',mosi:'kunst',scherb:'kunst',bunt:'kunst',goldi:'kunst',regenb:'kunst'};
 /* Steckbrief: [Größe, Lieblingsessen, Kraft] */
 var DFACT={
  knick:['so groß wie ein Briefumschlag','Butterkekse','faltet sich in jede Form'],
@@ -37,7 +40,7 @@ var DFACT={
  segel:['so groß wie ein Drachen','Kekse','segelt stundenlang im Aufwind'],
  kapi:['so groß wie eine Mütze','Fischbrötchen','kennt jedes Flugzeug'],
  sternli:['so groß wie ein Stern am Himmel','Sternfrüchte','kennt jeden Himmelsrekord']};
-function dtype(s){return DSPT[s.id]||'stein'}
+function dtype(s){return DSPT[s.id]||'natur'}
 function dnr(s){return ('00'+(SPEC.indexOf(s)+1)).slice(-3)}
 function tyb(t,big){var x=DTYPES[t];return '<span class="tyb'+(big?' big':'')+'" style="background:'+x[1]+'">'+x[0]+'</span>'}
 function dwhere(s){if(s.src==='sky')return 'am Himmel und im Tüftel-Hangar';var th=speciesThemes(s.id);return th.length?th.map(function(t){return THEMES_N[t]}).join(' oder '):'überall in der Stadt'}
