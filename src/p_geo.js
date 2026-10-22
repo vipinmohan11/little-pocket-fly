@@ -86,9 +86,9 @@ function catchAt(stopId,firstTry){var m=S.mu,stp=STOPID[stopId];if(!stp||m.met[s
  m.met[stopId]={t:Date.now(),sp:sp.id};if(GEO.found===stopId)GEO.found=null;setTimeout(geoCalc,100);if(!S.stadt.done[stopId]){S.stadt.done[stopId]=1;ev('stop',1,stopId)}if(firstTry)m.qok=(m.qok||0)+1;
  var p=m.pets[sp.id],xp=0;
  if(!p){m.pets[sp.id]={t:Date.now(),base:m.life[sp.m]||0,st:1,shiny:shiny?1:0,how:'wild',n:1,where:place};if(!m.buddy)m.buddy=sp.id;m.sel=sp.id;xp=20+(shiny?15:0)+(firstTry?5:0);
-  save();checkRewards&&checkRewards();CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry});setTimeout(catchNext,150)}
+  save();checkRewards&&checkRewards();CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry,card:stopId});setTimeout(catchNext,150)}
  else{var before=petStage(sp.id);p.n=(p.n||1)+1;if(shiny&&!p.shiny)p.shiny=1;var after=petStage(sp.id);if(after>before)p.st=after;m.sel=sp.id;xp=10+(shiny?15:0)+(firstTry?5:0);save();
-  CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry,dupe:1,before:before,after:after});setTimeout(catchNext,150)}
+  CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry,card:stopId,dupe:1,before:before,after:after});setTimeout(catchNext,150)}
  badgeCheck(false);rerender()}
 
 /* ---------- GPS: beim Öffnen prüfen, Kalt/Warm/Heiß ---------- */

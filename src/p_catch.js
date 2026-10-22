@@ -25,7 +25,9 @@ function kEntry(){var c=KC;if(!c)return;var sp=SPEC_BY[c.id],p=S.mu.pets[sp.id]|
  e.innerHTML='<div class="kentry"><div class="kehead"><span class="kneu">'+(c.dupe?(grow?'Gewachsen!':'Wieder gefunden'):'Neu im Muya-Dex!')+'</span><span class="nr" style="color:#fff">Nr. '+dnr(sp)+'</span>'+tyb(t,1)+(p.shiny?'<span class="tyb big" style="background:#B58AE8">✦ Funkel</span>':'')+'</div>'+
   (grow?'<div class="kgrow"><div>'+cre(sp,c.before,0,p.shiny)+'</div><span>›</span><div class="big">'+cre(sp,c.after,0,p.shiny)+'</div></div>':'<div class="kepic">'+cre(sp,st,0,p.shiny)+'</div>')+
   '<h1 class="disp kename">'+esc(sp.n[st-1])+'</h1><p class="kesub">'+(grow?esc(sp.n[c.before-1])+' wird zu '+esc(sp.n[c.after-1])+'! Stufe '+c.after+' von 3':c.dupe?(nextGrow(sp.id)?'Noch '+nextGrow(sp.id)+'× finden, dann wächst er.':'Ganz groß!'):esc(sp.story))+'</p>'+
-  '<div class="kxp" id="kxp">+0 XP</div>'+
+  '<div class="kxp" id="kxp">+0 XP</div>'+(c.card?'<p class="kcard">✉ Neue Postkarte im Tagebuch: <b>'+esc(c.place)+'</b><button class="b" style="margin-left:8px;background:#ffffff26;border-color:#ffffff40;color:#fff;height:36px" data-act="catchSnd" data-a="'+c.card+'">🎙 Geräusch sammeln</button></p>':'')+
   '<div class="cbt"><button class="b" style="background:#fff;color:#13324A;border-color:#fff" data-act="catchClose">Weiter</button><button class="b" style="background:#ffffff26;border-color:#ffffff40;color:#fff" data-act="catchDex">Zum Muya-Dex</button>'+(S.mu.buddy===sp.id?'':'<button class="b" style="background:#ffffff26;border-color:#ffffff40;color:#fff" data-act="catchTeam" data-a="'+sp.id+'">Als Begleiter</button>')+'</div></div>';
  var x=c.xp||0,n=0,el=document.getElementById('kxp');if(x){var iv=setInterval(function(){n=Math.min(x,n+Math.max(1,Math.round(x/12)));if(el)el.textContent='+'+n+' XP';if(n>=x){clearInterval(iv);snd('coin')}},70)}else if(el)el.remove();
  if(x)addXP(x,'',true)}
+
+ACT.catchSnd=function(id){var e=document.getElementById('catch');if(e)e.remove();CATCHQ=[];rerender();setTimeout(function(){ACT.sndRec(id)},200)};
