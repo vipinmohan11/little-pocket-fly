@@ -618,3 +618,5 @@ html[data-dark="1"] .gwarn{background:rgba(227,166,0,.14);color:#F3D27A}html[dat
 .gdone{display:block;font-size:13.5px;color:var(--ac);font-weight:700;margin-top:2px}
 .gmeter.big .ginfo{text-align:center}
 .gtx .ginfo b{font-size:inherit;letter-spacing:0;display:inline;line-height:inherit}.gtx .gdone{font-size:13.5px}
+.gskip{background:var(--fill);color:var(--ink);border-radius:999px;padding:5px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+.gskip.sm{display:inline-block;margin-top:6px;font-size:12.5px;padding:4px 10px;color:var(--ink2);white-space:normal;text-align:left}
