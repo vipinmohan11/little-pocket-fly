@@ -83,7 +83,7 @@ function badgeToast(b){if(document.getElementById('catch')){setTimeout(function(
 function pickFor(stopId){var pool=TPOOL[themeOf(stopId)].map(function(id){return SPEC_BY[id]}).filter(Boolean),un=pool.filter(function(s){return !S.mu.pets[s.id]});
  var from=(un.length&&Math.random()<0.65)?un:pool,t=0,w=function(s){return s.rar===3?1:s.rar===2?3:6};from.forEach(function(s){t+=w(s)});var r=Math.random()*t;for(var i=0;i<from.length;i++){r-=w(from[i]);if(r<=0)return from[i]}return from[0]}
 function catchAt(stopId,firstTry){var m=S.mu,stp=STOPID[stopId];if(!stp||m.met[stopId])return;var place=pname(stopId),sp=pickFor(stopId),shiny=Math.random()<0.05;
- m.met[stopId]={t:Date.now(),sp:sp.id};if(GEO.lat)m.wl={lat:GEO.lat,lng:GEO.lng};if(GEO.found===stopId)GEO.found=null;setTimeout(geoCalc,100);if(!S.stadt.done[stopId]){S.stadt.done[stopId]=1;ev('stop',1,stopId)}if(firstTry)m.qok=(m.qok||0)+1;
+ m.met[stopId]={t:Date.now(),sp:sp.id};if(GEO.found===stopId)GEO.found=null;setTimeout(geoCalc,100);if(!S.stadt.done[stopId]){S.stadt.done[stopId]=1;ev('stop',1,stopId)}if(firstTry)m.qok=(m.qok||0)+1;
  var p=m.pets[sp.id],xp=0;
  if(!p){m.pets[sp.id]={t:Date.now(),base:m.life[sp.m]||0,st:1,shiny:shiny?1:0,how:'wild',n:1,where:place};if(!m.buddy)m.buddy=sp.id;m.sel=sp.id;xp=20+(shiny?15:0)+(firstTry?5:0);
   save();checkRewards&&checkRewards();CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry});setTimeout(catchNext,150)}
@@ -111,15 +111,17 @@ function geoCalc(){if(GEO.st!=='ok')return;
  var fo=GEO.open;if(fo&&fo.d<=RAD+Math.min(GEO.acc,100)&&GEO.acc<=250){if(GEO.found!==fo.id){GEO.found=fo.id;if(!GEO.shown[fo.id]){GEO.shown[fo.id]=1;snd('found');buzz([80,60,80,60,120])}}}else GEO.found=null;
  wildCheck();geoPaint()}
 var WILD_M=500,WILD_T=15*60000;
-function wildCheck(){var m=S.mu;if(GEO.st!=='ok'||GEO.acc>100)return;if(!m.wl){m.wl={lat:GEO.lat,lng:GEO.lng};save();return}
+function wildCheck(){var m=S.mu;if(GEO.st!=='ok')return;
+ /* echte Laufstrecke: jede gute GPS-Position zählt die gelaufenen Meter (kleine GPS-Sprünge werden ignoriert) */
+ if(GEO.acc<=60){if(!m.wpos)m.wpos={lat:GEO.lat,lng:GEO.lng};else{var d=hav(m.wpos.lat,m.wpos.lng,GEO.lat,GEO.lng);if(d>=Math.max(15,GEO.acc*0.8)){m.wd=(m.wd||0)+Math.min(d,1500);m.wpos={lat:GEO.lat,lng:GEO.lng};save()}}}
  if(m.wp){GEO.wild=1;return}
- if(GEO.found){GEO.wild=0;return}
- if(hav(GEO.lat,GEO.lng,m.wl.lat,m.wl.lng)>=WILD_M&&Date.now()-(m.wt||0)>=WILD_T){m.wp={lat:GEO.lat,lng:GEO.lng,t:Date.now()};save();GEO.wild=1;snd('found');buzz([80,60,80,60,120])}}
+ if(GEO.found||GEO.acc>100){return}
+ if((m.wd||0)>=WILD_M&&Date.now()-(m.wt||0)>=WILD_T){m.wp={lat:GEO.lat,lng:GEO.lng,t:Date.now()};save();GEO.wild=1;snd('found');buzz([80,60,80,60,120])}}
 function wildPick(){var m=S.mu,pool=SPEC.filter(function(s){return s.src!=='sky'}),rare=pool.filter(function(s){return s.rar===3}),un=pool.filter(function(s){return !m.pets[s.id]});
  m.wn=(m.wn||0)+1;if(rare.length&&(m.wn>=5||Math.random()<0.15)){m.wn=0;var ru=rare.filter(function(s){return !m.pets[s.id]});var r=ru.length?ru:rare;return r[Math.floor(Math.random()*r.length)]}
  var from=(un.length&&Math.random()<0.6)?un:pool,t=0,w=function(s){return s.rar===3?1:s.rar===2?3:6};from.forEach(function(s){t+=w(s)});var x=Math.random()*t;for(var i=0;i<from.length;i++){x-=w(from[i]);if(x<=0)return from[i]}return from[0]}
 function catchWild(){var m=S.mu;if(!m.wp)return;var sp=wildPick(),shiny=Math.random()<0.06,p=m.pets[sp.id],xp;
- m.wl={lat:GEO.lat||m.wp.lat,lng:GEO.lng||m.wp.lng};m.wt=Date.now();m.wp=null;GEO.wild=0;m.wc=(m.wc||0)+1;
+ m.wd=0;m.wt=Date.now();m.wp=null;GEO.wild=0;m.wc=(m.wc||0)+1;
  if(!p){m.pets[sp.id]={t:Date.now(),base:m.life[sp.m]||0,st:1,shiny:shiny?1:0,how:'walk',n:1,where:'unterwegs'};if(!m.buddy)m.buddy=sp.id;m.sel=sp.id;xp=10+(shiny?15:0)+(sp.rar===3?10:0);save();CATCHQ.push({id:sp.id,shiny:shiny,place:'Unterwegs',got:[],xp:xp})}
  else{var before=petStage(sp.id);p.n=(p.n||1)+1;if(shiny&&!p.shiny)p.shiny=1;var after=petStage(sp.id);if(after>before)p.st=after;m.sel=sp.id;xp=5+(shiny?15:0);save();CATCHQ.push({id:sp.id,shiny:shiny,place:'Unterwegs',got:[],xp:xp,dupe:1,before:before,after:after})}
  setTimeout(catchNext,150);badgeCheck(false);geoPaint();rerender()}
