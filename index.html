@@ -1143,7 +1143,7 @@ var WESEN=[
 
 /* --- core.js --- */
 /* ===== Kofferforscher core: state, migration, router, helpers, rewards, update ===== */
-var APP_VERSION='1.8.1';
+var APP_VERSION='1.8.2';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  theme:{c:'ozean',m:'hell'},
@@ -1190,11 +1190,26 @@ function migrate(){
   var d5=S.pack.done||{},n5={};Object.keys(d5).forEach(function(k){var id=k.split('@')[0];if(k.indexOf('@')>0&&SHARED_PACK[id]){n5[id]=1}else if(k==='15'){n5['15@kind']=1}else n5[k]=1});S.pack.done=n5;S.v=5}
  if(S.v<6){if(S.names&&S.names.wesen==='Wunderwesen')S.names.wesen='Schatzsuche';S.v=6}
  if(S.v<7){S.v=7}}
-function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+/* Schutz: Fortschritt nie mit einem leeren/kleineren Stand überschreiben; tägliche Zweitkopie in IndexedDB */
+function prog(st){if(!st)return 0;var m=st.mu||{},n=0;try{n+=Object.keys(m.pets||{}).length*10+Object.keys(m.met||{}).length*3+Object.keys(st.earned||{}).length*3+Math.floor((m.xp||0)/10)+(st.mem||[]).length*2}catch(e){}return n}
+var ALLOW_DROP=false,STORE_OK=true;
+function readStored(){try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){STORE_OK=false;return undefined}}
+function load(){var raw=readStored();
  S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=7;migrate()}
 var saveT=null;
-window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{S=deepMerge(DEFAULTS,JSON.parse(e.newValue));migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
+window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{var inc=JSON.parse(e.newValue);if(prog(inc)<prog(S))return;S=deepMerge(DEFAULTS,inc);migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
+function save(){var cur=readStored();
+ if(cur===undefined)return;/* Speicher gerade nicht lesbar: nichts überschreiben */
+ if(!ALLOW_DROP&&cur&&prog(cur)>prog(S)+5){/* gespeicherter Stand ist größer: übernehmen statt überschreiben */S=deepMerge(DEFAULTS,cur);migrate();if(typeof rerender==='function')setTimeout(rerender,0);return}
+ ALLOW_DROP=false;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}bakSoon();clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
+var BAKT=null;function bakSoon(){clearTimeout(BAKT);BAKT=setTimeout(bakWrite,4000)}
+function idb(cb){try{var r=indexedDB.open('kofferforscher-backup',1);r.onupgradeneeded=function(){r.result.createObjectStore('b')};r.onsuccess=function(){cb(r.result)};r.onerror=function(){cb(null)}}catch(e){cb(null)}}
+function bakWrite(){if(prog(S)<1)return;var data=JSON.stringify(S),d=today();idb(function(db){if(!db)return;try{var tx=db.transaction('b','readwrite'),st=tx.objectStore('b');st.get('latest').onsuccess=function(ev){var old=ev.target.result;if(old&&prog(JSON.parse(old.d))>prog(S)+5)return;st.put({t:Date.now(),d:data},'latest');st.put({t:Date.now(),d:data},'day-'+d)}}catch(e){}});try{localStorage.setItem(KEY+'.bak',JSON.stringify({t:Date.now(),d:S}))}catch(e){}}
+function bakRead(cb){idb(function(db){if(!db)return cb(null);try{db.transaction('b').objectStore('b').get('latest').onsuccess=function(ev){var v=ev.target.result;cb(v?{t:v.t,d:JSON.parse(v.d)}:null)}}catch(e){cb(null)}})}
+function bakCheck(){bakRead(function(b){var lb=null;try{lb=JSON.parse(localStorage.getItem(KEY+'.bak')||'null')}catch(e){}if(lb&&(!b||prog(lb.d)>prog(b.d)))b=lb;if(!b||!b.d)return;
+ if(prog(b.d)>prog(S)+5){PENDI=deepMerge(DEFAULTS,b.d);var keep=S;S=PENDI;migrate();S=keep;var dt=new Date(b.t);
+  sheet('<h2 class="disp" style="font-size:28px">Spielstand wiederherstellen?</h2><p class="muted" style="margin:8px 0 12px">Es gibt eine Sicherung vom '+dt.toLocaleDateString('de-DE')+' '+dt.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' mit mehr Fortschritt:<br><b>'+dataStats(PENDI)+'</b><br><br>Jetzt auf diesem Gerät:<br><b>'+dataStats(S)+'</b></p><div class="col" style="gap:8px"><button class="b p" data-act="impMerge">Wiederherstellen (nichts geht verloren)</button><button class="b" data-act="closeSheet">Später</button></div>')}})}
+function bakInfo(cb){bakRead(function(b){cb(b?new Date(b.t):null)})}
 load();
 
 /* ---------- helpers ---------- */
@@ -1308,7 +1323,7 @@ ACT.applyUpdate=function(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch
  else location.reload()};
 
 /* ---------- boot ---------- */
-window.addEventListener('DOMContentLoaded',function(){applyTs();checkRewards(true);if(!location.hash)location.hash='#/';route();initSW()});
+window.addEventListener('DOMContentLoaded',function(){applyTs();checkRewards(true);if(!location.hash)location.hash='#/';route();initSW();setTimeout(bakCheck,1500);setTimeout(bakWrite,6000)});
 
 /* --- p_home.js --- */
 /* ===== Start + Vor dem Abflug ===== */
@@ -2325,7 +2340,7 @@ ROUTES.eltern=function(){
  '</div>'+
  '<div class="pn pad"><span class="lab">Fenster · Rollo zu = Pause · Minuten pro Tag</span><div style="margin-top:6px">'+wins+'</div></div>'+
  '<div class="col"><div class="pn pad"><span class="lab">Namen & Anzeige</span><div class="col" style="margin-top:8px;gap:8px"><label class="muted" style="font-size:15px">Kuscheltier<input class="inp" data-in="setName" data-a="mascot" value="'+esc(S.names.mascot)+'" maxlength="20"></label><label class="muted" style="font-size:15px">Name für die Schatzsuche<input class="inp" data-in="setName" data-a="wesen" value="'+esc(S.names.wesen)+'" maxlength="24"></label><label class="muted" style="font-size:15px">Name des Kindes (Reisepass)<input class="inp" data-in="setName" data-a="kind" value="'+esc(S.names.kind)+'" maxlength="20"></label><div class="row"><span class="muted" style="font-size:15px">Schrift</span>'+seg([['1','Normal'],['1.12','Groß'],['1.25','Sehr groß']],String(S.ts),'setTs')+'</div></div></div>'+
- '<div class="pn pad"><span class="lab">Daten</span><div class="wrap" style="margin-top:8px"><button class="b s" data-act="exportData">Sichern (Datei)</button><label class="b s" style="position:relative">Laden<input type="file" data-ch="importData" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></label><button class="b s" data-act="copyData">Kopieren</button><button class="b s" data-act="pasteData">Einfügen</button><button class="b s" data-act="pinChange">PIN ändern</button><button class="b s" data-act="restorePrev">Früheren Stand zurück</button><button class="b s c" data-act="wipe">Alles löschen</button></div></div></div></div>','free')};
+ '<div class="pn pad"><span class="lab">Daten</span><div id="bakinfo" class="muted" style="font-size:14px;margin-top:4px">Automatische Sicherung: …</div><div class="wrap" style="margin-top:8px"><button class="b s" data-act="exportData">Sichern (Datei)</button><label class="b s" style="position:relative">Laden<input type="file" data-ch="importData" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"></label><button class="b s" data-act="copyData">Kopieren</button><button class="b s" data-act="pasteData">Einfügen</button><button class="b s" data-act="pinChange">PIN ändern</button><button class="b s" data-act="restorePrev">Früheren Stand zurück</button><button class="b s c" data-act="wipe">Alles löschen</button></div></div></div></div>','free')};
 ACT.limDec=function(){S.lim=Math.max(0,S.lim-15);save();rerender()};ACT.limInc=function(){S.lim=Math.min(240,S.lim+15);save();rerender()};
 ACT.minDec=function(id){S.mins[id]=Math.max(5,S.mins[id]-5);save();rerender()};ACT.minInc=function(id){S.mins[id]=Math.min(120,S.mins[id]+5);save();rerender()};
 ACT.winTgl=function(id){S.wpaused[id]=!S.wpaused[id];save();rerender()};
@@ -2353,10 +2368,10 @@ ACT.copyData=function(){var t=backupText();function fb(){var ta=document.createE
 ACT.pasteData=function(){sheet('<h2 class="disp" style="font-size:28px">Sicherung einfügen</h2><p class="muted" style="margin:8px 0">Lange in das Feld tippen, „Einfügen“ wählen, dann „Laden“.</p><textarea id="pastebox" style="width:100%;height:140px;border-radius:14px;border:1.5px solid var(--line);padding:10px;font-size:14px"></textarea><div class="row" style="margin-top:10px"><button class="b p" data-act="pasteGo">Laden</button><button class="b" data-act="closeSheet">Abbrechen</button></div>')};
 ACT.pasteGo=function(){var b=$('#pastebox');var t=b?b.value.trim():'';closeSheet();if(!t)return toast('Nichts eingefügt');importText(t)};
 ACT.impMerge=function(){if(!PENDI)return;snapshot();var inc=PENDI,out={};Object.keys(S).concat(Object.keys(inc)).forEach(function(k){if(k in out)return;out[k]=SKIPK[k]?((k in S)?S[k]:inc[k]):((k in S)?((k in inc)?mergeData(S[k],inc[k]):S[k]):inc[k])});S=out;PENDI=null;save();applyTs();closeSheet();toast('Zusammengeführt. Es ging nichts verloren.');rerender()};
-ACT.impReplace=function(){if(!PENDI)return;snapshot();S=PENDI;PENDI=null;save();applyTs();closeSheet();toast('Sicherung geladen. Der alte Stand ist gesichert.');rerender()};
-ACT.restorePrev=function(){var p=null;try{p=JSON.parse(localStorage.getItem(KEY+'.prev')||'null')}catch(e){}if(!p||!p.d)return toast('Kein früherer Stand vorhanden');var cur=S;S=deepMerge(DEFAULTS,p.d);migrate();try{localStorage.setItem(KEY+'.prev',JSON.stringify({t:Date.now(),d:cur}))}catch(e){}save();applyTs();toast('Früherer Stand wiederhergestellt');rerender()};
+ACT.impReplace=function(){if(!PENDI)return;snapshot();ALLOW_DROP=true;S=PENDI;PENDI=null;save();applyTs();closeSheet();toast('Sicherung geladen. Der alte Stand ist gesichert.');rerender()};
+ACT.restorePrev=function(){var p=null;try{p=JSON.parse(localStorage.getItem(KEY+'.prev')||'null')}catch(e){}if(!p||!p.d)return toast('Kein früherer Stand vorhanden');var cur=S;ALLOW_DROP=true;S=deepMerge(DEFAULTS,p.d);migrate();try{localStorage.setItem(KEY+'.prev',JSON.stringify({t:Date.now(),d:cur}))}catch(e){}save();applyTs();toast('Früherer Stand wiederhergestellt');rerender()};
 ACT.wipe=function(){sheet('<h2 class="disp" style="font-size:32px">Wirklich alles löschen?</h2><p class="muted" style="margin:10px 0 16px">Gepacktes, Tagebuch, Stempel, Schätze und Einstellungen werden gelöscht. Tipp: erst „Sichern“.</p><div class="row"><button class="b c" data-act="wipeGo">Ja, löschen</button><button class="b" data-act="closeSheet">Abbrechen</button></div>')};
-ACT.wipeGo=function(){snapshot();try{localStorage.removeItem(KEY)}catch(e){}load();unlocked=false;closeSheet();location.hash='#/';route()};
+ACT.wipeGo=function(){snapshot();try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+'.bak')}catch(e){}idb(function(db){if(db)try{db.transaction('b','readwrite').objectStore('b').clear()}catch(e){}});ALLOW_DROP=true;load();unlocked=false;closeSheet();location.hash='#/';route()};
 
 /* ---------- Reiseplan (A → B → C …) ---------- */
 var REG=[['DE','Deutschland'],['EU','EU'],['NonEU','Nicht-EU'],['IN','Indien'],['US','USA'],['AF','Afrika']];
@@ -2379,6 +2394,7 @@ var TBP=0;ACT.tbPage=function(d){TBP+=+d;rerender()};
 ACT.kidSet=function(){var v=($('#kidn')||{}).value||'';v=v.trim();if(!v)return toast('Schreib zuerst deinen Namen.');S.names.kind=v;save();rerender();toast('Hallo '+v+'!')};
 ACT.pplAdd=function(){sheet('<h2 class="disp" style="font-size:30px">Wer war noch dabei?</h2><p class="muted" style="margin:6px 0 10px">Zum Beispiel Oma, ein Freund oder deine Schwester.</p><input id="ppln" class="inp" maxlength="20" placeholder="Name" style="margin-bottom:12px"><div class="row"><button class="b" data-act="closeSheetGo">Abbrechen</button><div class="sp"></div><button class="b p" data-act="pplAddGo">Hinzufügen</button></div>');setTimeout(function(){var i=$('#ppln');if(i)i.focus()},60)};
 ACT.pplAddGo=function(){var v=(($('#ppln')||{}).value||'').trim();if(!v)return;S.names.people=S.names.people||[];if(S.names.people.indexOf(v)<0)S.names.people.push(v);var t=$('#mnote');if(NM.manual&&t)NM.note=t.value;NM.who.push('p:'+v);save();closeSheet();rerender()};
+ROUTES['post:eltern']=function(){var e=document.getElementById('bakinfo');if(!e)return;bakInfo(function(d){var x=document.getElementById('bakinfo');if(x)x.textContent=d?'Automatische Sicherung: '+d.toLocaleDateString('de-DE')+', '+d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' Uhr':'Automatische Sicherung: noch keine'})};
 
 /* --- muya.js --- */
 /* ===== Muya-Freunde: Materialien sammeln, Eier basteln, Freunde entwickeln, Tagesaufträge ===== */

@@ -46,11 +46,26 @@ function migrate(){
   var d5=S.pack.done||{},n5={};Object.keys(d5).forEach(function(k){var id=k.split('@')[0];if(k.indexOf('@')>0&&SHARED_PACK[id]){n5[id]=1}else if(k==='15'){n5['15@kind']=1}else n5[k]=1});S.pack.done=n5;S.v=5}
  if(S.v<6){if(S.names&&S.names.wesen==='Wunderwesen')S.names.wesen='Schatzsuche';S.v=6}
  if(S.v<7){S.v=7}}
-function load(){var raw=null;try{raw=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
+/* Schutz: Fortschritt nie mit einem leeren/kleineren Stand überschreiben; tägliche Zweitkopie in IndexedDB */
+function prog(st){if(!st)return 0;var m=st.mu||{},n=0;try{n+=Object.keys(m.pets||{}).length*10+Object.keys(m.met||{}).length*3+Object.keys(st.earned||{}).length*3+Math.floor((m.xp||0)/10)+(st.mem||[]).length*2}catch(e){}return n}
+var ALLOW_DROP=false,STORE_OK=true;
+function readStored(){try{var r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){STORE_OK=false;return undefined}}
+function load(){var raw=readStored();
  S=deepMerge(DEFAULTS,raw||{});if(!raw)S.v=7;migrate()}
 var saveT=null;
-window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{S=deepMerge(DEFAULTS,JSON.parse(e.newValue));migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
+window.addEventListener('storage',function(e){if(e.key===KEY&&e.newValue){try{var inc=JSON.parse(e.newValue);if(prog(inc)<prog(S))return;S=deepMerge(DEFAULTS,inc);migrate();if(typeof rerender==='function')rerender()}catch(x){}}});
+function save(){var cur=readStored();
+ if(cur===undefined)return;/* Speicher gerade nicht lesbar: nichts überschreiben */
+ if(!ALLOW_DROP&&cur&&prog(cur)>prog(S)+5){/* gespeicherter Stand ist größer: übernehmen statt überschreiben */S=deepMerge(DEFAULTS,cur);migrate();if(typeof rerender==='function')setTimeout(rerender,0);return}
+ ALLOW_DROP=false;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}bakSoon();clearTimeout(saveT);saveT=setTimeout(function(){checkRewards(false)},250)}
+var BAKT=null;function bakSoon(){clearTimeout(BAKT);BAKT=setTimeout(bakWrite,4000)}
+function idb(cb){try{var r=indexedDB.open('kofferforscher-backup',1);r.onupgradeneeded=function(){r.result.createObjectStore('b')};r.onsuccess=function(){cb(r.result)};r.onerror=function(){cb(null)}}catch(e){cb(null)}}
+function bakWrite(){if(prog(S)<1)return;var data=JSON.stringify(S),d=today();idb(function(db){if(!db)return;try{var tx=db.transaction('b','readwrite'),st=tx.objectStore('b');st.get('latest').onsuccess=function(ev){var old=ev.target.result;if(old&&prog(JSON.parse(old.d))>prog(S)+5)return;st.put({t:Date.now(),d:data},'latest');st.put({t:Date.now(),d:data},'day-'+d)}}catch(e){}});try{localStorage.setItem(KEY+'.bak',JSON.stringify({t:Date.now(),d:S}))}catch(e){}}
+function bakRead(cb){idb(function(db){if(!db)return cb(null);try{db.transaction('b').objectStore('b').get('latest').onsuccess=function(ev){var v=ev.target.result;cb(v?{t:v.t,d:JSON.parse(v.d)}:null)}}catch(e){cb(null)}})}
+function bakCheck(){bakRead(function(b){var lb=null;try{lb=JSON.parse(localStorage.getItem(KEY+'.bak')||'null')}catch(e){}if(lb&&(!b||prog(lb.d)>prog(b.d)))b=lb;if(!b||!b.d)return;
+ if(prog(b.d)>prog(S)+5){PENDI=deepMerge(DEFAULTS,b.d);var keep=S;S=PENDI;migrate();S=keep;var dt=new Date(b.t);
+  sheet('<h2 class="disp" style="font-size:28px">Spielstand wiederherstellen?</h2><p class="muted" style="margin:8px 0 12px">Es gibt eine Sicherung vom '+dt.toLocaleDateString('de-DE')+' '+dt.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})+' mit mehr Fortschritt:<br><b>'+dataStats(PENDI)+'</b><br><br>Jetzt auf diesem Gerät:<br><b>'+dataStats(S)+'</b></p><div class="col" style="gap:8px"><button class="b p" data-act="impMerge">Wiederherstellen (nichts geht verloren)</button><button class="b" data-act="closeSheet">Später</button></div>')}})}
+function bakInfo(cb){bakRead(function(b){cb(b?new Date(b.t):null)})}
 load();
 
 /* ---------- helpers ---------- */
@@ -164,4 +179,4 @@ ACT.applyUpdate=function(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch
  else location.reload()};
 
 /* ---------- boot ---------- */
-window.addEventListener('DOMContentLoaded',function(){applyTs();checkRewards(true);if(!location.hash)location.hash='#/';route();initSW()});
+window.addEventListener('DOMContentLoaded',function(){applyTs();checkRewards(true);if(!location.hash)location.hash='#/';route();initSW();setTimeout(bakCheck,1500);setTimeout(bakWrite,6000)});
