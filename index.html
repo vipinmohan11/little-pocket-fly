@@ -1143,7 +1143,7 @@ var WESEN=[
 
 /* --- core.js --- */
 /* ===== Kofferforscher core: state, migration, router, helpers, rewards, update ===== */
-var APP_VERSION='1.7.5';
+var APP_VERSION='1.8.0';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  theme:{c:'ozean',m:'hell'},
@@ -2936,7 +2936,7 @@ function badgeToast(b){if(document.getElementById('catch')){setTimeout(function(
 function pickFor(stopId){var pool=TPOOL[themeOf(stopId)].map(function(id){return SPEC_BY[id]}).filter(Boolean),un=pool.filter(function(s){return !S.mu.pets[s.id]});
  var from=(un.length&&Math.random()<0.65)?un:pool,t=0,w=function(s){return s.rar===3?1:s.rar===2?3:6};from.forEach(function(s){t+=w(s)});var r=Math.random()*t;for(var i=0;i<from.length;i++){r-=w(from[i]);if(r<=0)return from[i]}return from[0]}
 function catchAt(stopId,firstTry){var m=S.mu,stp=STOPID[stopId];if(!stp||m.met[stopId])return;var place=pname(stopId),sp=pickFor(stopId),shiny=Math.random()<0.05;
- m.met[stopId]={t:Date.now(),sp:sp.id};if(GEO.found===stopId)GEO.found=null;setTimeout(geoCalc,100);if(!S.stadt.done[stopId]){S.stadt.done[stopId]=1;ev('stop',1,stopId)}if(firstTry)m.qok=(m.qok||0)+1;
+ m.met[stopId]={t:Date.now(),sp:sp.id};if(GEO.lat)m.wl={lat:GEO.lat,lng:GEO.lng};if(GEO.found===stopId)GEO.found=null;setTimeout(geoCalc,100);if(!S.stadt.done[stopId]){S.stadt.done[stopId]=1;ev('stop',1,stopId)}if(firstTry)m.qok=(m.qok||0)+1;
  var p=m.pets[sp.id],xp=0;
  if(!p){m.pets[sp.id]={t:Date.now(),base:m.life[sp.m]||0,st:1,shiny:shiny?1:0,how:'wild',n:1,where:place};if(!m.buddy)m.buddy=sp.id;m.sel=sp.id;xp=20+(shiny?15:0)+(firstTry?5:0);
   save();checkRewards&&checkRewards();CATCHQ.push({id:sp.id,shiny:shiny,place:place,got:[],xp:xp,first:firstTry});setTimeout(catchNext,150)}
@@ -2962,7 +2962,20 @@ function geoCalc(){if(GEO.st!=='ok')return;
  var lv=best?HEAT.findIndex(function(h){return best.d<=h[0]}):5;
  if(GEO.lvl>-1&&lv<GEO.lvl&&lv>0){snd('tick');buzz(30)}GEO.lvl=lv;
  var fo=GEO.open;if(fo&&fo.d<=RAD+Math.min(GEO.acc,100)&&GEO.acc<=250){if(GEO.found!==fo.id){GEO.found=fo.id;if(!GEO.shown[fo.id]){GEO.shown[fo.id]=1;snd('found');buzz([80,60,80,60,120])}}}else GEO.found=null;
- geoPaint()}
+ wildCheck();geoPaint()}
+var WILD_M=300,WILD_T=15*60000;
+function wildCheck(){var m=S.mu;if(GEO.st!=='ok'||GEO.acc>100)return;if(!m.wl){m.wl={lat:GEO.lat,lng:GEO.lng};save();return}
+ if(m.wp){GEO.wild=1;return}
+ if(GEO.found){GEO.wild=0;return}
+ if(hav(GEO.lat,GEO.lng,m.wl.lat,m.wl.lng)>=WILD_M&&Date.now()-(m.wt||0)>=WILD_T){m.wp={lat:GEO.lat,lng:GEO.lng,t:Date.now()};save();GEO.wild=1;snd('found');buzz([80,60,80,60,120])}}
+function wildPick(){var m=S.mu,pool=SPEC.filter(function(s){return s.src!=='sky'}),rare=pool.filter(function(s){return s.rar===3}),un=pool.filter(function(s){return !m.pets[s.id]});
+ m.wn=(m.wn||0)+1;if(rare.length&&(m.wn>=5||Math.random()<0.15)){m.wn=0;var ru=rare.filter(function(s){return !m.pets[s.id]});var r=ru.length?ru:rare;return r[Math.floor(Math.random()*r.length)]}
+ var from=(un.length&&Math.random()<0.6)?un:pool,t=0,w=function(s){return s.rar===3?1:s.rar===2?3:6};from.forEach(function(s){t+=w(s)});var x=Math.random()*t;for(var i=0;i<from.length;i++){x-=w(from[i]);if(x<=0)return from[i]}return from[0]}
+function catchWild(){var m=S.mu;if(!m.wp)return;var sp=wildPick(),shiny=Math.random()<0.06,p=m.pets[sp.id],xp;
+ m.wl={lat:GEO.lat||m.wp.lat,lng:GEO.lng||m.wp.lng};m.wt=Date.now();m.wp=null;GEO.wild=0;m.wc=(m.wc||0)+1;
+ if(!p){m.pets[sp.id]={t:Date.now(),base:m.life[sp.m]||0,st:1,shiny:shiny?1:0,how:'walk',n:1,where:'unterwegs'};if(!m.buddy)m.buddy=sp.id;m.sel=sp.id;xp=10+(shiny?15:0)+(sp.rar===3?10:0);save();CATCHQ.push({id:sp.id,shiny:shiny,place:'Unterwegs',got:[],xp:xp})}
+ else{var before=petStage(sp.id);p.n=(p.n||1)+1;if(shiny&&!p.shiny)p.shiny=1;var after=petStage(sp.id);if(after>before)p.st=after;m.sel=sp.id;xp=5+(shiny?15:0);save();CATCHQ.push({id:sp.id,shiny:shiny,place:'Unterwegs',got:[],xp:xp,dupe:1,before:before,after:after})}
+ setTimeout(catchNext,150);badgeCheck(false);geoPaint();rerender()}
 function fmtD(d){return d<1000?Math.round(d/10)*10+' m':(d/1000).toFixed(1)+' km'}
 ACT.geoInfo=function(){var SK=Object.keys(S.stadt.skip||{}).filter(function(id){return STOPID[id]&&!S.mu.met[id]}),L=planStops().map(function(x){return{id:x.id,d:GEO.lat?hav(GEO.lat,GEO.lng,x.lat,x.lng):0}}).sort(function(a,b){return a.d-b.d});
  sheet('<h2 class="disp" style="font-size:26px">GPS-Details</h2><p class="muted" style="margin:6px 0 10px;font-size:14px">Position '+(GEO.lat?GEO.lat.toFixed(5)+', '+GEO.lng.toFixed(5):'–')+' · Genauigkeit ±'+Math.round(GEO.acc||0)+' m · vor '+Math.round((Date.now()-GEO.last)/1000)+' s</p><div class="col" style="gap:6px;max-height:48vh;overflow:auto">'+L.map(function(x){return '<div class="row" style="padding:6px 0;border-top:1px solid var(--line);font-size:15px;gap:8px;flex-wrap:wrap"><b style="flex:1;min-width:120px">'+esc(pname(x.id))+'</b><span>'+fmtD(x.d)+'</span>'+(S.mu.met[x.id]?'<span class="tag">✓ gefunden</span>':(S.mu.tgt===x.id?'<button class="gskip on" data-act="geoTgt" data-a="">★ Ziel</button>':'<button class="gskip go" data-act="geoTgt" data-a="'+x.id+'">Hierhin</button>')+'<button class="gskip" data-act="geoSkip" data-a="'+x.id+'">Auslassen</button>')+'</div>'}).join('')+'</div>'+(SK.length?'<div class="lab" style="margin-top:12px">Ausgelassen</div><div class="col" style="gap:4px;margin-top:4px">'+SK.map(function(id){return '<div class="row" style="font-size:15px;gap:8px;flex-wrap:wrap"><span style="flex:1;min-width:120px;color:var(--ink2)">'+esc(pname(id))+'</span><button class="gskip" data-act="geoUnskip" data-a="'+id+'">Zurückholen</button></div>'}).join('')+'</div>':'')+(GEO.acc>150?'<p class="gwarn" style="margin-top:10px"><b>Standort ungenau</b><span>Android: Einstellungen → Apps → Chrome → Berechtigungen → Standort → „Genauen Standort verwenden“ einschalten.</span></p>':'')+'<div class="row" style="margin-top:12px;gap:8px"><button class="b p" data-act="geoInfoRef">Neu suchen</button><button class="b" data-act="closeSheet">Schließen</button></div>')};
@@ -2983,11 +2996,12 @@ function geoRefresh(){if(GEO.watch!=null){try{navigator.geolocation.clearWatch(G
  try{navigator.geolocation.getCurrentPosition(geoFix,function(){},{enableHighAccuracy:true,maximumAge:0,timeout:20000})}catch(e){}geoPaint()}
 function rbtn(){var sp=GEO.spin&&Date.now()-GEO.spin<6000;return '<button class="grf'+(sp?' spin':'')+'" data-act="geoGo" aria-label="Standort neu suchen">'+ICON('M20 11a8 8 0 10-2.3 5.7M20 4v7h-7','currentColor',2.4)+'</button>'}
 document.addEventListener('visibilitychange',function(){if(!document.hidden&&GEO.st==='ok'){GEO.shown={}}});
-function geoPaint(){var b=document.getElementById('geobox');if(b)b.innerHTML=geoInner(b.getAttribute('data-big')==='1');var f=document.getElementById('geofab');var show=GEO.found&&!document.getElementById('geobox')&&!document.querySelector('.sheet')&&!document.getElementById('catch');
- if(show&&!f){f=document.createElement('button');f.id='geofab';f.setAttribute('data-act','geoCatch');document.body.appendChild(f)}if(f){if(show)f.innerHTML='<span class="gfs">'+silh()+'</span><b>Ein Freund ist hier!</b><span>Antippen</span>';else f.remove()}}
-function silh(){var sp=SPEC_BY[TPOOL[themeOf(GEO.found||'x')][0]]||SPEC[0];return cre(sp,1,1)}
+function geoPaint(){var b=document.getElementById('geobox');if(b)b.innerHTML=geoInner(b.getAttribute('data-big')==='1');var f=document.getElementById('geofab');var show=(GEO.found||GEO.wild)&&!document.getElementById('geobox')&&!document.querySelector('.sheet')&&!document.getElementById('catch');
+ if(show&&!f){f=document.createElement('button');f.id='geofab';f.setAttribute('data-act','geoCatch');document.body.appendChild(f)}if(f){if(show)f.innerHTML='<span class="gfs">'+silh()+'</span><b>'+(GEO.found?'Ein Freund ist hier!':'Ein wilder Freund!')+'</b><span>Antippen</span>';else f.remove()}}
+function silh(){var sp=GEO.found?(SPEC_BY[TPOOL[themeOf(GEO.found)][0]]||SPEC[0]):(SPEC_BY.schatti||SPEC[0]);return cre(sp,1,1)}
 function heat(){if(!GEO.near)return HEAT[5];return HEAT[Math.max(0,GEO.lvl)]}
 function geoInner(big){var h=heat(),bud=S.mu.buddy&&S.mu.pets[S.mu.buddy]?creP(S.mu.buddy,petStage(S.mu.buddy)):cre(SPEC_BY.nordi||SPEC[0],1,0);
+ if(!GEO.found&&GEO.wild)return '<div class="gfound'+(big?' big':'')+'"><div class="gshake">'+silh()+'</div><div><b>Ein wilder Freund!</b><span>Hier in der Nähe, unterwegs</span></div><button class="b p" data-act="geoCatch">Fangen!</button></div>';
  if(GEO.found){var place=pname(GEO.found);return '<div class="gfound'+(big?' big':'')+'"><div class="gshake">'+silh()+'</div><div><b>Ein Freund ist hier!</b><span>'+esc(place)+'</span></div><button class="b p" data-act="geoCatch">Fangen!</button></div>'}
  if(GEO.st==='off'||GEO.st==='ask')return '<div class="gmeter'+(big?' big':'')+'"><div class="gbud">'+bud+'</div><div class="gtx"><b>Wo ist mein Freund?</b><span>Tippe auf ↻. Muya sagt dir: kalt, warm oder heiß.</span></div>'+rbtn()+'</div>';
  var steps=HEAT.slice().reverse().map(function(x,i){var on=(5-Math.max(0,GEO.lvl))>=i;return '<i style="background:'+(on&&GEO.st==='ok'?x[2]:'var(--fill)')+'"></i>'}).join('');
@@ -2995,7 +3009,7 @@ function geoInner(big){var h=heat(),bud=S.mu.buddy&&S.mu.pets[S.mu.buddy]?creP(S
  var word=GEO.st==='ok'?(GEO.near?h[1]:'Fertig'):'…';
  return '<div class="gwrap"><div class="gmeter'+(big?' big':'')+'"><div class="gbud">'+bud+'</div><div class="gtx"><b style="color:'+(GEO.st==='ok'?h[2]:'var(--ink2)')+'">'+word+'</b><span>'+msg+'</span><div class="gsteps">'+steps+'</div>'+(GEO.st==='ok'&&GEO.any&&GEO.any.d<=150&&S.mu.met[GEO.any.id]?'<span class="gdone">Bei '+esc(pname(GEO.any.id))+' hast du schon einen Freund gefunden.</span>':'')+(GEO.st==='ok'&&GEO.near?'<button class="ginfo" data-act="geoInfo">'+(GEO.near.tgt?'Dein Ziel: ':'Nächster Freund: ')+'<b>'+esc(pname(GEO.near.id))+'</b> · ca. '+fmtD(GEO.near.d)+'<br>GPS ±'+Math.round(GEO.acc)+' m · vor '+Math.max(0,Math.round((Date.now()-GEO.last)/1000))+' s</button>'+'<button class="gskip sm" data-act="geoSkip1" data-a="'+GEO.near.id+'">Anderer Ort? Diesen auslassen</button>':'')+'</div>'+(geoStale()?rbtn():'')+'</div>'+
   (geoWeak()?'<div class="gwarn"><b>'+ICON('M12 9v4M12 17h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z','currentColor',2.2).replace('<svg','<svg class="gwi"')+(GEO.st==='deny'?'Standort ist nicht erlaubt':GEO.st==='ok'&&GEO.acc>150?'Standort ungenau (±'+Math.round(GEO.acc)+' m)':'Kein GPS-Signal')+'</b><span>'+(GEO.st==='deny'?'Erlaube den Standort in Chrome und tippe dann auf ↻.':(GEO.st==='ok'&&GEO.acc>150?'Android: Einstellungen → Apps → Chrome → Berechtigungen → Standort → „Genauen Standort verwenden“ einschalten.':'Ist der Standort am Handy an? Tippe auf ↻ oder geh ein paar Schritte ins Freie.'))+'</span><button class="gwbtn" data-act="geoParent">Eltern: Wir sind da</button></div>':'')+'</div>'}
-ACT.geoCatch=function(){var id=GEO.found;if(!id||S.mu.met[id])return;var f=document.getElementById('geofab');if(f)f.remove();ACT.here(id)};
+ACT.geoCatch=function(){var id=GEO.found;if(!id&&GEO.wild){var f0=document.getElementById('geofab');if(f0)f0.remove();catchWild();return}if(!id||S.mu.met[id])return;var f=document.getElementById('geofab');if(f)f.remove();ACT.here(id)};
 ACT.geoParent=function(){var st=dayStops(curSlot()).filter(function(s){return !S.mu.met[s.id]});sheet('<h2 class="disp" style="font-size:26px">Wo seid ihr?</h2><p class="muted" style="margin:6px 0 10px">Nur für Eltern, wenn GPS nicht geht.</p><div class="col" style="gap:6px;max-height:50vh;overflow:auto">'+(st.length?st.map(function(s){return '<button class="qo" data-act="geoParentGo" data-a="'+s.id+'">'+esc(pname(s.id))+'</button>'}).join(''):'<p class="muted">Heute sind alle Orte geschafft.</p>')+'</div><button class="b" style="margin-top:10px" data-act="closeSheet">Abbrechen</button>')};
 ACT.geoParentGo=function(id){closeSheet();setTimeout(function(){ACT.here(id)},100)};
 setInterval(function(){if(document.getElementById('geobox'))geoPaint()},5000);
@@ -3018,7 +3032,7 @@ function meisterHtml(){xpInit();var L=lvlBar(),m=S.mu,got=Object.keys(m.bd||{}).
 function badgesHtml(){var m=S.mu;m.bd=m.bd||{};return '<div class="bdgrid">'+BADGES.map(function(b){var on=!!m.bd[b[0]];return '<div class="pn bdg'+(on?' on':'')+'"><span class="bdgi">'+ICON(IC.star,on?'#fff':'var(--ink3)',2.4)+'</span><b>'+esc(b[1])+'</b><small>'+esc(b[2])+'</small>'+(on?'<span class="lab" style="font-size:12px">'+esc(m.bd[b[0]].split('-').reverse().join('.'))+'</span>':'')+'</div>'}).join('')+'</div>'}
 
 /* ---------- Start ---------- */
-window.addEventListener('DOMContentLoaded',function(){xpInit();geoInit()});
+window.addEventListener('DOMContentLoaded',function(){xpInit();if(S.mu.wp)GEO.wild=1;geoInit()});
 window.addEventListener('hashchange',function(){setTimeout(geoPaint,50)});
 
 /* --- p_dex.js --- */
