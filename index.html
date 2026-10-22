@@ -1143,7 +1143,7 @@ var WESEN=[
 
 /* --- core.js --- */
 /* ===== Kofferforscher core: state, migration, router, helpers, rewards, update ===== */
-var APP_VERSION='1.8.0';
+var APP_VERSION='1.8.1';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  theme:{c:'ozean',m:'hell'},
@@ -2963,7 +2963,7 @@ function geoCalc(){if(GEO.st!=='ok')return;
  if(GEO.lvl>-1&&lv<GEO.lvl&&lv>0){snd('tick');buzz(30)}GEO.lvl=lv;
  var fo=GEO.open;if(fo&&fo.d<=RAD+Math.min(GEO.acc,100)&&GEO.acc<=250){if(GEO.found!==fo.id){GEO.found=fo.id;if(!GEO.shown[fo.id]){GEO.shown[fo.id]=1;snd('found');buzz([80,60,80,60,120])}}}else GEO.found=null;
  wildCheck();geoPaint()}
-var WILD_M=300,WILD_T=15*60000;
+var WILD_M=500,WILD_T=15*60000;
 function wildCheck(){var m=S.mu;if(GEO.st!=='ok'||GEO.acc>100)return;if(!m.wl){m.wl={lat:GEO.lat,lng:GEO.lng};save();return}
  if(m.wp){GEO.wild=1;return}
  if(GEO.found){GEO.wild=0;return}
