@@ -10,9 +10,8 @@ function shell(cur,html){return '<div class="hubshell">'+railHtml(cur)+'<div cla
 ACT.go=function(id){var s=winState(id);if(s!=='open'){toast(s==='limit'?'Pause: Das Rollo ist heute zu.':'Dieses Fenster ruht gerade. Frag Mama oder Papa.');return}location.hash='#/'+id};
 ACT.openWin=ACT.go;
 function WIN(id){return WINDOWS.filter(function(w){return w.id===id})[0]}
-function topChips(){var rk=rankOf(earnedCount()),n=earnedCount(),base=RANKS.filter(function(r){return r[1]===rk.name})[0][0],pct=rk.next?Math.round((n-base)/(rk.next[0]-base)*100):100;
- return '<a class="hchip" href="#/samm" title="Reisepass"><span style="width:20px;display:inline-block">'+ICON(IC.star,'#C9A227')+'</span><b>'+esc(rk.name)+'</b><span class="bar" style="width:70px;margin:0"><i style="width:'+pct+'%"></i></span><span class="muted" style="font-size:13px">'+n+' Stempel</span></a>'+
- (typeof lvlBar==='function'?(function(){xpInit();var x=lvlBar();return '<a class="hchip" href="#/" title="Rang"><span class="lvlc s">'+(x.i+1)+'</span><b>'+esc(x.name)+'</b><span class="bar" style="width:60px;margin:0"><i style="width:'+x.p+'%"></i></span><span class="muted" style="font-size:13px">'+(S.mu.xp||0)+' XP</span></a>'})():'')}
+function topChips(){var rk=rankOf(earnedCount()),n=earnedCount(),x=typeof lvlBar==='function'?(xpInit(),lvlBar()):null;
+ return '<div class="hchip two"><a href="#/samm" title="Reisepass"><span class="ci">'+ICON(IC.star,'#C9A227')+'</span><b>'+esc(rk.name)+'</b><span class="muted">'+n+' Stempel</span></a>'+(x?'<a href="#/" title="Rang"><span class="lvlc s">'+(x.i+1)+'</span><b>'+esc(x.name)+'</b><span class="muted">'+(S.mu.xp||0)+' XP</span></a>':'')+'</div>'}
 function greet(){var h=new Date().getHours(),g=h<11?'Guten Morgen':h<18?'Hallo':'Guten Abend',k=kidName();return g+(k?', '+esc(k):', Forscher')+'!'}
 function skyline(){
  function spire(x,w,top,base){var c=x+w/2;return '<path d="M'+x+' '+base+'V'+(top+w*1.6)+'Q'+x+' '+(top+w*.7)+' '+c+' '+top+'Q'+(x+w)+' '+(top+w*.7)+' '+(x+w)+' '+(top+w*1.6)+'V'+base+'z"/><circle cx="'+c+'" cy="'+(top-5)+'" r="'+(w*.22)+'"/>'}

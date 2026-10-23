@@ -650,3 +650,29 @@ html[data-dark="1"] .gwarn{background:rgba(227,166,0,.14);color:#F3D27A}html[dat
 .hbuch{flex:none!important;height:auto!important;min-height:0!important;align-self:stretch}
 @media (orientation:portrait){.hhero .hname,.hhero .hsub,.hhero .htease{max-width:60%}.hbud{height:40%!important}}
 @media (orientation:portrait){.hhero{height:350px!important}.hhero .hname{font-size:27px!important;max-width:100%!important}.hhero .hsub{max-width:100%!important;font-size:14px}.hhero .htease{max-width:100%!important;font-size:13.5px}.hbud{height:34%!important;right:4%}.hhero .sky{height:46%!important}}
+
+/* v1.9.3 kompakter Kopf, kleiner Hero */
+.hchip.two{display:flex;align-items:center;gap:0;padding:0;border-radius:99px;background:var(--card);box-shadow:var(--shadow);overflow:hidden}
+.hchip.two a{display:flex;align-items:center;gap:6px;padding:7px 14px;color:inherit;text-decoration:none;font-size:14px;white-space:nowrap}.hchip.two a+a{border-left:1px solid var(--line)}
+.hchip.two .ci{width:16px;height:16px;display:inline-block}.hchip.two .ci svg{width:16px;height:16px}.hchip.two .muted{font-size:13px}.hchip.two .lvlc{width:20px;height:20px;font-size:12px}
+.hhero{flex:none!important;height:clamp(150px,calc(24*var(--vh)/100),210px)!important;padding:14px 20px!important}
+.hhero .hname{font-size:clamp(22px,calc(3.6*var(--vh)/100),32px)!important;margin-top:2px;max-width:66%!important}
+.hhero .hsub{font-size:13.5px;margin-top:3px;max-width:66%!important}.hhero .htease{font-size:13px;margin-top:5px;max-width:66%!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hhero .sky{height:70%!important;opacity:.85}.hbud{height:80%!important;bottom:6%!important;right:5%!important}.hbn{font-size:12px;padding:2px 9px;margin-top:2px}
+#geobox.gcard{flex:1;min-height:0}
+@media (orientation:portrait){.hhero{height:200px!important}.hhero .hname,.hhero .hsub,.hhero .htease{max-width:62%!important}.hhero .hname{font-size:22px!important}.hbud{height:66%!important}.hhero .sky{height:60%!important}.hchip.two{flex-wrap:nowrap;max-width:100%}.hchip.two a{padding:6px 10px;font-size:13px;gap:5px}.hd{flex-wrap:wrap}}
+
+.gline{display:block;font-size:14px;margin-top:6px;color:var(--ink2)}.gline b{color:var(--ink)}
+.grow{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.gq{font-size:12.5px;color:var(--ink3);margin-top:6px}.gq button{font:inherit;color:var(--ac);text-decoration:underline;padding:0}
+.gpr{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:11px 14px;border-radius:14px;background:var(--card);box-shadow:0 0 0 1px var(--line);font-size:16px;color:var(--ink)}.gpr b{flex:1;min-width:0}.gpr span{font-size:13.5px;color:var(--ink3)}.gpr i{font-style:normal;font-weight:800;font-size:13px;color:var(--ac)}.gpr.on{box-shadow:0 0 0 2px var(--ac)}.gpr.done{opacity:.5}.gpr.done i{color:var(--ink3)}
+
+.pctx.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dpc .pcf,.dpc .pcback{width:100%}
+.pcback{position:relative;aspect-ratio:3/2;background:#FBF3E4;border-radius:10px;box-shadow:0 0 0 1px #D9C6A5 inset;display:flex;padding:5% 4%;gap:4%;overflow:hidden}
+.pcbl{flex:1.5;min-width:0;border-right:1.5px solid #D9C6A5;padding-right:4%;display:flex}.pcbt{font-family:'Caveat',cursive;color:#2779A7;line-height:1.18;white-space:pre-wrap;overflow:auto;width:100%;height:100%;font-size:30px}
+.pcbr{flex:1;display:flex;flex-direction:column;gap:12%;align-items:flex-end}.pcbs{border:2px solid #E8673A;color:#E8673A;padding:6px 8px;display:flex;flex-direction:column;align-items:center;font-weight:800;width:44%}.pcbs svg{width:22px;height:22px}.pcbs small{font-size:9px}
+.pcba{width:100%;display:flex;flex-direction:column;gap:18px}.pcba span{border-bottom:1.5px solid #C9B8A0;height:1px}
+.pcbk{position:absolute;left:4%;bottom:4%;font-family:'Caveat',cursive;font-size:24px;color:#13324A}
+.hhero .lab,.hhero .hname,.hhero .hsub,.hhero .htease{position:relative;z-index:2}.hhero .sky{height:58%!important;opacity:.55}
+#geobox.gcard{display:flex;flex-direction:column;justify-content:center}
