@@ -1199,7 +1199,7 @@ var WESEN=[
 
 /* --- core.js --- */
 /* ===== Kofferforscher core: state, migration, router, helpers, rewards, update ===== */
-var APP_VERSION='1.9.4';
+var APP_VERSION='1.9.5';
 var KEY='kofferforscher.v1';
 var DEFAULTS={
  theme:{c:'ozean',m:'hell'},
@@ -3061,15 +3061,19 @@ function geoAsk(id,after){sheet('<div style="text-align:center;padding:6px"><h2 
 ACT.geoSkipYes=function(id){S.stadt.skip[id]=1;S.mu.tgs=TGV().filter(function(x){return x!==id});save();geoCalc();closeSheet();toast(pname(id)+' wird ausgelassen.');if(GEO.after)GEO.after()};
 ACT.geoSkipNo=function(){closeSheet();if(GEO.after)GEO.after()};
 
-var PICKD=null;
-function areaDe(a){return a==='Old Town'?'Altstadt':a}
-ACT.geoPick=function(d){var ds=tripDates();if(d!=null&&d!=='')PICKD=+d;if(PICKD==null)PICKD=curSlot();PICKD=Math.max(0,Math.min(ds.length-1,PICKD));
- var tg=TGV(),tabs=ds.map(function(_,i){var cc=CT(i),n=dayStops(i).filter(function(x){return tg.indexOf(x.id)>-1}).length;return '<button class="dtab'+(i===PICKD?' on':'')+'" data-act="geoPick" data-a="'+i+'">'+esc(areaDe(cc&&cc.area||'Tag '+(i+1)))+(n?' <span class="tag" style="height:18px">'+n+'</span>':'')+'</button>'}).join(''),c=CT(PICKD),st=dayStops(PICKD).filter(function(x){return !S.mu.met[x.id]}),allOn=st.length&&st.every(function(x){return tg.indexOf(x.id)>-1}),
- rows=dayStops(PICKD).map(function(x){var o=STOPID[x.id]||x,d=GEO.lat&&o.lat?hav(GEO.lat,GEO.lng,o.lat,o.lng):null,met=S.mu.met[x.id],t=tg.indexOf(x.id)>-1;
-  return '<button class="gpr'+(t?' on':'')+(met?' done':'')+'" '+(met?'disabled':'data-act="geoTgt" data-a="'+x.id+'"')+'><span class="gck">'+(t?'✓':'')+'</span><b>'+esc(pname(x.id))+'</b><span>'+(d!=null&&d<=FARM?fmtD(d):'')+'</span><i>'+(met?'gefunden':'')+'</i></button>'}).join('');
- sheet('<h2 class="disp" style="font-size:26px">Ziele wählen</h2><p class="muted" style="margin:4px 0 8px;font-size:14px">Gebiet wählen, dann Orte antippen. Du kannst mehrere wählen. Gewählt: <b>'+tg.length+'</b></p><div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">'+tabs+'</div><div class="row" style="gap:6px;margin-bottom:8px;flex-wrap:wrap"><button class="gskip go" data-act="geoTgtDay" data-a="'+PICKD+'">'+(allOn?'Alle in '+esc(areaDe(c&&c.area||''))+' abwählen':'Alle in '+esc(areaDe(c&&c.area||''))+' wählen')+'</button>'+(tg.length?'<button class="gskip" data-act="geoTgtNone">Nichts gewählt (nächster Ort)</button>':'')+'</div><div class="col" style="gap:6px;max-height:42vh;overflow:auto">'+(rows||'<p class="muted">Keine Orte.</p>')+'</div><div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="b p" data-act="closeSheet">Fertig</button><button class="b" data-act="geoInfo">GPS-Details</button></div>')};
+var PICKD=null,PICKM='tag';
+function pickIds(d){return d>=6?SIT.map(function(x){return x.id}):dayStops(d).map(function(x){return x.id})}
+function regIds(r){return r==='sit'?pickIds(6):[0,1,2,3,4,5].reduce(function(a,i){return a.concat(pickIds(i))},[]).filter(function(x,i,a){return a.indexOf(x)===i})}
+ACT.geoPickM=function(m){PICKM=m;ACT.geoPick()};
+ACT.geoPick=function(d){var ds=tripDates();if(d!=null&&d!=='')PICKD=+d;if(PICKD==null)PICKD=Math.min(curSlot(),5);PICKD=Math.max(0,Math.min(6,PICKD));
+ var tg=TGV(),mt='<div class="seg" style="margin-bottom:10px"><button class="'+(PICKM==='tag'?'on':'')+'" data-act="geoPickM" data-a="tag">Nach Tag</button><button class="'+(PICKM==='reg'?'on':'')+'" data-act="geoPickM" data-a="reg">Nach Gebiet</button></div>',body;
+ function row(id){var o=STOPID[id],d=GEO.lat&&o.lat?hav(GEO.lat,GEO.lng,o.lat,o.lng):null,met=S.mu.met[id],t=tg.indexOf(id)>-1;return '<button class="gpr'+(t?' on':'')+(met?' done':'')+'" '+(met?'disabled':'data-act="geoTgt" data-a="'+id+'"')+'><span class="gck">'+(t?'✓':'')+'</span><b>'+esc(pname(id))+'</b><span>'+(d!=null&&d<=FARM?fmtD(d):'')+'</span><i>'+(met?'gefunden':'')+'</i></button>'}
+ if(PICKM==='tag'){var tabs=[0,1,2,3,4,5,6].map(function(i){var n=pickIds(i).filter(function(x){return tg.indexOf(x)>-1}).length;return '<button class="dtab'+(i===PICKD?' on':'')+'" data-act="geoPick" data-a="'+i+'">'+(i===6?'Sitges':'Tag '+(i+1))+(n?' <span class="tag" style="height:18px">'+n+'</span>':'')+'</button>'}).join(''),ids=pickIds(PICKD),open=ids.filter(function(x){return !S.mu.met[x]}),allOn=open.length&&open.every(function(x){return tg.indexOf(x)>-1}),c=PICKD<6?CT(PICKD):null;
+  body='<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:8px">'+tabs+'</div><div class="row" style="gap:6px;margin-bottom:8px;flex-wrap:wrap"><button class="gskip go" data-act="geoTgtSet" data-a="d|'+PICKD+'">'+(allOn?'Alle abwählen':'Alle dieses Tages wählen')+'</button></div><div class="col" style="gap:6px;max-height:40vh;overflow:auto">'+ids.map(row).join('')+'</div>'}
+ else{body='<div class="col" style="gap:8px">'+[['bcn','Barcelona','Tag 1 bis 6'],['sit','Sitges','Tagesausflug']].map(function(r){var ids=regIds(r[0]),open=ids.filter(function(x){return !S.mu.met[x]}),n=open.filter(function(x){return tg.indexOf(x)>-1}).length,allOn=open.length&&n===open.length;return '<button class="gpr'+(allOn?' on':'')+'" data-act="geoTgtSet" data-a="r|'+r[0]+'"><span class="gck">'+(allOn?'✓':'')+'</span><b>'+r[1]+'<small style="display:block;font-weight:600;color:var(--ink3)">'+r[2]+' · '+open.length+' Orte offen</small></b><span>'+(n?n+' gewählt':'')+'</span><i>'+(allOn?'abwählen':'alle wählen')+'</i></button>'}).join('')+'</div>'}
+ sheet('<h2 class="disp" style="font-size:26px">Ziele wählen</h2><p class="muted" style="margin:4px 0 8px;font-size:14px">Du kannst mehrere wählen. Gewählt: <b>'+tg.length+'</b></p>'+mt+body+'<div class="row" style="margin-top:12px;gap:8px;flex-wrap:wrap"><button class="b p" data-act="closeSheet">Fertig</button>'+(tg.length?'<button class="b" data-act="geoTgtNone">Nichts gewählt</button>':'')+'<button class="b" data-act="geoInfo">GPS-Details</button></div>')};
+ACT.geoTgtSet=function(a){var p=a.split('|'),ids=(p[0]==='r'?regIds(p[1]):pickIds(+p[1])).filter(function(x){return !S.mu.met[x]}),t=TGV().slice(),all=ids.every(function(x){return t.indexOf(x)>-1});ids.forEach(function(x){var i=t.indexOf(x);if(all){if(i>-1)t.splice(i,1)}else if(i<0)t.push(x)});S.mu.tgs=t;save();geoCalc();ACT.geoPick()};
 ACT.geoTgt=function(id){var t=TGV().slice(),i=t.indexOf(id);if(i>-1)t.splice(i,1);else if(id)t.push(id);S.mu.tgs=t;save();geoCalc();ACT.geoPick()};
-ACT.geoTgtDay=function(d){var st=dayStops(+d).filter(function(x){return !S.mu.met[x.id]}),t=TGV().slice(),all=st.every(function(x){return t.indexOf(x.id)>-1});st.forEach(function(x){var i=t.indexOf(x.id);if(all){if(i>-1)t.splice(i,1)}else if(i<0)t.push(x.id)});S.mu.tgs=t;save();geoCalc();ACT.geoPick()};
 ACT.geoTgtNone=function(){S.mu.tgs=[];save();geoCalc();ACT.geoPick()};
 ACT.geoUnskip=function(id){delete S.stadt.skip[id];save();geoCalc();ACT.geoInfo()};
 ACT.geoSkip1=function(id){geoAsk(id,null)};
@@ -3378,6 +3382,26 @@ function pcFrame(id,place,date,sp){var src=PC.get(id),st='';if(sp){var sv=cre(sp
  '<text x="30" y="372" font-size="15" font-weight="800" letter-spacing="3" fill="#FFF0D8" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))">'+esc(place.toUpperCase())+'</text>'+
  (st?'<g transform="translate(534 66) rotate(4)" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))"><path d="M-38 -46h76v92h-76z" fill="#FFFBF1"/><path d="M-38 -46h76v92h-76z" fill="none" stroke="#FFFBF1" stroke-width="6" stroke-dasharray=".1 7.5" stroke-linecap="round"/><rect x="-31" y="-39" width="62" height="66" fill="#F3E2C4"/>'+st+'<text y="40" text-anchor="middle" font-size="9" font-weight="800" fill="#9A6B2E" letter-spacing="1.2">MUYA-POST</text></g>':'')+
  '<g transform="translate(474 100) rotate(-12)" opacity=".75" fill="none" stroke="#FFF0D8" stroke-width="1.8"><circle r="26"/><circle r="20"/><text text-anchor="middle" y="-3" font-size="7.5" font-weight="800" fill="#FFF0D8" stroke="none" letter-spacing="1.2">BARCELONA</text><text text-anchor="middle" y="9" font-size="9.5" font-weight="800" fill="#FFF0D8" stroke="none">'+date+'</text></g></svg></div>'}
+
+/* --- p_sitges.js --- */
+/* ===== v1.9.5: Sitges (Tagesausflug) als eigenes Gebiet: Orte mit GPS (Koordinaten ungefähr), Fragen, Postkartenbilder ===== */
+var SIT=[
+ {id:'sit_sebastia',n:'Strand Platja de Sant Sebastià',lat:41.2339,lng:1.8052,k:'play',kid:'Such am Wasserrand die schönste Muschel.'},
+ {id:'sit_kirche',n:'Kirche Sant Bartomeu i Santa Tecla',lat:41.2349,lng:1.8064,k:'see',kid:'Die Kirche steht fast im Meer. Von weitem sieht sie aus wie ein Schiff.'},
+ {id:'sit_promenade',n:'Passeig Marítim (Promenade)',lat:41.2362,lng:1.8040,k:'view',kid:'Lauf die Promenade entlang und zähl die Palmen.'},
+ {id:'sit_altstadt',n:'Altstadt & Platja de la Ribera',lat:41.2371,lng:1.8056,k:'see',kid:'Such eine enge Gasse mit weißen Häusern.'},
+ {id:'sit_cauferrat',n:'Museum Cau Ferrat',lat:41.2350,lng:1.8059,k:'see',kid:'Such die großen Fenster. Sie stammen von der alten Burg der Stadt.'},
+ {id:'sit_maricel',n:'Palau Maricel',lat:41.2347,lng:1.8068,k:'see',kid:'Der Palast steht direkt am Wasser. „Mar i Cel“ heißt Meer und Himmel.'}];
+SIT.forEach(function(s,i){s.day=6;s.idx=i;STOPID[s.id]=s;PLACE[s.id]=s;PNAME_DE[s.id]=s.n});
+Object.assign(PTHEME,{sit_sebastia:'meer',sit_kirche:'kunst',sit_promenade:'meer',sit_altstadt:'stadt',sit_cauferrat:'kunst',sit_maricel:'kunst'});
+Object.assign(PLACEQ,{
+ sit_sebastia:['Was kannst du am Strand Sant Sebastià machen?','Im Sand spielen und aufs Meer schauen','Ski fahren','Schlittschuh laufen'],
+ sit_kirche:['Wo steht die große Kirche von Sitges?','Direkt am Meer','Mitten im Wald','Auf einem Berggipfel'],
+ sit_promenade:['Was ist eine Promenade?','Ein Spazierweg am Meer','Eine Autobahn','Ein Fluss'],
+ sit_altstadt:['Was heißt „Platja“ auf Deutsch?','Strand','Platz','Pizza'],
+ sit_cauferrat:['Wem gehörte das Haus Cau Ferrat?','Dem Maler Santiago Rusiñol','Einem Piraten','Einem Bäcker'],
+ sit_maricel:['Was bedeutet „Mar i Cel“?','Meer und Himmel','Sand und Sonne','Berg und Tal']});
+Object.assign(PC.MAP,{sit_sebastia:['beach','sea','gold'],sit_kirche:['smm','sea','gold'],sit_promenade:['beach','sea','dawn'],sit_altstadt:['smm','street','gold'],sit_cauferrat:['smm','sea','blue'],sit_maricel:['colom','sea','gold']});
 
 /* --- p_cards.js --- */
 /* ===== v1.9.0: Postkarten (gezeichnet je Ortsart) und Geräusche (5 s) im Tagebuch ===== */
