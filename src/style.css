@@ -676,3 +676,4 @@ html[data-dark="1"] .gwarn{background:rgba(227,166,0,.14);color:#F3D27A}html[dat
 .pcbk{position:absolute;left:4%;bottom:4%;font-family:'Caveat',cursive;font-size:24px;color:#13324A}
 .hhero .lab,.hhero .hname,.hhero .hsub,.hhero .htease{position:relative;z-index:2}.hhero .sky{height:58%!important;opacity:.55}
 #geobox.gcard{display:flex;flex-direction:column;justify-content:center}
+.gpr .gck{width:22px;height:22px;border-radius:7px;box-shadow:0 0 0 1.5px var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex:none}.gpr.on .gck{background:var(--ac);box-shadow:none}
