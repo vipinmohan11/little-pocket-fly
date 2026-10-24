@@ -677,3 +677,17 @@ html[data-dark="1"] .gwarn{background:rgba(227,166,0,.14);color:#F3D27A}html[dat
 .hhero .lab,.hhero .hname,.hhero .hsub,.hhero .htease{position:relative;z-index:2}.hhero .sky{height:58%!important;opacity:.55}
 #geobox.gcard{display:flex;flex-direction:column;justify-content:center}
 .gpr .gck{width:22px;height:22px;border-radius:7px;box-shadow:0 0 0 1.5px var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:14px;color:#fff;flex:none}.gpr.on .gck{background:var(--ac);box-shadow:none}
+
+/* v1.9.6 Halloween */
+html[data-th=halloween]{--ac:#F26B1D;--act:rgba(242,107,29,.22);--bg:#1A1030;--card:#2A1A4A;--ink:#FFF3E6;--ink2:#CDBBE6;--ink3:#A28DC4;--deep:#FFF3E6;--paper:#2A1A4A;--cream:#1A1030;--line:rgba(255,255,255,.14);--soft:rgba(255,255,255,.08);--fill:#3A2762;--shadow:0 0 0 .5px rgba(255,255,255,.1);color-scheme:dark}
+html[data-th=halloween] body{background:#1A1030;color:#FFF3E6}
+html[data-th=halloween] .hhero{background:linear-gradient(180deg,#3B2166 0%,#6A2F6B 62%,#C2561F 100%)!important;border:0}
+html[data-th=halloween] .hhero .lab,html[data-th=halloween] .hhero .hname,html[data-th=halloween] .hhero .hsub,html[data-th=halloween] .hhero .htease{color:#FFF3E6}
+html[data-th=halloween] .hhero .sky{opacity:1}
+html[data-th=halloween] .hbn{background:rgba(26,16,48,.8);color:#FFF3E6}
+html[data-th=halloween] .b.p,html[data-th=halloween] .tabs a.on{background:#F26B1D;color:#fff}
+.hwfx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5}.hwfx span{position:absolute;top:-10%;animation:hwf 3.2s ease-in forwards}
+@keyframes hwf{0%{transform:translateY(0) rotate(0);opacity:0}15%{opacity:1}100%{transform:translateY(115vh) rotate(40deg);opacity:.9}}
+html[data-th=halloween] .hhero .sky{width:100%!important;height:100%!important;max-height:none!important;opacity:1}
+html[data-th=halloween] [style*="#FFF5CC"]{background:#3A2762!important;color:#FFF3E6}
+html[data-th=halloween] .fcard small,html[data-th=halloween] .bpl small,html[data-th=halloween] .sslot small{color:var(--ink2)!important}
